@@ -1,0 +1,29 @@
+config:
+  target: 'http://localhost:8080'
+  phases:
+    - duration: 20
+      arrivalRate: 5
+      name: Warm up
+    - duration: 40
+      arrivalRate: 5
+      rampTo: 50
+      name: Ramp up load
+    - duration: 200
+      arrivalRate: 50
+      name: Sustained load
+    - duration: 40
+      arrivalRate: 5
+      rampTo: 50
+      name: Cool down load
+    - duration: 20
+      arrivalRate: 5
+      name: cool down
+  processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
+  defaults:
+
+scenarios:
+  - flow:
+      - post:
+          url: '/bubblesort'
+          beforeRequest: "beforeRequest"
+    name: 'bubblesort'

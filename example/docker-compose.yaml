@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  prometheus:
+    image: prom/prometheus
+    user: "1000:1000"
+    volumes:
+      - ./config:/prometheus
+    command:
+      - '--config.file=/prometheus/prometheus.yaml'
+    ports:
+      - 9090:9090
+    restart: always
+    networks:
+      - promnet
+
+  node:
+    image: prom/node-exporter
+    ports:
+      - 9100:9100
+    restart: always
+    networks:
+      - promnet
+
+  example:
+    image: cbrgm/example-app:latest
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - promnet
+
+networks:
+  promnet:
+    driver: bridge
