@@ -14,15 +14,7 @@ services:
     networks:
       - promnet
 
-  node:
-    image: prom/node-exporter
-    ports:
-      - 9100:9100
-    restart: always
-    networks:
-      - promnet
-
-  example:
+  example-app:
     image: cbrgm/example-app:latest
     ports:
       - 8080:8080

@@ -36,4 +36,4 @@ scrape_configs:
     honor_labels: true
 
     static_configs:
-      - targets: ['example:8080']
+      - targets: ['example-app:8080']

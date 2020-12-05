@@ -18,6 +18,7 @@ import (
 
 
 // round((avg_antwortzeit÷slo_antwortzeit)−1)×instanzen_lokal)
+// ceil(((((rate(example_sorting_request_duration_seconds_sum[5m]) / rate(example_sorting_request_duration_seconds_count[5m])) / 0.045) -1) * 25) + 0.5)
 // RED Metrics implementation
 var (
 	requestsDuration = promauto.NewHistogram(prometheus.HistogramOpts{
