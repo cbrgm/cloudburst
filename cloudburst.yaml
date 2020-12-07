@@ -1,0 +1,10 @@
+prometheus_url: http://localhost:9090
+targets:
+  - name: bubblesort-svc
+    description: request duration greater than 0.045ms
+    query: |
+      ceil(((((rate(example_sorting_request_duration_seconds_sum[5m]) / rate(example_sorting_request_duration_seconds_count[5m])) / 0.045) -1) * 25) + 0.5)
+    spec:
+      container:
+        name: "test"
+        image: cbrgm/example-app:latest

@@ -1,0 +1,98 @@
+openapi: 3.0.1
+info:
+  title: Cloudburst
+  version: 0.0.0
+servers:
+  - url: /api/v1
+paths:
+  /targets:
+    get:
+      summary: List ScrapeTargets
+      operationId: ListScrapeTargets
+      tags:
+        - targets
+      responses:
+        '200':
+          description: List of ScrapeTargets
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ScrapeTarget"
+  /targets/{name}/instances:
+    post:
+      summary: Set the Instances for a ScrapeTarget
+      operationId: SetInstances
+      tags:
+        - targets
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instances'
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Status update successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Instances"
+components:
+  schemas:
+    ScrapeTarget:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        value:
+          type: number
+        instanceSpec:
+          $ref: '#/components/schemas/InstanceSpec'
+        instances:
+          $ref: '#/components/schemas/Instances'
+    InstanceSpec:
+      type: object
+      properties:
+        container:
+          $ref: '#/components/schemas/ContainerSpec'
+    ContainerSpec:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+    Instance:
+      type: object
+      properties:
+        name:
+          type: string
+        endpoint:
+          type: string
+        status:
+          $ref: '#/components/schemas/InstanceStatus'
+    InstanceStatus:
+      type: object
+      properties:
+        agent:
+          type: string
+        phase:
+          type: string
+          enum: ['unknown', 'progress', 'failure', 'running']
+        started:
+          type: string
+          format: 'date-time'
+    Instances:
+      type: array
+      items:
+        $ref: '#/components/schemas/Instance'

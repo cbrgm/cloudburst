@@ -40,3 +40,9 @@ curl -X POST -i http://localhost:8080/bubblesort --data '{
 ```
 curl http://localhost:8080/metrics
 ```
+
+## Benchmarking
+
+```
+docker run --rm -it --network="host" -v $(pwd):/workload cbrgm/artillery:latest /bin/sh
+```
