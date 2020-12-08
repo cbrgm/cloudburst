@@ -1,5 +1,6 @@
 prometheus_url: http://localhost:9090
 targets:
+
   - name: bubblesort-svc
     description: request duration greater than 0.045ms
     query: |

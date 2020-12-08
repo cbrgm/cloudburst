@@ -13,7 +13,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/prometheus/client_golang/api"
 	prometheusv1 "github.com/prometheus/client_golang/api/prometheus/v1"
-	"github.com/prometheus/common/model"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"net/http"
@@ -121,10 +120,9 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 				for {
 					select {
 					case <-ticker.C:
-						// do stuff
-						err = query(promAPI, state)
+						err = processScrapeTargets(promAPI, state)
 						if err != nil {
-							level.Info(logger).Log("msg", "prometheus query job failed", "err", err)
+							level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 						}
 					}
 				}
@@ -144,28 +142,6 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		return nil
 
 	}
-}
-
-func query(api prometheusv1.API, state *cloudburst.State) error {
-
-	scrapeTargets, err := state.ListScrapeTargets()
-	if err != nil {
-		return err
-	}
-
-	for _, target := range scrapeTargets {
-		value, _, err := api.Query(context.TODO(), target.Query, time.Now())
-		if err != nil {
-			return fmt.Errorf("failed to run query: %w", err)
-		}
-
-		vec := value.(model.Vector)
-
-		for _, v := range vec {
-			fmt.Printf("%.2f\n", v.Value)
-		}
-	}
-	return nil
 }
 
 // Logger returns a middleware to log HTTP requests

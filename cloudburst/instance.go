@@ -2,6 +2,17 @@ package cloudburst
 
 import "time"
 
+type Status string
+
+const (
+	Unknown    Status = "unknown"
+	Pending    Status = "pending"
+	Running    Status = "running"
+	Failure    Status = "failure"
+	Progress   Status = "progress"
+	Terminated Status = "terminated"
+)
+
 type (
 	Instance struct {
 		Name     string         `json:"name"`
@@ -12,7 +23,7 @@ type (
 
 	InstanceStatus struct {
 		Agent   string    `json:"agent"`
-		Status  string    `json:"status"`
+		Status  Status    `json:"status"`
 		Started time.Time `json:"started"`
 	}
 )

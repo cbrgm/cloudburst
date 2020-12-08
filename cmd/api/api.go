@@ -133,9 +133,9 @@ func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
 
 func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
 	return cloudburst.Instance{
-		Name:     i.Name,
-		Endpoint: i.Endpoint,
-		Active:   i.Active,
+		Name:      i.Name,
+		Endpoint:  i.Endpoint,
+		Active: i.Active,
 		Status: cloudburst.InstanceStatus{
 			Agent:   i.Status.Agent,
 			Status:  i.Status.Status,
