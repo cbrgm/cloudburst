@@ -5,7 +5,6 @@ type (
 		Name         string       `json:"name"`
 		Description  string       `json:"description"`
 		Query        string       `json:"query"`
-		Value        float64      `json:"value"`
 		InstanceSpec InstanceSpec `json:"instanceSpec"`
 		Instances    []Instance   `json:"instances"`
 	}

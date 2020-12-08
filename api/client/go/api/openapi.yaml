@@ -71,7 +71,6 @@ components:
             name: name
         name: name
         description: description
-        value: 0.8008281904610115
       properties:
         name:
           type: string
@@ -79,9 +78,6 @@ components:
           type: string
         query:
           type: string
-        value:
-          format: double
-          type: number
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
         instances:

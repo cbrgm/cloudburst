@@ -19,7 +19,6 @@ type ScrapeTarget struct {
 	Name *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Query *string `json:"query,omitempty"`
-	Value *float64 `json:"value,omitempty"`
 	InstanceSpec *InstanceSpec `json:"instanceSpec,omitempty"`
 	Instances *[]Instance `json:"instances,omitempty"`
 }
@@ -137,38 +136,6 @@ func (o *ScrapeTarget) SetQuery(v string) {
 	o.Query = &v
 }
 
-// GetValue returns the Value field value if set, zero value otherwise.
-func (o *ScrapeTarget) GetValue() float64 {
-	if o == nil || o.Value == nil {
-		var ret float64
-		return ret
-	}
-	return *o.Value
-}
-
-// GetValueOk returns a tuple with the Value field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ScrapeTarget) GetValueOk() (*float64, bool) {
-	if o == nil || o.Value == nil {
-		return nil, false
-	}
-	return o.Value, true
-}
-
-// HasValue returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasValue() bool {
-	if o != nil && o.Value != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetValue gets a reference to the given float64 and assigns it to the Value field.
-func (o *ScrapeTarget) SetValue(v float64) {
-	o.Value = &v
-}
-
 // GetInstanceSpec returns the InstanceSpec field value if set, zero value otherwise.
 func (o *ScrapeTarget) GetInstanceSpec() InstanceSpec {
 	if o == nil || o.InstanceSpec == nil {
@@ -243,9 +210,6 @@ func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	}
 	if o.Query != nil {
 		toSerialize["query"] = o.Query
-	}
-	if o.Value != nil {
-		toSerialize["value"] = o.Value
 	}
 	if o.InstanceSpec != nil {
 		toSerialize["instanceSpec"] = o.InstanceSpec

@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 **Name** | Pointer to **string** |  | [optional] 
 **Description** | Pointer to **string** |  | [optional] 
 **Query** | Pointer to **string** |  | [optional] 
-**Value** | Pointer to **float64** |  | [optional] 
 **InstanceSpec** | Pointer to [**InstanceSpec**](InstanceSpec.md) |  | [optional] 
 **Instances** | Pointer to [**[]Instance**](Instance.md) |  | [optional] 
 
@@ -104,31 +103,6 @@ SetQuery sets Query field to given value.
 `func (o *ScrapeTarget) HasQuery() bool`
 
 HasQuery returns a boolean if a field has been set.
-
-### GetValue
-
-`func (o *ScrapeTarget) GetValue() float64`
-
-GetValue returns the Value field if non-nil, zero value otherwise.
-
-### GetValueOk
-
-`func (o *ScrapeTarget) GetValueOk() (*float64, bool)`
-
-GetValueOk returns a tuple with the Value field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetValue
-
-`func (o *ScrapeTarget) SetValue(v float64)`
-
-SetValue sets Value field to given value.
-
-### HasValue
-
-`func (o *ScrapeTarget) HasValue() bool`
-
-HasValue returns a boolean if a field has been set.
 
 ### GetInstanceSpec
 

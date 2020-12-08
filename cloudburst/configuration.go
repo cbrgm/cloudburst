@@ -28,7 +28,6 @@ func ParseConfiguration(config Configuration) ([]ScrapeTarget, error) {
 			Name:        item.Name,
 			Description: item.Description,
 			Query:       item.Query,
-			Value:       0,
 			InstanceSpec: InstanceSpec{
 				Container: ContainerSpec{
 					Name:  item.InstanceSpec.ContainerSpec.Name,

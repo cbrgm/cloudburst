@@ -54,9 +54,6 @@ components:
           type: string
         query:
           type: string
-        value:
-          type: number
-          format: double
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
         instances:

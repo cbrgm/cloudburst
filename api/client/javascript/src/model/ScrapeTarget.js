@@ -58,9 +58,6 @@ class ScrapeTarget {
             if (data.hasOwnProperty('query')) {
                 obj['query'] = ApiClient.convertToType(data['query'], 'String');
             }
-            if (data.hasOwnProperty('value')) {
-                obj['value'] = ApiClient.convertToType(data['value'], 'Number');
-            }
             if (data.hasOwnProperty('instanceSpec')) {
                 obj['instanceSpec'] = InstanceSpec.constructFromObject(data['instanceSpec']);
             }
@@ -88,11 +85,6 @@ ScrapeTarget.prototype['description'] = undefined;
  * @member {String} query
  */
 ScrapeTarget.prototype['query'] = undefined;
-
-/**
- * @member {Number} value
- */
-ScrapeTarget.prototype['value'] = undefined;
 
 /**
  * @member {module:model/InstanceSpec} instanceSpec

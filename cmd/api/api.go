@@ -107,7 +107,6 @@ func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 		Name:        s.Name,
 		Description: s.Description,
 		Query:       s.Query,
-		Value:       s.Value,
 		InstanceSpec: openapi.InstanceSpec{
 			Container: openapi.ContainerSpec{
 				Name:  s.InstanceSpec.Container.Name,
@@ -125,20 +124,36 @@ func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
 		Active:   i.Active,
 		Status: openapi.InstanceStatus{
 			Agent:   i.Status.Agent,
-			Status:  i.Status.Status,
+			Status:  string(i.Status.Status),
 			Started: i.Status.Started,
 		},
 	}
 }
 
 func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
+	var status cloudburst.Status
+	switch i.Status.Status {
+	case "unknown":
+		status = cloudburst.Unknown
+	case "pending":
+		status = cloudburst.Pending
+	case "running":
+		status = cloudburst.Running
+	case "failure":
+		status = cloudburst.Failure
+	case "progress":
+		status = cloudburst.Progress
+	case "terminated":
+		status = cloudburst.Terminated
+	}
+
 	return cloudburst.Instance{
-		Name:      i.Name,
-		Endpoint:  i.Endpoint,
-		Active: i.Active,
+		Name:     i.Name,
+		Endpoint: i.Endpoint,
+		Active:   i.Active,
 		Status: cloudburst.InstanceStatus{
 			Agent:   i.Status.Agent,
-			Status:  i.Status.Status,
+			Status:  status,
 			Started: i.Status.Started,
 		},
 	}

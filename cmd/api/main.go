@@ -116,7 +116,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			promAPI := prometheusv1.NewAPI(client)
 
 			gr.Add(func() error {
-				ticker := time.NewTicker(time.Duration(15) * time.Second)
+				ticker := time.NewTicker(time.Duration(5) * time.Second)
 				for {
 					select {
 					case <-ticker.C:
