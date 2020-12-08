@@ -1,0 +1,154 @@
+openapi: 3.0.1
+info:
+  title: Cloudburst
+  version: 0.0.0
+servers:
+- url: /api/v1
+paths:
+  /targets:
+    get:
+      operationId: ListScrapeTargets
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeTarget'
+          description: List of ScrapeTargets
+      summary: List ScrapeTargets
+      tags:
+      - targets
+  /targets/{name}/instances:
+    put:
+      operationId: UpdateInstances
+      parameters:
+      - explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instances'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instances'
+          description: Status update successful
+      summary: Update Instances for a ScrapeTarget
+      tags:
+      - instances
+components:
+  schemas:
+    ScrapeTarget:
+      example:
+        instances:
+        - endpoint: endpoint
+          name: name
+          active: true
+          status:
+            agent: agent
+            started: 2000-01-23T04:56:07.000+00:00
+            status: unknown
+        - endpoint: endpoint
+          name: name
+          active: true
+          status:
+            agent: agent
+            started: 2000-01-23T04:56:07.000+00:00
+            status: unknown
+        query: query
+        instanceSpec:
+          container:
+            image: image
+            name: name
+        name: name
+        description: description
+        value: 0.8008281904610115
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        query:
+          type: string
+        value:
+          format: double
+          type: number
+        instanceSpec:
+          $ref: '#/components/schemas/InstanceSpec'
+        instances:
+          items:
+            $ref: '#/components/schemas/Instance'
+          type: array
+      type: object
+    InstanceSpec:
+      example:
+        container:
+          image: image
+          name: name
+      properties:
+        container:
+          $ref: '#/components/schemas/ContainerSpec'
+      type: object
+    ContainerSpec:
+      example:
+        image: image
+        name: name
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+      type: object
+    Instance:
+      example:
+        endpoint: endpoint
+        name: name
+        active: true
+        status:
+          agent: agent
+          started: 2000-01-23T04:56:07.000+00:00
+          status: unknown
+      properties:
+        name:
+          type: string
+        endpoint:
+          type: string
+        active:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/InstanceStatus'
+      type: object
+    InstanceStatus:
+      example:
+        agent: agent
+        started: 2000-01-23T04:56:07.000+00:00
+        status: unknown
+      properties:
+        agent:
+          type: string
+        status:
+          enum:
+          - unknown
+          - pending
+          - progress
+          - failure
+          - running
+          - terminated
+          type: string
+        started:
+          format: date-time
+          type: string
+      type: object
+    Instances:
+      items:
+        $ref: '#/components/schemas/Instance'
+      type: array
