@@ -124,7 +124,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 						// do stuff
 						err = query(promAPI, state)
 						if err != nil {
-							return err
+							level.Info(logger).Log("msg", "prometheus query job failed", "err", err)
 						}
 					}
 				}

@@ -32,7 +32,8 @@ func NewV1(logger log.Logger, state State) (http.Handler, error) {
 		for _, route := range api.Routes() {
 			router.Methods(route.Method).
 				Path(route.Pattern).
-				Name(route.Name)
+				Name(route.Name).
+				Handler(route.HandlerFunc)
 		}
 	}
 
