@@ -119,7 +119,7 @@ All URIs are relative to *http://localhost/api/v1*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *Cloudburst.InstancesApi* | [**getInstances**](docs/InstancesApi.md#getInstances) | **GET** /targets/{target}/instances | Get Instances for a ScrapeTarget
-*Cloudburst.InstancesApi* | [**updateInstances**](docs/InstancesApi.md#updateInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
+*Cloudburst.InstancesApi* | [**saveInstances**](docs/InstancesApi.md#saveInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
 *Cloudburst.TargetsApi* | [**listScrapeTargets**](docs/TargetsApi.md#listScrapeTargets) | **GET** /targets | List ScrapeTargets
 
 

@@ -4,45 +4,48 @@ import "github.com/cbrgm/cloudburst/cloudburst"
 
 type StateProvider interface {
 	ListScrapeTargets() ([]cloudburst.ScrapeTarget, error)
-	GetInstances(scrapeTarget string) []cloudburst.Instance
-	GetInstance(scrapeTarget string) []cloudburst.Instance
-	UpdateInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
-	RemoveInstances(scrapeTarget string, instances []cloudburst.Instance) error
-	RemoveInstance(scrapeTarget string, instance cloudburst.Instance) error
-	CreateInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
-	CreateInstance(scrapeTarget string, instance cloudburst.Instance) (cloudburst.Instance, error)
+	GetInstance(name string) (cloudburst.Instance, error)
+	GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Instance, error)
+	RemoveInstances(instances []cloudburst.Instance) error
+	RemoveInstance(instance cloudburst.Instance) error
+	SaveInstances(instances []cloudburst.Instance) ([]cloudburst.Instance, error)
+	SaveInstance(instance cloudburst.Instance) (cloudburst.Instance, error)
 }
 
 type State struct {
-	StateProvider StateProvider
+	stateProvider StateProvider
 }
 
 func NewStateWithProvider(provider StateProvider) *State {
 	return &State{
-		StateProvider: provider,
+		stateProvider: provider,
 	}
 }
 
 func (state *State) ListScrapeTargets() ([]cloudburst.ScrapeTarget, error) {
-	return state.StateProvider.ListScrapeTargets()
+	return state.stateProvider.ListScrapeTargets()
 }
 
-func (state *State) UpdateInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error) {
-	return state.StateProvider.UpdateInstances(scrapeTarget, instances)
+func (state *State) GetInstance(name string) (cloudburst.Instance, error) {
+	return state.stateProvider.GetInstance(name)
+}
+
+func (state *State) GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Instance, error) {
+	return state.stateProvider.GetInstancesForTarget(scrapeTarget)
 }
 
 func (state *State) RemoveInstances(scrapeTarget string, instances []cloudburst.Instance) error {
-	return state.StateProvider.RemoveInstances(scrapeTarget, instances)
+	return state.stateProvider.RemoveInstances(instances)
 }
 
 func (state *State) RemoveInstance(scrapeTarget string, instance cloudburst.Instance) error {
-	return state.StateProvider.RemoveInstance(scrapeTarget, instance)
+	return state.stateProvider.RemoveInstance(instance)
 }
 
-func (state *State) CreateInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error) {
-	return state.StateProvider.CreateInstances(scrapeTarget, instances)
+func (state *State) SaveInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error) {
+	return state.stateProvider.SaveInstances(instances)
 }
 
-func (state *State) CreateInstance(scrapeTarget string, instance cloudburst.Instance) (cloudburst.Instance, error) {
-	return state.StateProvider.CreateInstance(scrapeTarget, instance)
+func (state *State) SaveInstance(scrapeTarget string, instance cloudburst.Instance) (cloudburst.Instance, error) {
+	return state.stateProvider.SaveInstance(instance)
 }

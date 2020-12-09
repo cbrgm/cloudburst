@@ -5,7 +5,7 @@ All URIs are relative to *http://localhost/api/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetInstances**](InstancesApi.md#GetInstances) | **Get** /targets/{target}/instances | Get Instances for a ScrapeTarget
-[**UpdateInstances**](InstancesApi.md#UpdateInstances) | **Put** /targets/{target}/instances | Update Instances for a ScrapeTarget
+[**SaveInstances**](InstancesApi.md#SaveInstances) | **Put** /targets/{target}/instances | Update Instances for a ScrapeTarget
 
 
 
@@ -77,9 +77,9 @@ No authorization required
 [[Back to README]](../README.md)
 
 
-## UpdateInstances
+## SaveInstances
 
-> []Instance UpdateInstances(ctx, target).Instance(instance).Execute()
+> []Instance SaveInstances(ctx, target).Instance(instance).Execute()
 
 Update Instances for a ScrapeTarget
 
@@ -101,13 +101,13 @@ func main() {
 
     configuration := openapiclient.NewConfiguration()
     api_client := openapiclient.NewAPIClient(configuration)
-    resp, r, err := api_client.InstancesApi.UpdateInstances(context.Background(), target).Instance(instance).Execute()
+    resp, r, err := api_client.InstancesApi.SaveInstances(context.Background(), target).Instance(instance).Execute()
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error when calling `InstancesApi.UpdateInstances``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error when calling `InstancesApi.SaveInstances``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `UpdateInstances`: []Instance
-    fmt.Fprintf(os.Stdout, "Response from `InstancesApi.UpdateInstances`: %v\n", resp)
+    // response from `SaveInstances`: []Instance
+    fmt.Fprintf(os.Stdout, "Response from `InstancesApi.SaveInstances`: %v\n", resp)
 }
 ```
 
@@ -121,7 +121,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiUpdateInstancesRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiSaveInstancesRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

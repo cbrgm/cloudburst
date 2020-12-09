@@ -21,7 +21,7 @@ paths:
   /targets/{target}/instances:
     put:
       summary: Update Instances for a ScrapeTarget
-      operationId: UpdateInstances
+      operationId: SaveInstances
       tags:
         - instances
       requestBody:

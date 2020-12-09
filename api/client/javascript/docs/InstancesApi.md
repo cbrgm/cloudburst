@@ -5,7 +5,7 @@ All URIs are relative to *http://localhost/api/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**getInstances**](InstancesApi.md#getInstances) | **GET** /targets/{target}/instances | Get Instances for a ScrapeTarget
-[**updateInstances**](InstancesApi.md#updateInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
+[**saveInstances**](InstancesApi.md#saveInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
 
 
 
@@ -51,9 +51,9 @@ No authorization required
 - **Accept**: application/json
 
 
-## updateInstances
+## saveInstances
 
-> [Instance] updateInstances(target, instance)
+> [Instance] saveInstances(target, instance)
 
 Update Instances for a ScrapeTarget
 
@@ -65,7 +65,7 @@ import Cloudburst from 'cloudburst';
 let apiInstance = new Cloudburst.InstancesApi();
 let target = "target_example"; // String | 
 let instance = [new Cloudburst.Instance()]; // [Instance] | 
-apiInstance.updateInstances(target, instance).then((data) => {
+apiInstance.saveInstances(target, instance).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);

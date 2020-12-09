@@ -37,10 +37,10 @@ func (c *InstancesApiController) Routes() Routes {
 			c.GetInstances,
 		},
 		{
-			"UpdateInstances",
+			"SaveInstances",
 			strings.ToUpper("Put"),
 			"/api/v1/targets/{target}/instances",
-			c.UpdateInstances,
+			c.SaveInstances,
 		},
 	}
 }
@@ -60,8 +60,8 @@ func (c *InstancesApiController) GetInstances(w http.ResponseWriter, r *http.Req
 	
 }
 
-// UpdateInstances - Update Instances for a ScrapeTarget
-func (c *InstancesApiController) UpdateInstances(w http.ResponseWriter, r *http.Request) { 
+// SaveInstances - Update Instances for a ScrapeTarget
+func (c *InstancesApiController) SaveInstances(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
 	target := params["target"]
 	instance := &[]Instance{}
@@ -70,7 +70,7 @@ func (c *InstancesApiController) UpdateInstances(w http.ResponseWriter, r *http.
 		return
 	}
 	
-	result, err := c.service.UpdateInstances(r.Context(), target, *instance)
+	result, err := c.service.SaveInstances(r.Context(), target, *instance)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)

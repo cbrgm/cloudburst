@@ -58,10 +58,10 @@
         done();
       });
     });
-    describe('updateInstances', function() {
-      it('should call updateInstances successfully', function(done) {
-        //uncomment below and update the code to test updateInstances
-        //instance.updateInstances(function(error) {
+    describe('saveInstances', function() {
+      it('should call saveInstances successfully', function(done) {
+        //uncomment below and update the code to test saveInstances
+        //instance.saveInstances(function(error) {
         //  if (error) throw error;
         //expect().to.be();
         //});

@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func processScrapeTargets(promAPI prometheusv1.API, state *state.State) error {
+func processScrapeTargets(promAPI prometheusv1.API, state State) error {
 	scrapeTargets, err := state.ListScrapeTargets()
 	if err != nil {
 		return err
@@ -27,7 +27,7 @@ func processScrapeTargets(promAPI prometheusv1.API, state *state.State) error {
 	return nil
 }
 
-func processScrapeTarget(promAPI prometheusv1.API, state *state.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func processScrapeTarget(promAPI prometheusv1.API, state state.State, scrapeTarget cloudburst.ScrapeTarget) error {
 	value, _, err := promAPI.Query(context.TODO(), scrapeTarget.Query, time.Now())
 	if err != nil {
 		return fmt.Errorf("failed to run processScrapeTargets: %w", err)

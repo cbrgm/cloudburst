@@ -40,7 +40,7 @@ paths:
       tags:
       - instances
     put:
-      operationId: UpdateInstances
+      operationId: SaveInstances
       parameters:
       - explode: false
         in: path

@@ -87,15 +87,15 @@ export default class InstancesApi {
      * @param {Array.<module:model/Instance>} instance 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/Instance>} and HTTP response
      */
-    updateInstancesWithHttpInfo(target, instance) {
+    saveInstancesWithHttpInfo(target, instance) {
       let postBody = instance;
       // verify the required parameter 'target' is set
       if (target === undefined || target === null) {
-        throw new Error("Missing the required parameter 'target' when calling updateInstances");
+        throw new Error("Missing the required parameter 'target' when calling saveInstances");
       }
       // verify the required parameter 'instance' is set
       if (instance === undefined || instance === null) {
-        throw new Error("Missing the required parameter 'instance' when calling updateInstances");
+        throw new Error("Missing the required parameter 'instance' when calling saveInstances");
       }
 
       let pathParams = {
@@ -125,8 +125,8 @@ export default class InstancesApi {
      * @param {Array.<module:model/Instance>} instance 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/Instance>}
      */
-    updateInstances(target, instance) {
-      return this.updateInstancesWithHttpInfo(target, instance)
+    saveInstances(target, instance) {
+      return this.saveInstancesWithHttpInfo(target, instance)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

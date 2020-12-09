@@ -130,30 +130,30 @@ func (a *InstancesApiService) GetInstancesExecute(r ApiGetInstancesRequest) ([]I
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiUpdateInstancesRequest struct {
+type ApiSaveInstancesRequest struct {
 	ctx _context.Context
 	ApiService *InstancesApiService
 	target string
 	instance *[]Instance
 }
 
-func (r ApiUpdateInstancesRequest) Instance(instance []Instance) ApiUpdateInstancesRequest {
+func (r ApiSaveInstancesRequest) Instance(instance []Instance) ApiSaveInstancesRequest {
 	r.instance = &instance
 	return r
 }
 
-func (r ApiUpdateInstancesRequest) Execute() ([]Instance, *_nethttp.Response, error) {
-	return r.ApiService.UpdateInstancesExecute(r)
+func (r ApiSaveInstancesRequest) Execute() ([]Instance, *_nethttp.Response, error) {
+	return r.ApiService.SaveInstancesExecute(r)
 }
 
 /*
- * UpdateInstances Update Instances for a ScrapeTarget
+ * SaveInstances Update Instances for a ScrapeTarget
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param target
- * @return ApiUpdateInstancesRequest
+ * @return ApiSaveInstancesRequest
  */
-func (a *InstancesApiService) UpdateInstances(ctx _context.Context, target string) ApiUpdateInstancesRequest {
-	return ApiUpdateInstancesRequest{
+func (a *InstancesApiService) SaveInstances(ctx _context.Context, target string) ApiSaveInstancesRequest {
+	return ApiSaveInstancesRequest{
 		ApiService: a,
 		ctx: ctx,
 		target: target,
@@ -164,7 +164,7 @@ func (a *InstancesApiService) UpdateInstances(ctx _context.Context, target strin
  * Execute executes the request
  * @return []Instance
  */
-func (a *InstancesApiService) UpdateInstancesExecute(r ApiUpdateInstancesRequest) ([]Instance, *_nethttp.Response, error) {
+func (a *InstancesApiService) SaveInstancesExecute(r ApiSaveInstancesRequest) ([]Instance, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPut
 		localVarPostBody     interface{}
@@ -174,7 +174,7 @@ func (a *InstancesApiService) UpdateInstancesExecute(r ApiUpdateInstancesRequest
 		localVarReturnValue  []Instance
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InstancesApiService.UpdateInstances")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InstancesApiService.SaveInstances")
 	if err != nil {
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}

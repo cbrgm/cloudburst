@@ -11,7 +11,7 @@ import (
 
 type State interface {
 	ScrapeTargetLister
-	InstanceUpdater
+	InstanceSetter
 	InstanceGetter
 }
 
@@ -22,8 +22,8 @@ func NewV1(logger log.Logger, state State) (http.Handler, error) {
 			lister: state,
 		}),
 		openapi.NewInstancesApiController(&Instances{
-			updater: state,
-			getter:  state,
+			setter: state,
+			getter: state,
 		}),
 	}
 
@@ -71,21 +71,21 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 }
 
 type Instances struct {
-	updater InstanceUpdater
-	getter  InstanceGetter
+	setter InstanceSetter
+	getter InstanceGetter
 }
 
-type InstanceUpdater interface {
-	UpdateInstances(targetName string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
+type InstanceSetter interface {
+	SaveInstances(targetName string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
 }
 
-func (i *Instances) UpdateInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
+func (i *Instances) SaveInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
 	var in []cloudburst.Instance
 	for _, item := range instances {
 		in = append(in, instanceCloudburst(item))
 	}
 
-	body, err := i.updater.UpdateInstances(targetName, in)
+	body, err := i.setter.SaveInstances(targetName, in)
 	if err != nil {
 		return openapi.ImplResponse{
 			Code: 500,
@@ -100,11 +100,11 @@ func (i *Instances) UpdateInstances(ctx context.Context, targetName string, inst
 }
 
 type InstanceGetter interface {
-	GetInstances(targetName string) ([]cloudburst.Instance, error)
+	GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Instance, error)
 }
 
 func (s *Instances) GetInstances(ctx context.Context, targetName string) (openapi.ImplResponse, error) {
-	instances, err := s.getter.GetInstances(targetName)
+	instances, err := s.getter.GetInstancesForTarget(targetName)
 	if err != nil {
 		return openapi.ImplResponse{
 			Code: 500,

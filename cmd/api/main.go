@@ -40,21 +40,16 @@ func main() {
 	app.Action = apiAction(logger)
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name:  "file,f",
+			Name:  flagConfigFile,
 			Usage: "Path to the configuration file",
 			Value: "cloudburst.yaml",
 		},
 		cli.StringFlag{
-			Name:  "bolt.path",
+			Name:  flagBoltPath,
 			Value: "./development/data",
 		},
 		cli.StringFlag{
-			Name:  "prometheus.url",
-			Usage: "prometheus api endpoint",
-			Value: "http://localhost:9090/api/v1",
-		},
-		cli.StringFlag{
-			Name:  "addr",
+			Name:  flagAddr,
 			Usage: "The address for the public http server",
 			Value: ":6660",
 		},
@@ -83,7 +78,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			return fmt.Errorf("failed to parse scrapeTargets from config: %w", err)
 		}
 
-		var db state.State
+		var db State
 		{
 			var dbPath = c.String(flagBoltPath)
 
