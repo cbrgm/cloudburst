@@ -13,6 +13,7 @@ type State interface {
 	ScrapeTargetLister
 	InstanceSetter
 	InstanceGetter
+	InstanceRemover
 }
 
 func NewV1(logger log.Logger, state State) (http.Handler, error) {
@@ -71,12 +72,14 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 }
 
 type Instances struct {
-	setter InstanceSetter
-	getter InstanceGetter
+	setter  InstanceSetter
+	getter  InstanceGetter
+	remover InstanceRemover
 }
 
 type InstanceSetter interface {
 	SaveInstances(targetName string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
+	SaveInstance(targetName string, instances cloudburst.Instance) (cloudburst.Instance, error)
 }
 
 func (i *Instances) SaveInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
@@ -121,6 +124,11 @@ func (s *Instances) GetInstances(ctx context.Context, targetName string) (openap
 		Code: 200,
 		Body: body,
 	}, nil
+}
+
+type InstanceRemover interface {
+	RemoveInstance(instance cloudburst.Instance) error
+	RemoveInstances(instances []cloudburst.Instance) error
 }
 
 func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {

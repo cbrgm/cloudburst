@@ -13,6 +13,7 @@
 
 .idea
 /example/config/data/
+/development/data
 
 /cmd/agent/agent
 /cmd/api/api

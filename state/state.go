@@ -34,11 +34,11 @@ func (state *State) GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Ins
 	return state.stateProvider.GetInstancesForTarget(scrapeTarget)
 }
 
-func (state *State) RemoveInstances(scrapeTarget string, instances []cloudburst.Instance) error {
+func (state *State) RemoveInstances(instances []cloudburst.Instance) error {
 	return state.stateProvider.RemoveInstances(instances)
 }
 
-func (state *State) RemoveInstance(scrapeTarget string, instance cloudburst.Instance) error {
+func (state *State) RemoveInstance(instance cloudburst.Instance) error {
 	return state.stateProvider.RemoveInstance(instance)
 }
 
