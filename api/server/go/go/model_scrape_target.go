@@ -18,6 +18,4 @@ type ScrapeTarget struct {
 	Query string `json:"query,omitempty"`
 
 	InstanceSpec InstanceSpec `json:"instanceSpec,omitempty"`
-
-	Instances []Instance `json:"instances,omitempty"`
 }

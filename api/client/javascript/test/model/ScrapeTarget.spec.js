@@ -78,12 +78,6 @@
       //expect(instance).to.be();
     });
 
-    it('should have the property instances (base name: "instances")', function() {
-      // uncomment below and update the code to test the property instances
-      //var instance = new Cloudburst.ScrapeTarget();
-      //expect(instance).to.be();
-    });
-
   });
 
 }));

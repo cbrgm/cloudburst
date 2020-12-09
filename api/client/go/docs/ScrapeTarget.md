@@ -8,7 +8,6 @@ Name | Type | Description | Notes
 **Description** | Pointer to **string** |  | [optional] 
 **Query** | Pointer to **string** |  | [optional] 
 **InstanceSpec** | Pointer to [**InstanceSpec**](InstanceSpec.md) |  | [optional] 
-**Instances** | Pointer to [**[]Instance**](Instance.md) |  | [optional] 
 
 ## Methods
 
@@ -128,31 +127,6 @@ SetInstanceSpec sets InstanceSpec field to given value.
 `func (o *ScrapeTarget) HasInstanceSpec() bool`
 
 HasInstanceSpec returns a boolean if a field has been set.
-
-### GetInstances
-
-`func (o *ScrapeTarget) GetInstances() []Instance`
-
-GetInstances returns the Instances field if non-nil, zero value otherwise.
-
-### GetInstancesOk
-
-`func (o *ScrapeTarget) GetInstancesOk() (*[]Instance, bool)`
-
-GetInstancesOk returns a tuple with the Instances field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetInstances
-
-`func (o *ScrapeTarget) SetInstances(v []Instance)`
-
-SetInstances sets Instances field to given value.
-
-### HasInstances
-
-`func (o *ScrapeTarget) HasInstances() bool`
-
-HasInstances returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -20,7 +20,6 @@ type ScrapeTarget struct {
 	Description *string `json:"description,omitempty"`
 	Query *string `json:"query,omitempty"`
 	InstanceSpec *InstanceSpec `json:"instanceSpec,omitempty"`
-	Instances *[]Instance `json:"instances,omitempty"`
 }
 
 // NewScrapeTarget instantiates a new ScrapeTarget object
@@ -168,38 +167,6 @@ func (o *ScrapeTarget) SetInstanceSpec(v InstanceSpec) {
 	o.InstanceSpec = &v
 }
 
-// GetInstances returns the Instances field value if set, zero value otherwise.
-func (o *ScrapeTarget) GetInstances() []Instance {
-	if o == nil || o.Instances == nil {
-		var ret []Instance
-		return ret
-	}
-	return *o.Instances
-}
-
-// GetInstancesOk returns a tuple with the Instances field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *ScrapeTarget) GetInstancesOk() (*[]Instance, bool) {
-	if o == nil || o.Instances == nil {
-		return nil, false
-	}
-	return o.Instances, true
-}
-
-// HasInstances returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasInstances() bool {
-	if o != nil && o.Instances != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetInstances gets a reference to the given []Instance and assigns it to the Instances field.
-func (o *ScrapeTarget) SetInstances(v []Instance) {
-	o.Instances = &v
-}
-
 func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Name != nil {
@@ -213,9 +180,6 @@ func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	}
 	if o.InstanceSpec != nil {
 		toSerialize["instanceSpec"] = o.InstanceSpec
-	}
-	if o.Instances != nil {
-		toSerialize["instances"] = o.Instances
 	}
 	return json.Marshal(toSerialize)
 }

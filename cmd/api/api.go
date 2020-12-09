@@ -12,6 +12,7 @@ import (
 type State interface {
 	ScrapeTargetLister
 	InstanceUpdater
+	InstanceGetter
 }
 
 func NewV1(logger log.Logger, state State) (http.Handler, error) {
@@ -22,6 +23,7 @@ func NewV1(logger log.Logger, state State) (http.Handler, error) {
 		}),
 		openapi.NewInstancesApiController(&Instances{
 			updater: state,
+			getter:  state,
 		}),
 	}
 
@@ -57,19 +59,20 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 		}, err
 	}
 
-	var targets []openapi.ScrapeTarget
+	var body []openapi.ScrapeTarget
 	for _, st := range scrapeTargets {
-		targets = append(targets, scrapeTargetOpenAPI(st))
+		body = append(body, scrapeTargetOpenAPI(st))
 	}
 
 	return openapi.ImplResponse{
 		Code: 200,
-		Body: targets,
+		Body: body,
 	}, nil
 }
 
 type Instances struct {
 	updater InstanceUpdater
+	getter  InstanceGetter
 }
 
 type InstanceUpdater interface {
@@ -82,7 +85,7 @@ func (i *Instances) UpdateInstances(ctx context.Context, targetName string, inst
 		in = append(in, instanceCloudburst(item))
 	}
 
-	res, err := i.updater.UpdateInstances(targetName, in)
+	body, err := i.updater.UpdateInstances(targetName, in)
 	if err != nil {
 		return openapi.ImplResponse{
 			Code: 500,
@@ -92,17 +95,35 @@ func (i *Instances) UpdateInstances(ctx context.Context, targetName string, inst
 
 	return openapi.ImplResponse{
 		Code: 200,
-		Body: res,
+		Body: body,
+	}, nil
+}
+
+type InstanceGetter interface {
+	GetInstances(targetName string) ([]cloudburst.Instance, error)
+}
+
+func (s *Instances) GetInstances(ctx context.Context, targetName string) (openapi.ImplResponse, error) {
+	instances, err := s.getter.GetInstances(targetName)
+	if err != nil {
+		return openapi.ImplResponse{
+			Code: 500,
+			Body: nil,
+		}, err
+	}
+
+	var body []openapi.Instance
+	for _, st := range instances {
+		body = append(body, instanceOpenAPI(st))
+	}
+
+	return openapi.ImplResponse{
+		Code: 200,
+		Body: body,
 	}, nil
 }
 
 func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
-
-	var instances []openapi.Instance
-	for _, item := range s.Instances {
-		instances = append(instances, instanceOpenAPI(item))
-	}
-
 	return openapi.ScrapeTarget{
 		Name:        s.Name,
 		Description: s.Description,
@@ -113,13 +134,13 @@ func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 				Image: s.InstanceSpec.Container.Image,
 			},
 		},
-		Instances: instances,
 	}
 }
 
 func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
 	return openapi.Instance{
 		Name:     i.Name,
+		Target:   i.Target,
 		Endpoint: i.Endpoint,
 		Active:   i.Active,
 		Status: openapi.InstanceStatus{
@@ -150,6 +171,7 @@ func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
 	return cloudburst.Instance{
 		Name:     i.Name,
 		Endpoint: i.Endpoint,
+		Target:   i.Target,
 		Active:   i.Active,
 		Status: cloudburst.InstanceStatus{
 			Agent:   i.Status.Agent,

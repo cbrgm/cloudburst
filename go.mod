@@ -12,5 +12,6 @@ require (
 	github.com/prometheus/client_golang v1.3.0
 	github.com/prometheus/common v0.7.0
 	github.com/urfave/cli v1.22.1
+	go.etcd.io/bbolt v1.3.3
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 )

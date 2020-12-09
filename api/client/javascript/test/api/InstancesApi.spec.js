@@ -48,6 +48,16 @@
   }
 
   describe('InstancesApi', function() {
+    describe('getInstances', function() {
+      it('should call getInstances successfully', function(done) {
+        //uncomment below and update the code to test getInstances
+        //instance.getInstances(function(error) {
+        //  if (error) throw error;
+        //expect().to.be();
+        //});
+        done();
+      });
+    });
     describe('updateInstances', function() {
       it('should call updateInstances successfully', function(done) {
         //uncomment below and update the code to test updateInstances

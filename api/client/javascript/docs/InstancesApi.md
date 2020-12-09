@@ -4,15 +4,16 @@ All URIs are relative to *http://localhost/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**updateInstances**](InstancesApi.md#updateInstances) | **PUT** /targets/{name}/instances | Update Instances for a ScrapeTarget
+[**getInstances**](InstancesApi.md#getInstances) | **GET** /targets/{target}/instances | Get Instances for a ScrapeTarget
+[**updateInstances**](InstancesApi.md#updateInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
 
 
 
-## updateInstances
+## getInstances
 
-> [Instance] updateInstances(name, instance)
+> [Instance] getInstances(target)
 
-Update Instances for a ScrapeTarget
+Get Instances for a ScrapeTarget
 
 ### Example
 
@@ -20,9 +21,8 @@ Update Instances for a ScrapeTarget
 import Cloudburst from 'cloudburst';
 
 let apiInstance = new Cloudburst.InstancesApi();
-let name = "name_example"; // String | 
-let instance = [new Cloudburst.Instance()]; // [Instance] | 
-apiInstance.updateInstances(name, instance).then((data) => {
+let target = "target_example"; // String | 
+apiInstance.getInstances(target).then((data) => {
   console.log('API called successfully. Returned data: ' + data);
 }, (error) => {
   console.error(error);
@@ -35,7 +35,50 @@ apiInstance.updateInstances(name, instance).then((data) => {
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **name** | **String**|  | 
+ **target** | **String**|  | 
+
+### Return type
+
+[**[Instance]**](Instance.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+## updateInstances
+
+> [Instance] updateInstances(target, instance)
+
+Update Instances for a ScrapeTarget
+
+### Example
+
+```javascript
+import Cloudburst from 'cloudburst';
+
+let apiInstance = new Cloudburst.InstancesApi();
+let target = "target_example"; // String | 
+let instance = [new Cloudburst.Instance()]; // [Instance] | 
+apiInstance.updateInstances(target, instance).then((data) => {
+  console.log('API called successfully. Returned data: ' + data);
+}, (error) => {
+  console.error(error);
+});
+
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **target** | **String**|  | 
  **instance** | [**[Instance]**](Instance.md)|  | 
 
 ### Return type

@@ -17,6 +17,7 @@ import (
 // Instance struct for Instance
 type Instance struct {
 	Name *string `json:"name,omitempty"`
+	Target *string `json:"target,omitempty"`
 	Endpoint *string `json:"endpoint,omitempty"`
 	Active *bool `json:"active,omitempty"`
 	Status *InstanceStatus `json:"status,omitempty"`
@@ -69,6 +70,38 @@ func (o *Instance) HasName() bool {
 // SetName gets a reference to the given string and assigns it to the Name field.
 func (o *Instance) SetName(v string) {
 	o.Name = &v
+}
+
+// GetTarget returns the Target field value if set, zero value otherwise.
+func (o *Instance) GetTarget() string {
+	if o == nil || o.Target == nil {
+		var ret string
+		return ret
+	}
+	return *o.Target
+}
+
+// GetTargetOk returns a tuple with the Target field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Instance) GetTargetOk() (*string, bool) {
+	if o == nil || o.Target == nil {
+		return nil, false
+	}
+	return o.Target, true
+}
+
+// HasTarget returns a boolean if a field has been set.
+func (o *Instance) HasTarget() bool {
+	if o != nil && o.Target != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTarget gets a reference to the given string and assigns it to the Target field.
+func (o *Instance) SetTarget(v string) {
+	o.Target = &v
 }
 
 // GetEndpoint returns the Endpoint field value if set, zero value otherwise.
@@ -171,6 +204,9 @@ func (o Instance) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if o.Name != nil {
 		toSerialize["name"] = o.Name
+	}
+	if o.Target != nil {
+		toSerialize["target"] = o.Target
 	}
 	if o.Endpoint != nil {
 		toSerialize["endpoint"] = o.Endpoint

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/cbrgm/cloudburst/cloudburst"
+	"github.com/cbrgm/cloudburst/state"
 	prometheusv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/prometheus/common/model"
 	"math/rand"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-func processScrapeTargets(promAPI prometheusv1.API, state *cloudburst.State) error {
+func processScrapeTargets(promAPI prometheusv1.API, state *state.State) error {
 	scrapeTargets, err := state.ListScrapeTargets()
 	if err != nil {
 		return err
@@ -26,7 +27,7 @@ func processScrapeTargets(promAPI prometheusv1.API, state *cloudburst.State) err
 	return nil
 }
 
-func processScrapeTarget(promAPI prometheusv1.API, state *cloudburst.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func processScrapeTarget(promAPI prometheusv1.API, state *state.State, scrapeTarget cloudburst.ScrapeTarget) error {
 	value, _, err := promAPI.Query(context.TODO(), scrapeTarget.Query, time.Now())
 	if err != nil {
 		return fmt.Errorf("failed to run processScrapeTargets: %w", err)
@@ -47,7 +48,7 @@ func processScrapeTarget(promAPI prometheusv1.API, state *cloudburst.State, scra
 	return scale(queryResult, state, scrapeTarget)
 }
 
-func scale(queryResult int, state *cloudburst.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func scale(queryResult int, state *boltdb.State, scrapeTarget cloudburst.ScrapeTarget) error {
 
 	instances := scrapeTarget.Instances
 
@@ -68,7 +69,7 @@ func scale(queryResult int, state *cloudburst.State, scrapeTarget cloudburst.Scr
 	return nil
 }
 
-func removeAllPending(state *cloudburst.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func removeAllPending(state *boltdb.State, scrapeTarget cloudburst.ScrapeTarget) error {
 	pendingInstances := getInstancesByStatus(scrapeTarget.Instances, cloudburst.Pending)
 	err := state.RemoveInstances(scrapeTarget.Name, pendingInstances)
 	if err != nil {
@@ -77,7 +78,7 @@ func removeAllPending(state *cloudburst.State, scrapeTarget cloudburst.ScrapeTar
 	return nil
 }
 
-func scaleUp(demand int, state *cloudburst.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func scaleUp(demand int, state *boltdb.State, scrapeTarget cloudburst.ScrapeTarget) error {
 
 	pendingInstances := countInstancesByStatus(scrapeTarget.Instances, cloudburst.Pending)
 
@@ -97,7 +98,7 @@ func scaleUp(demand int, state *cloudburst.State, scrapeTarget cloudburst.Scrape
 	return err
 }
 
-func scaleDown(demand int, state *cloudburst.State, scrapeTarget cloudburst.ScrapeTarget) error {
+func scaleDown(demand int, state *boltdb.State, scrapeTarget cloudburst.ScrapeTarget) error {
 	err := removeAllPending(state, scrapeTarget)
 	if err != nil {
 		return err

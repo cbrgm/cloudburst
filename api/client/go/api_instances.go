@@ -26,10 +26,114 @@ var (
 // InstancesApiService InstancesApi service
 type InstancesApiService service
 
+type ApiGetInstancesRequest struct {
+	ctx _context.Context
+	ApiService *InstancesApiService
+	target string
+}
+
+
+func (r ApiGetInstancesRequest) Execute() ([]Instance, *_nethttp.Response, error) {
+	return r.ApiService.GetInstancesExecute(r)
+}
+
+/*
+ * GetInstances Get Instances for a ScrapeTarget
+ * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ * @param target
+ * @return ApiGetInstancesRequest
+ */
+func (a *InstancesApiService) GetInstances(ctx _context.Context, target string) ApiGetInstancesRequest {
+	return ApiGetInstancesRequest{
+		ApiService: a,
+		ctx: ctx,
+		target: target,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return []Instance
+ */
+func (a *InstancesApiService) GetInstancesExecute(r ApiGetInstancesRequest) ([]Instance, *_nethttp.Response, error) {
+	var (
+		localVarHTTPMethod   = _nethttp.MethodGet
+		localVarPostBody     interface{}
+		localVarFormFileName string
+		localVarFileName     string
+		localVarFileBytes    []byte
+		localVarReturnValue  []Instance
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "InstancesApiService.GetInstances")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/targets/{target}/instances"
+	localVarPath = strings.Replace(localVarPath, "{"+"target"+"}", _neturl.PathEscape(parameterToString(r.target, "")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := _neturl.Values{}
+	localVarFormParams := _neturl.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := _ioutil.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiUpdateInstancesRequest struct {
 	ctx _context.Context
 	ApiService *InstancesApiService
-	name string
+	target string
 	instance *[]Instance
 }
 
@@ -45,14 +149,14 @@ func (r ApiUpdateInstancesRequest) Execute() ([]Instance, *_nethttp.Response, er
 /*
  * UpdateInstances Update Instances for a ScrapeTarget
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param name
+ * @param target
  * @return ApiUpdateInstancesRequest
  */
-func (a *InstancesApiService) UpdateInstances(ctx _context.Context, name string) ApiUpdateInstancesRequest {
+func (a *InstancesApiService) UpdateInstances(ctx _context.Context, target string) ApiUpdateInstancesRequest {
 	return ApiUpdateInstancesRequest{
 		ApiService: a,
 		ctx: ctx,
-		name: name,
+		target: target,
 	}
 }
 
@@ -75,8 +179,8 @@ func (a *InstancesApiService) UpdateInstancesExecute(r ApiUpdateInstancesRequest
 		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/targets/{name}/instances"
-	localVarPath = strings.Replace(localVarPath, "{"+"name"+"}", _neturl.PathEscape(parameterToString(r.name, "")), -1)
+	localVarPath := localBasePath + "/targets/{target}/instances"
+	localVarPath = strings.Replace(localVarPath, "{"+"target"+"}", _neturl.PathEscape(parameterToString(r.target, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}

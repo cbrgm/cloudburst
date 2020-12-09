@@ -31,25 +31,46 @@ func NewInstancesApiController(s InstancesApiServicer) Router {
 func (c *InstancesApiController) Routes() Routes {
 	return Routes{ 
 		{
+			"GetInstances",
+			strings.ToUpper("Get"),
+			"/api/v1/targets/{target}/instances",
+			c.GetInstances,
+		},
+		{
 			"UpdateInstances",
 			strings.ToUpper("Put"),
-			"/api/v1/targets/{name}/instances",
+			"/api/v1/targets/{target}/instances",
 			c.UpdateInstances,
 		},
 	}
 }
 
+// GetInstances - Get Instances for a ScrapeTarget
+func (c *InstancesApiController) GetInstances(w http.ResponseWriter, r *http.Request) { 
+	params := mux.Vars(r)
+	target := params["target"]
+	result, err := c.service.GetInstances(r.Context(), target)
+	//If an error occured, encode the error with the status code
+	if err != nil {
+		EncodeJSONResponse(err.Error(), &result.Code, w)
+		return
+	}
+	//If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+	
+}
+
 // UpdateInstances - Update Instances for a ScrapeTarget
 func (c *InstancesApiController) UpdateInstances(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
-	name := params["name"]
+	target := params["target"]
 	instance := &[]Instance{}
 	if err := json.NewDecoder(r.Body).Decode(&instance); err != nil {
 		w.WriteHeader(500)
 		return
 	}
 	
-	result, err := c.service.UpdateInstances(r.Context(), name, *instance)
+	result, err := c.service.UpdateInstances(r.Context(), target, *instance)
 	//If an error occured, encode the error with the status code
 	if err != nil {
 		EncodeJSONResponse(err.Error(), &result.Code, w)

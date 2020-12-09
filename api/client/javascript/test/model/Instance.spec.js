@@ -60,6 +60,12 @@
       //expect(instance).to.be();
     });
 
+    it('should have the property target (base name: "target")', function() {
+      // uncomment below and update the code to test the property target
+      //var instance = new Cloudburst.Instance();
+      //expect(instance).to.be();
+    });
+
     it('should have the property endpoint (base name: "endpoint")', function() {
       // uncomment below and update the code to test the property endpoint
       //var instance = new Cloudburst.Instance();

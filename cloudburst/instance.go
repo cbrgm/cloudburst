@@ -17,6 +17,7 @@ type (
 	Instance struct {
 		Name     string         `json:"name"`
 		Endpoint string         `json:"endpoint"`
+		Target   string         `json:"target"`
 		Active   bool           `json:"active"`
 		Status   InstanceStatus `json:"status"`
 	}

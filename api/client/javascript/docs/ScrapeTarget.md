@@ -8,6 +8,5 @@ Name | Type | Description | Notes
 **description** | **String** |  | [optional] 
 **query** | **String** |  | [optional] 
 **instanceSpec** | [**InstanceSpec**](InstanceSpec.md) |  | [optional] 
-**instances** | [**[Instance]**](Instance.md) |  | [optional] 
 
 

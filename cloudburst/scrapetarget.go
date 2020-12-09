@@ -6,7 +6,6 @@ type (
 		Description  string       `json:"description"`
 		Query        string       `json:"query"`
 		InstanceSpec InstanceSpec `json:"instanceSpec"`
-		Instances    []Instance   `json:"instances"`
 	}
 
 	InstanceSpec struct {

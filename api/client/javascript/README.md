@@ -102,9 +102,8 @@ var Cloudburst = require('cloudburst');
 
 
 var api = new Cloudburst.InstancesApi()
-var name = "name_example"; // {String} 
-var instance = [new Cloudburst.Instance()]; // {[Instance]} 
-api.updateInstances(name, instance).then(function(data) {
+var target = "target_example"; // {String} 
+api.getInstances(target).then(function(data) {
   console.log('API called successfully. Returned data: ' + data);
 }, function(error) {
   console.error(error);
@@ -119,7 +118,8 @@ All URIs are relative to *http://localhost/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*Cloudburst.InstancesApi* | [**updateInstances**](docs/InstancesApi.md#updateInstances) | **PUT** /targets/{name}/instances | Update Instances for a ScrapeTarget
+*Cloudburst.InstancesApi* | [**getInstances**](docs/InstancesApi.md#getInstances) | **GET** /targets/{target}/instances | Get Instances for a ScrapeTarget
+*Cloudburst.InstancesApi* | [**updateInstances**](docs/InstancesApi.md#updateInstances) | **PUT** /targets/{target}/instances | Update Instances for a ScrapeTarget
 *Cloudburst.TargetsApi* | [**listScrapeTargets**](docs/TargetsApi.md#listScrapeTargets) | **GET** /targets | List ScrapeTargets
 
 

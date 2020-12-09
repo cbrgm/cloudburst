@@ -34,7 +34,6 @@ func ParseConfiguration(config Configuration) ([]ScrapeTarget, error) {
 					Image: item.InstanceSpec.ContainerSpec.Image,
 				},
 			},
-			Instances: []Instance{},
 		})
 	}
 

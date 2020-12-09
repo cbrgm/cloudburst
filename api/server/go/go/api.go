@@ -20,6 +20,7 @@ import (
 // The InstancesApiRouter implementation should parse necessary information from the http request, 
 // pass the data to a InstancesApiServicer to perform the required actions, then write the service results to the http response.
 type InstancesApiRouter interface { 
+	GetInstances(http.ResponseWriter, *http.Request)
 	UpdateInstances(http.ResponseWriter, *http.Request)
 }
 // TargetsApiRouter defines the required methods for binding the api requests to a responses for the TargetsApi
@@ -35,6 +36,7 @@ type TargetsApiRouter interface {
 // while the service implementation can ignored with the .openapi-generator-ignore file 
 // and updated with the logic required for the API.
 type InstancesApiServicer interface { 
+	GetInstances(context.Context, string) (ImplResponse, error)
 	UpdateInstances(context.Context, string, []Instance) (ImplResponse, error)
 }
 

@@ -26,8 +26,19 @@ func NewInstancesApiService() InstancesApiServicer {
 	return &InstancesApiService{}
 }
 
+// GetInstances - Get Instances for a ScrapeTarget
+func (s *InstancesApiService) GetInstances(ctx context.Context, target string) (ImplResponse, error) {
+	// TODO - update GetInstances with the required logic for this service method.
+	// Add api_instances_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
+
+	//TODO: Uncomment the next line to return response Response(200, []Instance{}) or use other options such as http.Ok ...
+	//return Response(200, []Instance{}), nil
+
+	return Response(http.StatusNotImplemented, nil), errors.New("GetInstances method not implemented")
+}
+
 // UpdateInstances - Update Instances for a ScrapeTarget
-func (s *InstancesApiService) UpdateInstances(ctx context.Context, name string, instance []Instance) (ImplResponse, error) {
+func (s *InstancesApiService) UpdateInstances(ctx context.Context, target string, instance []Instance) (ImplResponse, error) {
 	// TODO - update UpdateInstances with the required logic for this service method.
 	// Add api_instances_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 

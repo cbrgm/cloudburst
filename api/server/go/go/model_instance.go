@@ -13,6 +13,8 @@ type Instance struct {
 
 	Name string `json:"name,omitempty"`
 
+	Target string `json:"target,omitempty"`
+
 	Endpoint string `json:"endpoint,omitempty"`
 
 	Active bool `json:"active,omitempty"`

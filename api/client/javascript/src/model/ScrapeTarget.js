@@ -12,7 +12,6 @@
  */
 
 import ApiClient from '../ApiClient';
-import Instance from './Instance';
 import InstanceSpec from './InstanceSpec';
 
 /**
@@ -61,9 +60,6 @@ class ScrapeTarget {
             if (data.hasOwnProperty('instanceSpec')) {
                 obj['instanceSpec'] = InstanceSpec.constructFromObject(data['instanceSpec']);
             }
-            if (data.hasOwnProperty('instances')) {
-                obj['instances'] = ApiClient.convertToType(data['instances'], [Instance]);
-            }
         }
         return obj;
     }
@@ -90,11 +86,6 @@ ScrapeTarget.prototype['query'] = undefined;
  * @member {module:model/InstanceSpec} instanceSpec
  */
 ScrapeTarget.prototype['instanceSpec'] = undefined;
-
-/**
- * @member {Array.<module:model/Instance>} instances
- */
-ScrapeTarget.prototype['instances'] = undefined;
 
 
 

@@ -78,7 +78,8 @@ All URIs are relative to *http://localhost/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*InstancesApi* | [**UpdateInstances**](docs/InstancesApi.md#updateinstances) | **Put** /targets/{name}/instances | Update Instances for a ScrapeTarget
+*InstancesApi* | [**GetInstances**](docs/InstancesApi.md#getinstances) | **Get** /targets/{target}/instances | Get Instances for a ScrapeTarget
+*InstancesApi* | [**UpdateInstances**](docs/InstancesApi.md#updateinstances) | **Put** /targets/{target}/instances | Update Instances for a ScrapeTarget
 *TargetsApi* | [**ListScrapeTargets**](docs/TargetsApi.md#listscrapetargets) | **Get** /targets | List ScrapeTargets
 
 

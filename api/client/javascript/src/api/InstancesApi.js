@@ -36,16 +36,62 @@ export default class InstancesApi {
 
 
     /**
+     * Get Instances for a ScrapeTarget
+     * @param {String} target 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/Instance>} and HTTP response
+     */
+    getInstancesWithHttpInfo(target) {
+      let postBody = null;
+      // verify the required parameter 'target' is set
+      if (target === undefined || target === null) {
+        throw new Error("Missing the required parameter 'target' when calling getInstances");
+      }
+
+      let pathParams = {
+        'target': target
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = [Instance];
+      return this.apiClient.callApi(
+        '/targets/{target}/instances', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null
+      );
+    }
+
+    /**
+     * Get Instances for a ScrapeTarget
+     * @param {String} target 
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/Instance>}
+     */
+    getInstances(target) {
+      return this.getInstancesWithHttpInfo(target)
+        .then(function(response_and_data) {
+          return response_and_data.data;
+        });
+    }
+
+
+    /**
      * Update Instances for a ScrapeTarget
-     * @param {String} name 
+     * @param {String} target 
      * @param {Array.<module:model/Instance>} instance 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/Instance>} and HTTP response
      */
-    updateInstancesWithHttpInfo(name, instance) {
+    updateInstancesWithHttpInfo(target, instance) {
       let postBody = instance;
-      // verify the required parameter 'name' is set
-      if (name === undefined || name === null) {
-        throw new Error("Missing the required parameter 'name' when calling updateInstances");
+      // verify the required parameter 'target' is set
+      if (target === undefined || target === null) {
+        throw new Error("Missing the required parameter 'target' when calling updateInstances");
       }
       // verify the required parameter 'instance' is set
       if (instance === undefined || instance === null) {
@@ -53,7 +99,7 @@ export default class InstancesApi {
       }
 
       let pathParams = {
-        'name': name
+        'target': target
       };
       let queryParams = {
       };
@@ -67,7 +113,7 @@ export default class InstancesApi {
       let accepts = ['application/json'];
       let returnType = [Instance];
       return this.apiClient.callApi(
-        '/targets/{name}/instances', 'PUT',
+        '/targets/{target}/instances', 'PUT',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null
       );
@@ -75,12 +121,12 @@ export default class InstancesApi {
 
     /**
      * Update Instances for a ScrapeTarget
-     * @param {String} name 
+     * @param {String} target 
      * @param {Array.<module:model/Instance>} instance 
      * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/Instance>}
      */
-    updateInstances(name, instance) {
-      return this.updateInstancesWithHttpInfo(name, instance)
+    updateInstances(target, instance) {
+      return this.updateInstancesWithHttpInfo(target, instance)
         .then(function(response_and_data) {
           return response_and_data.data;
         });

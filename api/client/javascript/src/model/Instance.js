@@ -51,6 +51,9 @@ class Instance {
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
+            if (data.hasOwnProperty('target')) {
+                obj['target'] = ApiClient.convertToType(data['target'], 'String');
+            }
             if (data.hasOwnProperty('endpoint')) {
                 obj['endpoint'] = ApiClient.convertToType(data['endpoint'], 'String');
             }
@@ -71,6 +74,11 @@ class Instance {
  * @member {String} name
  */
 Instance.prototype['name'] = undefined;
+
+/**
+ * @member {String} target
+ */
+Instance.prototype['target'] = undefined;
 
 /**
  * @member {String} endpoint

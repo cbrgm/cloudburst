@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/cbrgm/cloudburst/cloudburst"
+	"github.com/cbrgm/cloudburst/state"
+	"github.com/cbrgm/cloudburst/state/boltdb"
 	"github.com/ghodss/yaml"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -18,6 +20,12 @@ import (
 	"net/http"
 	"os"
 	"time"
+)
+
+const (
+	flagAddr       = "addr"
+	flagBoltPath   = "bolt.path"
+	flagConfigFile = "file"
 )
 
 func main() {
@@ -35,6 +43,10 @@ func main() {
 			Name:  "file,f",
 			Usage: "Path to the configuration file",
 			Value: "cloudburst.yaml",
+		},
+		cli.StringFlag{
+			Name:  "bolt.path",
+			Value: "./development/data",
 		},
 		cli.StringFlag{
 			Name:  "prometheus.url",
@@ -56,7 +68,7 @@ func main() {
 
 func apiAction(logger log.Logger) cli.ActionFunc {
 	return func(c *cli.Context) error {
-		bytes, err := ioutil.ReadFile(c.String("file"))
+		bytes, err := ioutil.ReadFile(c.String(flagConfigFile))
 		if err != nil {
 			return fmt.Errorf("failed to read config file: %w", err)
 		}
@@ -71,15 +83,23 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			return fmt.Errorf("failed to parse scrapeTargets from config: %w", err)
 		}
 
-		state, err := cloudburst.NewVolatileState(scrapeTargets)
-		if err != nil {
-			return fmt.Errorf("failed to initialize state provider: %w", err)
+		var db state.State
+		{
+			var dbPath = c.String(flagBoltPath)
+
+			bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
+			if err != nil {
+				return fmt.Errorf("failed to create bolt db: %s", err)
+			}
+			defer dbClose()
+
+			db = state.NewStateWithProvider(bolt)
 		}
 
 		var gr run.Group
 		// api
 		{
-			apiV1, err := NewV1(logger, state)
+			apiV1, err := NewV1(logger, db)
 			if err != nil {
 				return fmt.Errorf("failed to initialize api: %w", err)
 			}
@@ -120,7 +140,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 				for {
 					select {
 					case <-ticker.C:
-						err = processScrapeTargets(promAPI, state)
+						err = processScrapeTargets(promAPI, db)
 						if err != nil {
 							level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 						}

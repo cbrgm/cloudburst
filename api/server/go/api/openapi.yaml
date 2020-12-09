@@ -14,17 +14,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScrapeTarget'
-          description: List of ScrapeTargets
+          description: Listing successful
       summary: List ScrapeTargets
       tags:
       - targets
-  /targets/{name}/instances:
+  /targets/{target}/instances:
+    get:
+      operationId: GetInstances
+      parameters:
+      - explode: false
+        in: path
+        name: target
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instances'
+          description: Listing successful
+      summary: Get Instances for a ScrapeTarget
+      tags:
+      - instances
     put:
       operationId: UpdateInstances
       parameters:
       - explode: false
         in: path
-        name: name
+        name: target
         required: true
         schema:
           type: string
@@ -49,21 +69,6 @@ components:
   schemas:
     ScrapeTarget:
       example:
-        instances:
-        - endpoint: endpoint
-          name: name
-          active: true
-          status:
-            agent: agent
-            started: 2000-01-23T04:56:07.000+00:00
-            status: unknown
-        - endpoint: endpoint
-          name: name
-          active: true
-          status:
-            agent: agent
-            started: 2000-01-23T04:56:07.000+00:00
-            status: unknown
         query: query
         instanceSpec:
           container:
@@ -80,10 +85,6 @@ components:
           type: string
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
-        instances:
-          items:
-            $ref: '#/components/schemas/Instance'
-          type: array
       type: object
     InstanceSpec:
       example:
@@ -109,12 +110,15 @@ components:
         endpoint: endpoint
         name: name
         active: true
+        target: target
         status:
           agent: agent
           started: 2000-01-23T04:56:07.000+00:00
           status: unknown
       properties:
         name:
+          type: string
+        target:
           type: string
         endpoint:
           type: string

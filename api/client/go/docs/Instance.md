@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | Pointer to **string** |  | [optional] 
+**Target** | Pointer to **string** |  | [optional] 
 **Endpoint** | Pointer to **string** |  | [optional] 
 **Active** | Pointer to **bool** |  | [optional] 
 **Status** | Pointer to [**InstanceStatus**](InstanceStatus.md) |  | [optional] 
@@ -52,6 +53,31 @@ SetName sets Name field to given value.
 `func (o *Instance) HasName() bool`
 
 HasName returns a boolean if a field has been set.
+
+### GetTarget
+
+`func (o *Instance) GetTarget() string`
+
+GetTarget returns the Target field if non-nil, zero value otherwise.
+
+### GetTargetOk
+
+`func (o *Instance) GetTargetOk() (*string, bool)`
+
+GetTargetOk returns a tuple with the Target field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetTarget
+
+`func (o *Instance) SetTarget(v string)`
+
+SetTarget sets Target field to given value.
+
+### HasTarget
+
+`func (o *Instance) HasTarget() bool`
+
+HasTarget returns a boolean if a field has been set.
 
 ### GetEndpoint
 
