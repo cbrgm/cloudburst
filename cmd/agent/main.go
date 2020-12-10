@@ -132,9 +132,6 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	}
 
 	instances := cloudburstInstances(items)
-	if instances == nil {
-		return nil
-	}
 	terminate := getTerminatingInstances(instances)
 	pending := getInstancesByStatus(instances, cloudburst.Pending)
 
@@ -144,14 +141,6 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 			Status:  cloudburst.Progress,
 			Started: time.Now(),
 		}
-	}
-
-	if pending == nil {
-		println("IAM NIL")
-	}
-
-	if pending != nil {
-		println(len(pending))
 	}
 
 	items, resp, err = client.InstancesApi.SaveInstances(context.TODO(), scrapeTarget.Name).
@@ -166,12 +155,24 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	// create/delete items
 	for _, instance := range progress {
 		instance.Status.Status = cloudburst.Running
-		time.Sleep(time.Duration(250) * time.Millisecond)
+		time.Sleep(time.Duration(1) * time.Second)
 	}
 
 	for _, instance := range terminate {
 		instance.Status.Status = cloudburst.Terminated
-		time.Sleep(time.Duration(250) * time.Millisecond)
+		time.Sleep(time.Duration(1) * time.Second)
+	}
+
+	if progress == nil {
+		println("progress was nil")
+	} else {
+		println(len(progress))
+	}
+
+	if terminate == nil {
+		println("terminate was nil")
+	} else {
+		println(len(terminate))
 	}
 
 	result := append(progress, terminate...)
@@ -187,7 +188,7 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 }
 
 func cloudburstScrapeTargets(scrapeTargets []apiclient.ScrapeTarget) []*cloudburst.ScrapeTarget {
-	var res []*cloudburst.ScrapeTarget
+	res := []*cloudburst.ScrapeTarget{}
 	for _, scrapeTarget := range scrapeTargets {
 		res = append(res, cloudburstScrapeTarget(scrapeTarget))
 	}
@@ -209,7 +210,7 @@ func cloudburstScrapeTarget(st apiclient.ScrapeTarget) *cloudburst.ScrapeTarget 
 }
 
 func cloudburstInstances(instances []apiclient.Instance) []*cloudburst.Instance {
-	var res []*cloudburst.Instance
+	res := []*cloudburst.Instance{}
 	for _, instance := range instances {
 		res = append(res, cloudburstInstance(instance))
 	}
@@ -247,7 +248,7 @@ func cloudburstInstance(in apiclient.Instance) *cloudburst.Instance {
 }
 
 func instancesOpenAPI(instances []*cloudburst.Instance) []apiclient.Instance {
-	var res []apiclient.Instance
+	res := []apiclient.Instance{}
 	for _, instance := range instances {
 		res = append(res, instanceOpenAPI(instance))
 	}
@@ -269,7 +270,7 @@ func instanceOpenAPI(in *cloudburst.Instance) apiclient.Instance {
 }
 
 func getInstancesByStatus(instances []*cloudburst.Instance, status cloudburst.Status) []*cloudburst.Instance {
-	var res []*cloudburst.Instance
+	res := []*cloudburst.Instance{}
 	for _, instance := range instances {
 		if isMatchingStatus(instance, status) {
 			res = append(res, instance)
@@ -283,7 +284,7 @@ func isMatchingStatus(instance *cloudburst.Instance, status cloudburst.Status) b
 }
 
 func getTerminatingInstances(instances []*cloudburst.Instance) []*cloudburst.Instance {
-	var res []*cloudburst.Instance
+	res :=  []*cloudburst.Instance{}
 	for _, instance := range instances {
 		if instance.Active == false {
 			res = append(res, instance)

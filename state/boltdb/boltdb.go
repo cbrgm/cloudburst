@@ -53,7 +53,7 @@ func NewDB(path string, initState []cloudburst.ScrapeTarget) (*BoltDB, func() er
 }
 
 func (bdb *BoltDB) ListScrapeTargets() ([]cloudburst.ScrapeTarget, error) {
-	var scrapeTargets []cloudburst.ScrapeTarget
+	scrapeTargets := []cloudburst.ScrapeTarget{}
 
 	err := bdb.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketScrapeTargets))
@@ -91,7 +91,7 @@ func (bdb *BoltDB) GetInstance(name string) (cloudburst.Instance, error) {
 }
 
 func (bdb *BoltDB) GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Instance, error) {
-	var instances []cloudburst.Instance
+	instances := []cloudburst.Instance{}
 
 	err := bdb.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketInstances))
