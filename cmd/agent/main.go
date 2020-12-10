@@ -98,9 +98,7 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 }
 
 func poll(client *apiclient.APIClient, agentName string, logger log.Logger) error {
-	req := client.TargetsApi.ListScrapeTargets(context.Background())
-	scrapeTargets, res, err := req.Execute()
-
+	scrapeTargets, res, err := client.TargetsApi.ListScrapeTargets(context.TODO()).Execute()
 	if err != nil || res.StatusCode != 200 {
 		level.Info(logger).Log("msg", "failed retrieving scrapeTargets", "err", err)
 	}
@@ -161,18 +159,6 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	for _, instance := range terminate {
 		instance.Status.Status = cloudburst.Terminated
 		time.Sleep(time.Duration(1) * time.Second)
-	}
-
-	if progress == nil {
-		println("progress was nil")
-	} else {
-		println(len(progress))
-	}
-
-	if terminate == nil {
-		println("terminate was nil")
-	} else {
-		println(len(terminate))
 	}
 
 	result := append(progress, terminate...)
