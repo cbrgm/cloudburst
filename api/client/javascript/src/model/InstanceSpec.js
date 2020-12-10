@@ -23,10 +23,11 @@ class InstanceSpec {
     /**
      * Constructs a new <code>InstanceSpec</code>.
      * @alias module:model/InstanceSpec
+     * @param container {module:model/ContainerSpec} 
      */
-    constructor() { 
+    constructor(container) { 
         
-        InstanceSpec.initialize(this);
+        InstanceSpec.initialize(this, container);
     }
 
     /**
@@ -34,7 +35,8 @@ class InstanceSpec {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj) { 
+    static initialize(obj, container) { 
+        obj['container'] = container;
     }
 
     /**

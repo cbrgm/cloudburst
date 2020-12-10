@@ -36,8 +36,13 @@ api/server/go: api/api.yaml
 
 .PHONY: build
 build: \
-	cmd/api/api
+	cmd/api/api \
+	cmd/agent/agent
 
 .PHONY: cmd/api/api
 cmd/api/api:
 	$(GO) build -v -o ./cmd/api/api ./cmd/api
+
+.PHONY: cmd/agent/agent
+cmd/agent/agent:
+	$(GO) build -v -o ./cmd/agent/agent ./cmd/agent

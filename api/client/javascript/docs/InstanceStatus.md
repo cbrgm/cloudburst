@@ -4,9 +4,9 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**agent** | **String** |  | [optional] 
-**status** | **String** |  | [optional] 
-**started** | **Date** |  | [optional] 
+**agent** | **String** |  | 
+**status** | **String** |  | 
+**started** | **Date** |  | 
 
 
 

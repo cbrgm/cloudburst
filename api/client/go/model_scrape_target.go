@@ -16,18 +16,22 @@ import (
 
 // ScrapeTarget struct for ScrapeTarget
 type ScrapeTarget struct {
-	Name *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Query *string `json:"query,omitempty"`
-	InstanceSpec *InstanceSpec `json:"instanceSpec,omitempty"`
+	Name string `json:"name"`
+	Description string `json:"description"`
+	Query string `json:"query"`
+	InstanceSpec InstanceSpec `json:"instanceSpec"`
 }
 
 // NewScrapeTarget instantiates a new ScrapeTarget object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewScrapeTarget() *ScrapeTarget {
+func NewScrapeTarget(name string, description string, query string, instanceSpec InstanceSpec, ) *ScrapeTarget {
 	this := ScrapeTarget{}
+	this.Name = name
+	this.Description = description
+	this.Query = query
+	this.InstanceSpec = instanceSpec
 	return &this
 }
 
@@ -39,146 +43,114 @@ func NewScrapeTargetWithDefaults() *ScrapeTarget {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *ScrapeTarget) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *ScrapeTarget) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *ScrapeTarget) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetDescription returns the Description field value if set, zero value otherwise.
+// GetDescription returns the Description field value
 func (o *ScrapeTarget) GetDescription() string {
-	if o == nil || o.Description == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Description
+
+	return o.Description
 }
 
-// GetDescriptionOk returns a tuple with the Description field value if set, nil otherwise
+// GetDescriptionOk returns a tuple with the Description field value
 // and a boolean to check if the value has been set.
 func (o *ScrapeTarget) GetDescriptionOk() (*string, bool) {
-	if o == nil || o.Description == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Description, true
+	return &o.Description, true
 }
 
-// HasDescription returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasDescription() bool {
-	if o != nil && o.Description != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetDescription gets a reference to the given string and assigns it to the Description field.
+// SetDescription sets field value
 func (o *ScrapeTarget) SetDescription(v string) {
-	o.Description = &v
+	o.Description = v
 }
 
-// GetQuery returns the Query field value if set, zero value otherwise.
+// GetQuery returns the Query field value
 func (o *ScrapeTarget) GetQuery() string {
-	if o == nil || o.Query == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Query
+
+	return o.Query
 }
 
-// GetQueryOk returns a tuple with the Query field value if set, nil otherwise
+// GetQueryOk returns a tuple with the Query field value
 // and a boolean to check if the value has been set.
 func (o *ScrapeTarget) GetQueryOk() (*string, bool) {
-	if o == nil || o.Query == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Query, true
+	return &o.Query, true
 }
 
-// HasQuery returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasQuery() bool {
-	if o != nil && o.Query != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetQuery gets a reference to the given string and assigns it to the Query field.
+// SetQuery sets field value
 func (o *ScrapeTarget) SetQuery(v string) {
-	o.Query = &v
+	o.Query = v
 }
 
-// GetInstanceSpec returns the InstanceSpec field value if set, zero value otherwise.
+// GetInstanceSpec returns the InstanceSpec field value
 func (o *ScrapeTarget) GetInstanceSpec() InstanceSpec {
-	if o == nil || o.InstanceSpec == nil {
+	if o == nil  {
 		var ret InstanceSpec
 		return ret
 	}
-	return *o.InstanceSpec
+
+	return o.InstanceSpec
 }
 
-// GetInstanceSpecOk returns a tuple with the InstanceSpec field value if set, nil otherwise
+// GetInstanceSpecOk returns a tuple with the InstanceSpec field value
 // and a boolean to check if the value has been set.
 func (o *ScrapeTarget) GetInstanceSpecOk() (*InstanceSpec, bool) {
-	if o == nil || o.InstanceSpec == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.InstanceSpec, true
+	return &o.InstanceSpec, true
 }
 
-// HasInstanceSpec returns a boolean if a field has been set.
-func (o *ScrapeTarget) HasInstanceSpec() bool {
-	if o != nil && o.InstanceSpec != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetInstanceSpec gets a reference to the given InstanceSpec and assigns it to the InstanceSpec field.
+// SetInstanceSpec sets field value
 func (o *ScrapeTarget) SetInstanceSpec(v InstanceSpec) {
-	o.InstanceSpec = &v
+	o.InstanceSpec = v
 }
 
 func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
-	if o.Description != nil {
+	if true {
 		toSerialize["description"] = o.Description
 	}
-	if o.Query != nil {
+	if true {
 		toSerialize["query"] = o.Query
 	}
-	if o.InstanceSpec != nil {
+	if true {
 		toSerialize["instanceSpec"] = o.InstanceSpec
 	}
 	return json.Marshal(toSerialize)

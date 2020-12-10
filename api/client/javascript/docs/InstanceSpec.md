@@ -4,6 +4,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**container** | [**ContainerSpec**](ContainerSpec.md) |  | [optional] 
+**container** | [**ContainerSpec**](ContainerSpec.md) |  | 
 
 

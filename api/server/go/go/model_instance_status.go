@@ -15,9 +15,9 @@ import (
 
 type InstanceStatus struct {
 
-	Agent string `json:"agent,omitempty"`
+	Agent string `json:"agent"`
 
-	Status string `json:"status,omitempty"`
+	Status string `json:"status"`
 
-	Started time.Time `json:"started,omitempty"`
+	Started time.Time `json:"started"`
 }

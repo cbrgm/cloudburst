@@ -22,10 +22,13 @@ class InstanceStatus {
     /**
      * Constructs a new <code>InstanceStatus</code>.
      * @alias module:model/InstanceStatus
+     * @param agent {String} 
+     * @param status {module:model/InstanceStatus.StatusEnum} 
+     * @param started {Date} 
      */
-    constructor() { 
+    constructor(agent, status, started) { 
         
-        InstanceStatus.initialize(this);
+        InstanceStatus.initialize(this, agent, status, started);
     }
 
     /**
@@ -33,7 +36,10 @@ class InstanceStatus {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj) { 
+    static initialize(obj, agent, status, started) { 
+        obj['agent'] = agent;
+        obj['status'] = status;
+        obj['started'] = started;
     }
 
     /**

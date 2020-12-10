@@ -17,7 +17,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ScrapeTarget"
+                $ref: "#/components/schemas/ScrapeTargets"
   /targets/{target}/instances:
     put:
       summary: Update Instances for a ScrapeTarget
@@ -65,6 +65,11 @@ components:
   schemas:
     ScrapeTarget:
       type: object
+      required:
+        - name
+        - description
+        - query
+        - instanceSpec
       properties:
         name:
           type: string
@@ -76,18 +81,33 @@ components:
           $ref: '#/components/schemas/InstanceSpec'
     InstanceSpec:
       type: object
+      required:
+        - container
       properties:
         container:
           $ref: '#/components/schemas/ContainerSpec'
     ContainerSpec:
       type: object
+      required:
+        - name
+        - image
       properties:
         name:
           type: string
         image:
           type: string
+    ScrapeTargets:
+      type: array
+      items:
+        $ref: '#/components/schemas/ScrapeTarget'
     Instance:
       type: object
+      required:
+        - name
+        - target
+        - endpoint
+        - active
+        - status
       properties:
         name:
           type: string
@@ -101,6 +121,10 @@ components:
           $ref: '#/components/schemas/InstanceStatus'
     InstanceStatus:
       type: object
+      required:
+        - agent
+        - status
+        - started
       properties:
         agent:
           type: string

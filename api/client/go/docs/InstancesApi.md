@@ -97,7 +97,7 @@ import (
 
 func main() {
     target := "target_example" // string | 
-    instance := []openapiclient.Instance{*openapiclient.NewInstance()} // []Instance | 
+    instance := []openapiclient.Instance{*openapiclient.NewInstance("Name_example", "Target_example", "Endpoint_example", false, *openapiclient.NewInstanceStatus("Agent_example", "Status_example", "TODO"))} // []Instance | 
 
     configuration := openapiclient.NewConfiguration()
     api_client := openapiclient.NewAPIClient(configuration)

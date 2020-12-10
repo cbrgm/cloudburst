@@ -16,15 +16,16 @@ import (
 
 // InstanceSpec struct for InstanceSpec
 type InstanceSpec struct {
-	Container *ContainerSpec `json:"container,omitempty"`
+	Container ContainerSpec `json:"container"`
 }
 
 // NewInstanceSpec instantiates a new InstanceSpec object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstanceSpec() *InstanceSpec {
+func NewInstanceSpec(container ContainerSpec, ) *InstanceSpec {
 	this := InstanceSpec{}
+	this.Container = container
 	return &this
 }
 
@@ -36,41 +37,33 @@ func NewInstanceSpecWithDefaults() *InstanceSpec {
 	return &this
 }
 
-// GetContainer returns the Container field value if set, zero value otherwise.
+// GetContainer returns the Container field value
 func (o *InstanceSpec) GetContainer() ContainerSpec {
-	if o == nil || o.Container == nil {
+	if o == nil  {
 		var ret ContainerSpec
 		return ret
 	}
-	return *o.Container
+
+	return o.Container
 }
 
-// GetContainerOk returns a tuple with the Container field value if set, nil otherwise
+// GetContainerOk returns a tuple with the Container field value
 // and a boolean to check if the value has been set.
 func (o *InstanceSpec) GetContainerOk() (*ContainerSpec, bool) {
-	if o == nil || o.Container == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Container, true
+	return &o.Container, true
 }
 
-// HasContainer returns a boolean if a field has been set.
-func (o *InstanceSpec) HasContainer() bool {
-	if o != nil && o.Container != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetContainer gets a reference to the given ContainerSpec and assigns it to the Container field.
+// SetContainer sets field value
 func (o *InstanceSpec) SetContainer(v ContainerSpec) {
-	o.Container = &v
+	o.Container = v
 }
 
 func (o InstanceSpec) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Container != nil {
+	if true {
 		toSerialize["container"] = o.Container
 	}
 	return json.Marshal(toSerialize)

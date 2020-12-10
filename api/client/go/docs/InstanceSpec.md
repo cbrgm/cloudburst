@@ -4,13 +4,13 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Container** | Pointer to [**ContainerSpec**](ContainerSpec.md) |  | [optional] 
+**Container** | [**ContainerSpec**](ContainerSpec.md) |  | 
 
 ## Methods
 
 ### NewInstanceSpec
 
-`func NewInstanceSpec() *InstanceSpec`
+`func NewInstanceSpec(container ContainerSpec, ) *InstanceSpec`
 
 NewInstanceSpec instantiates a new InstanceSpec object
 This constructor will assign default values to properties that have it defined,
@@ -44,11 +44,6 @@ and a boolean to check if the value has been set.
 
 SetContainer sets Container field to given value.
 
-### HasContainer
-
-`func (o *InstanceSpec) HasContainer() bool`
-
-HasContainer returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

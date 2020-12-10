@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 ## listScrapeTargets
 
-> ScrapeTarget listScrapeTargets()
+> [ScrapeTarget] listScrapeTargets()
 
 List ScrapeTargets
 
@@ -34,7 +34,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**ScrapeTarget**](ScrapeTarget.md)
+[**[ScrapeTarget]**](ScrapeTarget.md)
 
 ### Authorization
 

@@ -22,10 +22,12 @@ class ContainerSpec {
     /**
      * Constructs a new <code>ContainerSpec</code>.
      * @alias module:model/ContainerSpec
+     * @param name {String} 
+     * @param image {String} 
      */
-    constructor() { 
+    constructor(name, image) { 
         
-        ContainerSpec.initialize(this);
+        ContainerSpec.initialize(this, name, image);
     }
 
     /**
@@ -33,7 +35,9 @@ class ContainerSpec {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj) { 
+    static initialize(obj, name, image) { 
+        obj['name'] = name;
+        obj['image'] = image;
     }
 
     /**

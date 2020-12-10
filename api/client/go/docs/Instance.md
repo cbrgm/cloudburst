@@ -4,17 +4,17 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Name** | Pointer to **string** |  | [optional] 
-**Target** | Pointer to **string** |  | [optional] 
-**Endpoint** | Pointer to **string** |  | [optional] 
-**Active** | Pointer to **bool** |  | [optional] 
-**Status** | Pointer to [**InstanceStatus**](InstanceStatus.md) |  | [optional] 
+**Name** | **string** |  | 
+**Target** | **string** |  | 
+**Endpoint** | **string** |  | 
+**Active** | **bool** |  | 
+**Status** | [**InstanceStatus**](InstanceStatus.md) |  | 
 
 ## Methods
 
 ### NewInstance
 
-`func NewInstance() *Instance`
+`func NewInstance(name string, target string, endpoint string, active bool, status InstanceStatus, ) *Instance`
 
 NewInstance instantiates a new Instance object
 This constructor will assign default values to properties that have it defined,
@@ -48,11 +48,6 @@ and a boolean to check if the value has been set.
 
 SetName sets Name field to given value.
 
-### HasName
-
-`func (o *Instance) HasName() bool`
-
-HasName returns a boolean if a field has been set.
 
 ### GetTarget
 
@@ -73,11 +68,6 @@ and a boolean to check if the value has been set.
 
 SetTarget sets Target field to given value.
 
-### HasTarget
-
-`func (o *Instance) HasTarget() bool`
-
-HasTarget returns a boolean if a field has been set.
 
 ### GetEndpoint
 
@@ -98,11 +88,6 @@ and a boolean to check if the value has been set.
 
 SetEndpoint sets Endpoint field to given value.
 
-### HasEndpoint
-
-`func (o *Instance) HasEndpoint() bool`
-
-HasEndpoint returns a boolean if a field has been set.
 
 ### GetActive
 
@@ -123,11 +108,6 @@ and a boolean to check if the value has been set.
 
 SetActive sets Active field to given value.
 
-### HasActive
-
-`func (o *Instance) HasActive() bool`
-
-HasActive returns a boolean if a field has been set.
 
 ### GetStatus
 
@@ -148,11 +128,6 @@ and a boolean to check if the value has been set.
 
 SetStatus sets Status field to given value.
 
-### HasStatus
-
-`func (o *Instance) HasStatus() bool`
-
-HasStatus returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

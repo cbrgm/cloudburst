@@ -11,13 +11,13 @@ package openapi
 
 type Instance struct {
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Target string `json:"target,omitempty"`
+	Target string `json:"target"`
 
-	Endpoint string `json:"endpoint,omitempty"`
+	Endpoint string `json:"endpoint"`
 
-	Active bool `json:"active,omitempty"`
+	Active bool `json:"active"`
 
-	Status InstanceStatus `json:"status,omitempty"`
+	Status InstanceStatus `json:"status"`
 }

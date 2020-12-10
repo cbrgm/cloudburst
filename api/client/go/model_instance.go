@@ -16,19 +16,24 @@ import (
 
 // Instance struct for Instance
 type Instance struct {
-	Name *string `json:"name,omitempty"`
-	Target *string `json:"target,omitempty"`
-	Endpoint *string `json:"endpoint,omitempty"`
-	Active *bool `json:"active,omitempty"`
-	Status *InstanceStatus `json:"status,omitempty"`
+	Name string `json:"name"`
+	Target string `json:"target"`
+	Endpoint string `json:"endpoint"`
+	Active bool `json:"active"`
+	Status InstanceStatus `json:"status"`
 }
 
 // NewInstance instantiates a new Instance object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstance() *Instance {
+func NewInstance(name string, target string, endpoint string, active bool, status InstanceStatus, ) *Instance {
 	this := Instance{}
+	this.Name = name
+	this.Target = target
+	this.Endpoint = endpoint
+	this.Active = active
+	this.Status = status
 	return &this
 }
 
@@ -40,181 +45,141 @@ func NewInstanceWithDefaults() *Instance {
 	return &this
 }
 
-// GetName returns the Name field value if set, zero value otherwise.
+// GetName returns the Name field value
 func (o *Instance) GetName() string {
-	if o == nil || o.Name == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Name
+
+	return o.Name
 }
 
-// GetNameOk returns a tuple with the Name field value if set, nil otherwise
+// GetNameOk returns a tuple with the Name field value
 // and a boolean to check if the value has been set.
 func (o *Instance) GetNameOk() (*string, bool) {
-	if o == nil || o.Name == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Name, true
+	return &o.Name, true
 }
 
-// HasName returns a boolean if a field has been set.
-func (o *Instance) HasName() bool {
-	if o != nil && o.Name != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetName gets a reference to the given string and assigns it to the Name field.
+// SetName sets field value
 func (o *Instance) SetName(v string) {
-	o.Name = &v
+	o.Name = v
 }
 
-// GetTarget returns the Target field value if set, zero value otherwise.
+// GetTarget returns the Target field value
 func (o *Instance) GetTarget() string {
-	if o == nil || o.Target == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Target
+
+	return o.Target
 }
 
-// GetTargetOk returns a tuple with the Target field value if set, nil otherwise
+// GetTargetOk returns a tuple with the Target field value
 // and a boolean to check if the value has been set.
 func (o *Instance) GetTargetOk() (*string, bool) {
-	if o == nil || o.Target == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Target, true
+	return &o.Target, true
 }
 
-// HasTarget returns a boolean if a field has been set.
-func (o *Instance) HasTarget() bool {
-	if o != nil && o.Target != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetTarget gets a reference to the given string and assigns it to the Target field.
+// SetTarget sets field value
 func (o *Instance) SetTarget(v string) {
-	o.Target = &v
+	o.Target = v
 }
 
-// GetEndpoint returns the Endpoint field value if set, zero value otherwise.
+// GetEndpoint returns the Endpoint field value
 func (o *Instance) GetEndpoint() string {
-	if o == nil || o.Endpoint == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Endpoint
+
+	return o.Endpoint
 }
 
-// GetEndpointOk returns a tuple with the Endpoint field value if set, nil otherwise
+// GetEndpointOk returns a tuple with the Endpoint field value
 // and a boolean to check if the value has been set.
 func (o *Instance) GetEndpointOk() (*string, bool) {
-	if o == nil || o.Endpoint == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Endpoint, true
+	return &o.Endpoint, true
 }
 
-// HasEndpoint returns a boolean if a field has been set.
-func (o *Instance) HasEndpoint() bool {
-	if o != nil && o.Endpoint != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetEndpoint gets a reference to the given string and assigns it to the Endpoint field.
+// SetEndpoint sets field value
 func (o *Instance) SetEndpoint(v string) {
-	o.Endpoint = &v
+	o.Endpoint = v
 }
 
-// GetActive returns the Active field value if set, zero value otherwise.
+// GetActive returns the Active field value
 func (o *Instance) GetActive() bool {
-	if o == nil || o.Active == nil {
+	if o == nil  {
 		var ret bool
 		return ret
 	}
-	return *o.Active
+
+	return o.Active
 }
 
-// GetActiveOk returns a tuple with the Active field value if set, nil otherwise
+// GetActiveOk returns a tuple with the Active field value
 // and a boolean to check if the value has been set.
 func (o *Instance) GetActiveOk() (*bool, bool) {
-	if o == nil || o.Active == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Active, true
+	return &o.Active, true
 }
 
-// HasActive returns a boolean if a field has been set.
-func (o *Instance) HasActive() bool {
-	if o != nil && o.Active != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetActive gets a reference to the given bool and assigns it to the Active field.
+// SetActive sets field value
 func (o *Instance) SetActive(v bool) {
-	o.Active = &v
+	o.Active = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *Instance) GetStatus() InstanceStatus {
-	if o == nil || o.Status == nil {
+	if o == nil  {
 		var ret InstanceStatus
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *Instance) GetStatusOk() (*InstanceStatus, bool) {
-	if o == nil || o.Status == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *Instance) HasStatus() bool {
-	if o != nil && o.Status != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given InstanceStatus and assigns it to the Status field.
+// SetStatus sets field value
 func (o *Instance) SetStatus(v InstanceStatus) {
-	o.Status = &v
+	o.Status = v
 }
 
 func (o Instance) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Name != nil {
+	if true {
 		toSerialize["name"] = o.Name
 	}
-	if o.Target != nil {
+	if true {
 		toSerialize["target"] = o.Target
 	}
-	if o.Endpoint != nil {
+	if true {
 		toSerialize["endpoint"] = o.Endpoint
 	}
-	if o.Active != nil {
+	if true {
 		toSerialize["active"] = o.Active
 	}
-	if o.Status != nil {
+	if true {
 		toSerialize["status"] = o.Status
 	}
 	return json.Marshal(toSerialize)

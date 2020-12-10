@@ -4,10 +4,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **String** |  | [optional] 
-**target** | **String** |  | [optional] 
-**endpoint** | **String** |  | [optional] 
-**active** | **Boolean** |  | [optional] 
-**status** | [**InstanceStatus**](InstanceStatus.md) |  | [optional] 
+**name** | **String** |  | 
+**target** | **String** |  | 
+**endpoint** | **String** |  | 
+**active** | **Boolean** |  | 
+**status** | [**InstanceStatus**](InstanceStatus.md) |  | 
 
 

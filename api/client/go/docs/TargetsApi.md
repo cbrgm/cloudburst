@@ -10,7 +10,7 @@ Method | HTTP request | Description
 
 ## ListScrapeTargets
 
-> ScrapeTarget ListScrapeTargets(ctx).Execute()
+> []ScrapeTarget ListScrapeTargets(ctx).Execute()
 
 List ScrapeTargets
 
@@ -35,7 +35,7 @@ func main() {
         fmt.Fprintf(os.Stderr, "Error when calling `TargetsApi.ListScrapeTargets``: %v\n", err)
         fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
     }
-    // response from `ListScrapeTargets`: ScrapeTarget
+    // response from `ListScrapeTargets`: []ScrapeTarget
     fmt.Fprintf(os.Stdout, "Response from `TargetsApi.ListScrapeTargets`: %v\n", resp)
 }
 ```
@@ -51,7 +51,7 @@ Other parameters are passed through a pointer to a apiListScrapeTargetsRequest s
 
 ### Return type
 
-[**ScrapeTarget**](ScrapeTarget.md)
+[**[]ScrapeTarget**](ScrapeTarget.md)
 
 ### Authorization
 

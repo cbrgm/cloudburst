@@ -4,16 +4,16 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Name** | Pointer to **string** |  | [optional] 
-**Description** | Pointer to **string** |  | [optional] 
-**Query** | Pointer to **string** |  | [optional] 
-**InstanceSpec** | Pointer to [**InstanceSpec**](InstanceSpec.md) |  | [optional] 
+**Name** | **string** |  | 
+**Description** | **string** |  | 
+**Query** | **string** |  | 
+**InstanceSpec** | [**InstanceSpec**](InstanceSpec.md) |  | 
 
 ## Methods
 
 ### NewScrapeTarget
 
-`func NewScrapeTarget() *ScrapeTarget`
+`func NewScrapeTarget(name string, description string, query string, instanceSpec InstanceSpec, ) *ScrapeTarget`
 
 NewScrapeTarget instantiates a new ScrapeTarget object
 This constructor will assign default values to properties that have it defined,
@@ -47,11 +47,6 @@ and a boolean to check if the value has been set.
 
 SetName sets Name field to given value.
 
-### HasName
-
-`func (o *ScrapeTarget) HasName() bool`
-
-HasName returns a boolean if a field has been set.
 
 ### GetDescription
 
@@ -72,11 +67,6 @@ and a boolean to check if the value has been set.
 
 SetDescription sets Description field to given value.
 
-### HasDescription
-
-`func (o *ScrapeTarget) HasDescription() bool`
-
-HasDescription returns a boolean if a field has been set.
 
 ### GetQuery
 
@@ -97,11 +87,6 @@ and a boolean to check if the value has been set.
 
 SetQuery sets Query field to given value.
 
-### HasQuery
-
-`func (o *ScrapeTarget) HasQuery() bool`
-
-HasQuery returns a boolean if a field has been set.
 
 ### GetInstanceSpec
 
@@ -122,11 +107,6 @@ and a boolean to check if the value has been set.
 
 SetInstanceSpec sets InstanceSpec field to given value.
 
-### HasInstanceSpec
-
-`func (o *ScrapeTarget) HasInstanceSpec() bool`
-
-HasInstanceSpec returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

@@ -31,7 +31,7 @@ type ApiListScrapeTargetsRequest struct {
 }
 
 
-func (r ApiListScrapeTargetsRequest) Execute() (ScrapeTarget, *_nethttp.Response, error) {
+func (r ApiListScrapeTargetsRequest) Execute() ([]ScrapeTarget, *_nethttp.Response, error) {
 	return r.ApiService.ListScrapeTargetsExecute(r)
 }
 
@@ -49,16 +49,16 @@ func (a *TargetsApiService) ListScrapeTargets(ctx _context.Context) ApiListScrap
 
 /*
  * Execute executes the request
- * @return ScrapeTarget
+ * @return []ScrapeTarget
  */
-func (a *TargetsApiService) ListScrapeTargetsExecute(r ApiListScrapeTargetsRequest) (ScrapeTarget, *_nethttp.Response, error) {
+func (a *TargetsApiService) ListScrapeTargetsExecute(r ApiListScrapeTargetsRequest) ([]ScrapeTarget, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  ScrapeTarget
+		localVarReturnValue  []ScrapeTarget
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TargetsApiService.ListScrapeTargets")

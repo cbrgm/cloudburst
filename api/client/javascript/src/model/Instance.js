@@ -23,10 +23,15 @@ class Instance {
     /**
      * Constructs a new <code>Instance</code>.
      * @alias module:model/Instance
+     * @param name {String} 
+     * @param target {String} 
+     * @param endpoint {String} 
+     * @param active {Boolean} 
+     * @param status {module:model/InstanceStatus} 
      */
-    constructor() { 
+    constructor(name, target, endpoint, active, status) { 
         
-        Instance.initialize(this);
+        Instance.initialize(this, name, target, endpoint, active, status);
     }
 
     /**
@@ -34,7 +39,12 @@ class Instance {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj) { 
+    static initialize(obj, name, target, endpoint, active, status) { 
+        obj['name'] = name;
+        obj['target'] = target;
+        obj['endpoint'] = endpoint;
+        obj['active'] = active;
+        obj['status'] = status;
     }
 
     /**

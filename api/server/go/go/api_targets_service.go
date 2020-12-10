@@ -31,8 +31,8 @@ func (s *TargetsApiService) ListScrapeTargets(ctx context.Context) (ImplResponse
 	// TODO - update ListScrapeTargets with the required logic for this service method.
 	// Add api_targets_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
-	//TODO: Uncomment the next line to return response Response(200, ScrapeTarget{}) or use other options such as http.Ok ...
-	//return Response(200, ScrapeTarget{}), nil
+	//TODO: Uncomment the next line to return response Response(200, []ScrapeTarget{}) or use other options such as http.Ok ...
+	//return Response(200, []ScrapeTarget{}), nil
 
 	return Response(http.StatusNotImplemented, nil), errors.New("ListScrapeTargets method not implemented")
 }

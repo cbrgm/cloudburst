@@ -4,15 +4,15 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Agent** | Pointer to **string** |  | [optional] 
-**Status** | Pointer to **string** |  | [optional] 
-**Started** | Pointer to [**time.Time**](time.Time.md) |  | [optional] 
+**Agent** | **string** |  | 
+**Status** | **string** |  | 
+**Started** | [**time.Time**](time.Time.md) |  | 
 
 ## Methods
 
 ### NewInstanceStatus
 
-`func NewInstanceStatus() *InstanceStatus`
+`func NewInstanceStatus(agent string, status string, started time.Time, ) *InstanceStatus`
 
 NewInstanceStatus instantiates a new InstanceStatus object
 This constructor will assign default values to properties that have it defined,
@@ -46,11 +46,6 @@ and a boolean to check if the value has been set.
 
 SetAgent sets Agent field to given value.
 
-### HasAgent
-
-`func (o *InstanceStatus) HasAgent() bool`
-
-HasAgent returns a boolean if a field has been set.
 
 ### GetStatus
 
@@ -71,11 +66,6 @@ and a boolean to check if the value has been set.
 
 SetStatus sets Status field to given value.
 
-### HasStatus
-
-`func (o *InstanceStatus) HasStatus() bool`
-
-HasStatus returns a boolean if a field has been set.
 
 ### GetStarted
 
@@ -96,11 +86,6 @@ and a boolean to check if the value has been set.
 
 SetStarted sets Started field to given value.
 
-### HasStarted
-
-`func (o *InstanceStatus) HasStarted() bool`
-
-HasStarted returns a boolean if a field has been set.
 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

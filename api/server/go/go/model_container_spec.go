@@ -11,7 +11,7 @@ package openapi
 
 type ContainerSpec struct {
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Image string `json:"image,omitempty"`
+	Image string `json:"image"`
 }

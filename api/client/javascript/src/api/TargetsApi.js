@@ -37,7 +37,7 @@ export default class TargetsApi {
 
     /**
      * List ScrapeTargets
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link module:model/ScrapeTarget} and HTTP response
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with an object containing data of type {@link Array.<module:model/ScrapeTarget>} and HTTP response
      */
     listScrapeTargetsWithHttpInfo() {
       let postBody = null;
@@ -54,7 +54,7 @@ export default class TargetsApi {
       let authNames = [];
       let contentTypes = [];
       let accepts = ['application/json'];
-      let returnType = ScrapeTarget;
+      let returnType = [ScrapeTarget];
       return this.apiClient.callApi(
         '/targets', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
@@ -64,7 +64,7 @@ export default class TargetsApi {
 
     /**
      * List ScrapeTargets
-     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link module:model/ScrapeTarget}
+     * @return {Promise} a {@link https://www.promisejs.org/|Promise}, with data of type {@link Array.<module:model/ScrapeTarget>}
      */
     listScrapeTargets() {
       return this.listScrapeTargetsWithHttpInfo()

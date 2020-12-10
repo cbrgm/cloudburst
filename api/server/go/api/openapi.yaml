@@ -13,7 +13,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ScrapeTarget'
+                $ref: '#/components/schemas/ScrapeTargets'
           description: Listing successful
       summary: List ScrapeTargets
       tags:
@@ -85,6 +85,11 @@ components:
           type: string
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
+      required:
+      - description
+      - instanceSpec
+      - name
+      - query
       type: object
     InstanceSpec:
       example:
@@ -94,6 +99,8 @@ components:
       properties:
         container:
           $ref: '#/components/schemas/ContainerSpec'
+      required:
+      - container
       type: object
     ContainerSpec:
       example:
@@ -104,7 +111,14 @@ components:
           type: string
         image:
           type: string
+      required:
+      - image
+      - name
       type: object
+    ScrapeTargets:
+      items:
+        $ref: '#/components/schemas/ScrapeTarget'
+      type: array
     Instance:
       example:
         endpoint: endpoint
@@ -126,6 +140,12 @@ components:
           type: boolean
         status:
           $ref: '#/components/schemas/InstanceStatus'
+      required:
+      - active
+      - endpoint
+      - name
+      - status
+      - target
       type: object
     InstanceStatus:
       example:
@@ -147,6 +167,10 @@ components:
         started:
           format: date-time
           type: string
+      required:
+      - agent
+      - started
+      - status
       type: object
     Instances:
       items:

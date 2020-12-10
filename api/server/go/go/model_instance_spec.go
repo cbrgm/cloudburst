@@ -11,5 +11,5 @@ package openapi
 
 type InstanceSpec struct {
 
-	Container ContainerSpec `json:"container,omitempty"`
+	Container ContainerSpec `json:"container"`
 }

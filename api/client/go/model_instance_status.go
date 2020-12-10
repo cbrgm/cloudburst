@@ -17,17 +17,20 @@ import (
 
 // InstanceStatus struct for InstanceStatus
 type InstanceStatus struct {
-	Agent *string `json:"agent,omitempty"`
-	Status *string `json:"status,omitempty"`
-	Started *time.Time `json:"started,omitempty"`
+	Agent string `json:"agent"`
+	Status string `json:"status"`
+	Started time.Time `json:"started"`
 }
 
 // NewInstanceStatus instantiates a new InstanceStatus object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstanceStatus() *InstanceStatus {
+func NewInstanceStatus(agent string, status string, started time.Time, ) *InstanceStatus {
 	this := InstanceStatus{}
+	this.Agent = agent
+	this.Status = status
+	this.Started = started
 	return &this
 }
 
@@ -39,111 +42,87 @@ func NewInstanceStatusWithDefaults() *InstanceStatus {
 	return &this
 }
 
-// GetAgent returns the Agent field value if set, zero value otherwise.
+// GetAgent returns the Agent field value
 func (o *InstanceStatus) GetAgent() string {
-	if o == nil || o.Agent == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Agent
+
+	return o.Agent
 }
 
-// GetAgentOk returns a tuple with the Agent field value if set, nil otherwise
+// GetAgentOk returns a tuple with the Agent field value
 // and a boolean to check if the value has been set.
 func (o *InstanceStatus) GetAgentOk() (*string, bool) {
-	if o == nil || o.Agent == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Agent, true
+	return &o.Agent, true
 }
 
-// HasAgent returns a boolean if a field has been set.
-func (o *InstanceStatus) HasAgent() bool {
-	if o != nil && o.Agent != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetAgent gets a reference to the given string and assigns it to the Agent field.
+// SetAgent sets field value
 func (o *InstanceStatus) SetAgent(v string) {
-	o.Agent = &v
+	o.Agent = v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
+// GetStatus returns the Status field value
 func (o *InstanceStatus) GetStatus() string {
-	if o == nil || o.Status == nil {
+	if o == nil  {
 		var ret string
 		return ret
 	}
-	return *o.Status
+
+	return o.Status
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
 func (o *InstanceStatus) GetStatusOk() (*string, bool) {
-	if o == nil || o.Status == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Status, true
+	return &o.Status, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *InstanceStatus) HasStatus() bool {
-	if o != nil && o.Status != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetStatus sets field value
 func (o *InstanceStatus) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
-// GetStarted returns the Started field value if set, zero value otherwise.
+// GetStarted returns the Started field value
 func (o *InstanceStatus) GetStarted() time.Time {
-	if o == nil || o.Started == nil {
+	if o == nil  {
 		var ret time.Time
 		return ret
 	}
-	return *o.Started
+
+	return o.Started
 }
 
-// GetStartedOk returns a tuple with the Started field value if set, nil otherwise
+// GetStartedOk returns a tuple with the Started field value
 // and a boolean to check if the value has been set.
 func (o *InstanceStatus) GetStartedOk() (*time.Time, bool) {
-	if o == nil || o.Started == nil {
+	if o == nil  {
 		return nil, false
 	}
-	return o.Started, true
+	return &o.Started, true
 }
 
-// HasStarted returns a boolean if a field has been set.
-func (o *InstanceStatus) HasStarted() bool {
-	if o != nil && o.Started != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetStarted gets a reference to the given time.Time and assigns it to the Started field.
+// SetStarted sets field value
 func (o *InstanceStatus) SetStarted(v time.Time) {
-	o.Started = &v
+	o.Started = v
 }
 
 func (o InstanceStatus) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if o.Agent != nil {
+	if true {
 		toSerialize["agent"] = o.Agent
 	}
-	if o.Status != nil {
+	if true {
 		toSerialize["status"] = o.Status
 	}
-	if o.Started != nil {
+	if true {
 		toSerialize["started"] = o.Started
 	}
 	return json.Marshal(toSerialize)

@@ -23,10 +23,14 @@ class ScrapeTarget {
     /**
      * Constructs a new <code>ScrapeTarget</code>.
      * @alias module:model/ScrapeTarget
+     * @param name {String} 
+     * @param description {String} 
+     * @param query {String} 
+     * @param instanceSpec {module:model/InstanceSpec} 
      */
-    constructor() { 
+    constructor(name, description, query, instanceSpec) { 
         
-        ScrapeTarget.initialize(this);
+        ScrapeTarget.initialize(this, name, description, query, instanceSpec);
     }
 
     /**
@@ -34,7 +38,11 @@ class ScrapeTarget {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj) { 
+    static initialize(obj, name, description, query, instanceSpec) { 
+        obj['name'] = name;
+        obj['description'] = description;
+        obj['query'] = query;
+        obj['instanceSpec'] = instanceSpec;
     }
 
     /**

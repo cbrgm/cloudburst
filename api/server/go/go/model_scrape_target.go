@@ -11,11 +11,11 @@ package openapi
 
 type ScrapeTarget struct {
 
-	Name string `json:"name,omitempty"`
+	Name string `json:"name"`
 
-	Description string `json:"description,omitempty"`
+	Description string `json:"description"`
 
-	Query string `json:"query,omitempty"`
+	Query string `json:"query"`
 
-	InstanceSpec InstanceSpec `json:"instanceSpec,omitempty"`
+	InstanceSpec InstanceSpec `json:"instanceSpec"`
 }
