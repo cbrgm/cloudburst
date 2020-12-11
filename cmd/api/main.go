@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/cbrgm/cloudburst/cloudburst"
-	"github.com/cbrgm/cloudburst/state"
 	"github.com/cbrgm/cloudburst/state/boltdb"
 	"github.com/ghodss/yaml"
 	"github.com/go-chi/chi"
@@ -88,7 +87,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			}
 			defer dbClose()
 
-			db = state.NewStateWithProvider(bolt)
+			db = cloudburst.NewStateWithProvider(bolt)
 		}
 
 		var gr run.Group
