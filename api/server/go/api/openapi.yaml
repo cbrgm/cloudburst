@@ -121,10 +121,12 @@ components:
       type: array
     Instance:
       example:
+        container:
+          image: image
+          name: name
         endpoint: endpoint
         name: name
         active: true
-        target: target
         status:
           agent: agent
           started: 2000-01-23T04:56:07.000+00:00
@@ -132,20 +134,20 @@ components:
       properties:
         name:
           type: string
-        target:
-          type: string
         endpoint:
           type: string
         active:
           type: boolean
+        container:
+          $ref: '#/components/schemas/ContainerSpec'
         status:
           $ref: '#/components/schemas/InstanceStatus'
       required:
       - active
+      - container
       - endpoint
       - name
       - status
-      - target
       type: object
     InstanceStatus:
       example:

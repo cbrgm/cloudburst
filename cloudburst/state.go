@@ -2,12 +2,12 @@ package cloudburst
 
 type StateProvider interface {
 	ListScrapeTargets() ([]ScrapeTarget, error)
-	GetInstance(name string) (Instance, error)
-	GetInstancesForTarget(scrapeTarget string) ([]Instance, error)
-	RemoveInstances(instances []Instance) error
-	RemoveInstance(instance Instance) error
-	SaveInstances(instances []Instance) ([]Instance, error)
-	SaveInstance(instance Instance) (Instance, error)
+	GetInstance(scrapeTarget string, name string) (Instance, error)
+	GetInstances(scrapeTarget string) ([]Instance, error)
+	RemoveInstances(scrapeTarget string, instances []Instance) error
+	RemoveInstance(scrapeTarget string, instance Instance) error
+	SaveInstances(scrapeTarget string, instances []Instance) ([]Instance, error)
+	SaveInstance(scrapeTarget string, instance Instance) (Instance, error)
 }
 
 type State struct {
@@ -24,26 +24,26 @@ func (state *State) ListScrapeTargets() ([]ScrapeTarget, error) {
 	return state.stateProvider.ListScrapeTargets()
 }
 
-func (state *State) GetInstance(name string) (Instance, error) {
-	return state.stateProvider.GetInstance(name)
+func (state *State) GetInstance(scrapeTarget string, name string) (Instance, error) {
+	return state.stateProvider.GetInstance(scrapeTarget, name)
 }
 
-func (state *State) GetInstancesForTarget(scrapeTarget string) ([]Instance, error) {
-	return state.stateProvider.GetInstancesForTarget(scrapeTarget)
+func (state *State) GetInstances(scrapeTarget string) ([]Instance, error) {
+	return state.stateProvider.GetInstances(scrapeTarget)
 }
 
-func (state *State) RemoveInstances(instances []Instance) error {
-	return state.stateProvider.RemoveInstances(instances)
+func (state *State) RemoveInstances(scrapeTarget string, instances []Instance) error {
+	return state.stateProvider.RemoveInstances(scrapeTarget, instances)
 }
 
-func (state *State) RemoveInstance(instance Instance) error {
-	return state.stateProvider.RemoveInstance(instance)
+func (state *State) RemoveInstance(scrapeTarget string, instance Instance) error {
+	return state.stateProvider.RemoveInstance(scrapeTarget, instance)
 }
 
 func (state *State) SaveInstances(scrapeTarget string, instances []Instance) ([]Instance, error) {
-	return state.stateProvider.SaveInstances(instances)
+	return state.stateProvider.SaveInstances(scrapeTarget, instances)
 }
 
 func (state *State) SaveInstance(scrapeTarget string, instance Instance) (Instance, error) {
-	return state.stateProvider.SaveInstance(instance)
+	return state.stateProvider.SaveInstance(scrapeTarget, instance)
 }

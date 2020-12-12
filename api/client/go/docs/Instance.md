@@ -5,16 +5,16 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | **string** |  | 
-**Target** | **string** |  | 
 **Endpoint** | **string** |  | 
 **Active** | **bool** |  | 
+**Container** | [**ContainerSpec**](ContainerSpec.md) |  | 
 **Status** | [**InstanceStatus**](InstanceStatus.md) |  | 
 
 ## Methods
 
 ### NewInstance
 
-`func NewInstance(name string, target string, endpoint string, active bool, status InstanceStatus, ) *Instance`
+`func NewInstance(name string, endpoint string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance`
 
 NewInstance instantiates a new Instance object
 This constructor will assign default values to properties that have it defined,
@@ -47,26 +47,6 @@ and a boolean to check if the value has been set.
 `func (o *Instance) SetName(v string)`
 
 SetName sets Name field to given value.
-
-
-### GetTarget
-
-`func (o *Instance) GetTarget() string`
-
-GetTarget returns the Target field if non-nil, zero value otherwise.
-
-### GetTargetOk
-
-`func (o *Instance) GetTargetOk() (*string, bool)`
-
-GetTargetOk returns a tuple with the Target field if it's non-nil, zero value otherwise
-and a boolean to check if the value has been set.
-
-### SetTarget
-
-`func (o *Instance) SetTarget(v string)`
-
-SetTarget sets Target field to given value.
 
 
 ### GetEndpoint
@@ -107,6 +87,26 @@ and a boolean to check if the value has been set.
 `func (o *Instance) SetActive(v bool)`
 
 SetActive sets Active field to given value.
+
+
+### GetContainer
+
+`func (o *Instance) GetContainer() ContainerSpec`
+
+GetContainer returns the Container field if non-nil, zero value otherwise.
+
+### GetContainerOk
+
+`func (o *Instance) GetContainerOk() (*ContainerSpec, bool)`
+
+GetContainerOk returns a tuple with the Container field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetContainer
+
+`func (o *Instance) SetContainer(v ContainerSpec)`
+
+SetContainer sets Container field to given value.
 
 
 ### GetStatus

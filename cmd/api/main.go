@@ -12,8 +12,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/api"
-	prometheusv1 "github.com/prometheus/client_golang/api/prometheus/v1"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"net/http"
@@ -78,17 +76,18 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		}
 
 		var db State
-		{
-			var dbPath = c.String(flagBoltPath)
 
-			bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
-			if err != nil {
-				return fmt.Errorf("failed to create bolt db: %s", err)
-			}
-			defer dbClose()
-
-			db = cloudburst.NewStateWithProvider(bolt)
+		var dbPath = c.String(flagBoltPath)
+		bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
+		if err != nil {
+			return fmt.Errorf("failed to create bolt db: %s", err)
 		}
+		defer dbClose()
+
+		var state = cloudburst.NewStateWithProvider(bolt)
+		var query = cloudburst.NewScrapeTargetProcessor(state)
+
+		db = state
 
 		var gr run.Group
 		// api
@@ -123,18 +122,12 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 		// polling
 		{
-			client, err := api.NewClient(api.Config{Address: config.PrometheusURL})
-			if err != nil {
-				return fmt.Errorf("failed to create Prometheus client: %w", err)
-			}
-			promAPI := prometheusv1.NewAPI(client)
-
 			gr.Add(func() error {
 				ticker := time.NewTicker(time.Duration(5) * time.Second)
 				for {
 					select {
 					case <-ticker.C:
-						err = processScrapeTargets(promAPI, db)
+						err = query.ProcessScrapeTargets(config.PrometheusURL)
 						if err != nil {
 							level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 						}

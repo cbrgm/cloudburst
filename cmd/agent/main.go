@@ -223,8 +223,11 @@ func cloudburstInstance(in apiclient.Instance) *cloudburst.Instance {
 	return &cloudburst.Instance{
 		Name:     in.Name,
 		Endpoint: in.Endpoint,
-		Target:   in.Target,
 		Active:   in.Active,
+		Container: cloudburst.ContainerSpec{
+			Name:  in.Container.Name,
+			Image: in.Container.Image,
+		},
 		Status: cloudburst.InstanceStatus{
 			Agent:   in.Status.Agent,
 			Status:  status,
@@ -245,8 +248,11 @@ func instanceOpenAPI(in *cloudburst.Instance) apiclient.Instance {
 	return apiclient.Instance{
 		Name:     in.Name,
 		Endpoint: in.Endpoint,
-		Target:   in.Target,
 		Active:   in.Active,
+		Container: apiclient.ContainerSpec{
+			Name:  in.Container.Name,
+			Image: in.Container.Image,
+		},
 		Status: apiclient.InstanceStatus{
 			Agent:   in.Status.Agent,
 			Status:  string(in.Status.Status),
@@ -270,7 +276,7 @@ func isMatchingStatus(instance *cloudburst.Instance, status cloudburst.Status) b
 }
 
 func getTerminatingInstances(instances []*cloudburst.Instance) []*cloudburst.Instance {
-	res :=  []*cloudburst.Instance{}
+	res := []*cloudburst.Instance{}
 	for _, instance := range instances {
 		if instance.Active == false {
 			res = append(res, instance)

@@ -1,6 +1,11 @@
 package cloudburst
 
-import "time"
+import (
+	"fmt"
+	"math/rand"
+	"strconv"
+	"time"
+)
 
 type Status string
 
@@ -15,11 +20,11 @@ const (
 
 type (
 	Instance struct {
-		Name     string         `json:"name"`
-		Endpoint string         `json:"endpoint"`
-		Target   string         `json:"target"`
-		Active   bool           `json:"active"`
-		Status   InstanceStatus `json:"status"`
+		Name      string         `json:"name"`
+		Endpoint  string         `json:"endpoint"`
+		Active    bool           `json:"active"`
+		Container ContainerSpec  `json:"container"`
+		Status    InstanceStatus `json:"status"`
 	}
 
 	InstanceStatus struct {
@@ -32,10 +37,10 @@ type (
 // TODO: add instance spec as attribute to Instances
 func NewInstance(spec InstanceSpec) Instance {
 	return Instance{
-		Name:     "foo",
-		Endpoint: "",
-		Target:   "",
-		Active:   false,
+		Name:      newInstanceName(spec),
+		Endpoint:  "",
+		Active:    true,
+		Container: spec.Container,
 		Status: InstanceStatus{
 			Agent:   "",
 			Status:  Pending,
@@ -44,10 +49,14 @@ func NewInstance(spec InstanceSpec) Instance {
 	}
 }
 
-func CountTerminatingInstances(instances []Instance) int {
+func newInstanceName(spec InstanceSpec) string {
+	return fmt.Sprintf("%s-%s-%s", spec.Container.Name, "instance", strconv.Itoa(rand.Intn(100000)))
+}
+
+func CountInstancesByActiveStatus(instances []Instance, active bool) int {
 	var sum int
 	for _, instance := range instances {
-		if instance.Active == false {
+		if instance.Active == active {
 			sum++
 		}
 	}
@@ -64,7 +73,15 @@ func CountInstancesByStatus(instances []Instance, status Status) int {
 	return sum
 }
 
-
+func GetInstancesByActiveStatus(instances []Instance, active bool) []Instance {
+	var res []Instance
+	for _, instance := range instances {
+		if instance.Active == active {
+			res = append(res, instance)
+		}
+	}
+	return res
+}
 
 func GetInstancesByStatus(instances []Instance, status Status) []Instance {
 	var res []Instance

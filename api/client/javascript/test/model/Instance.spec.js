@@ -60,12 +60,6 @@
       //expect(instance).to.be();
     });
 
-    it('should have the property target (base name: "target")', function() {
-      // uncomment below and update the code to test the property target
-      //var instance = new Cloudburst.Instance();
-      //expect(instance).to.be();
-    });
-
     it('should have the property endpoint (base name: "endpoint")', function() {
       // uncomment below and update the code to test the property endpoint
       //var instance = new Cloudburst.Instance();
@@ -74,6 +68,12 @@
 
     it('should have the property active (base name: "active")', function() {
       // uncomment below and update the code to test the property active
+      //var instance = new Cloudburst.Instance();
+      //expect(instance).to.be();
+    });
+
+    it('should have the property container (base name: "container")', function() {
+      // uncomment below and update the code to test the property container
       //var instance = new Cloudburst.Instance();
       //expect(instance).to.be();
     });

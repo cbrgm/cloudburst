@@ -5,9 +5,9 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **name** | **String** |  | 
-**target** | **String** |  | 
 **endpoint** | **String** |  | 
 **active** | **Boolean** |  | 
+**container** | [**ContainerSpec**](ContainerSpec.md) |  | 
 **status** | [**InstanceStatus**](InstanceStatus.md) |  | 
 
 

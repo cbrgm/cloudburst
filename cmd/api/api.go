@@ -13,7 +13,6 @@ type State interface {
 	ScrapeTargetLister
 	InstanceSetter
 	InstanceGetter
-	InstanceRemover
 }
 
 func NewV1(logger log.Logger, state State) (http.Handler, error) {
@@ -72,9 +71,8 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 }
 
 type Instances struct {
-	setter  InstanceSetter
-	getter  InstanceGetter
-	remover InstanceRemover
+	setter InstanceSetter
+	getter InstanceGetter
 }
 
 type InstanceSetter interface {
@@ -103,11 +101,11 @@ func (i *Instances) SaveInstances(ctx context.Context, targetName string, instan
 }
 
 type InstanceGetter interface {
-	GetInstancesForTarget(scrapeTarget string) ([]cloudburst.Instance, error)
+	GetInstances(scrapeTarget string) ([]cloudburst.Instance, error)
 }
 
 func (s *Instances) GetInstances(ctx context.Context, targetName string) (openapi.ImplResponse, error) {
-	instances, err := s.getter.GetInstancesForTarget(targetName)
+	instances, err := s.getter.GetInstances(targetName)
 	if err != nil {
 		return openapi.ImplResponse{
 			Code: 500,
@@ -124,11 +122,6 @@ func (s *Instances) GetInstances(ctx context.Context, targetName string) (openap
 		Code: 200,
 		Body: body,
 	}, nil
-}
-
-type InstanceRemover interface {
-	RemoveInstance(instance cloudburst.Instance) error
-	RemoveInstances(instances []cloudburst.Instance) error
 }
 
 func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
@@ -148,9 +141,12 @@ func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
 	return openapi.Instance{
 		Name:     i.Name,
-		Target:   i.Target,
 		Endpoint: i.Endpoint,
 		Active:   i.Active,
+		Container: openapi.ContainerSpec{
+			Name:  i.Container.Name,
+			Image: i.Container.Image,
+		},
 		Status: openapi.InstanceStatus{
 			Agent:   i.Status.Agent,
 			Status:  string(i.Status.Status),
@@ -179,8 +175,11 @@ func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
 	return cloudburst.Instance{
 		Name:     i.Name,
 		Endpoint: i.Endpoint,
-		Target:   i.Target,
-		Active:   i.Active,
+		Container: cloudburst.ContainerSpec{
+			Name:  i.Container.Name,
+			Image: i.Container.Image,
+		},
+		Active: i.Active,
 		Status: cloudburst.InstanceStatus{
 			Agent:   i.Status.Agent,
 			Status:  status,

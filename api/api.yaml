@@ -104,19 +104,19 @@ components:
       type: object
       required:
         - name
-        - target
         - endpoint
         - active
+        - container
         - status
       properties:
         name:
-          type: string
-        target:
           type: string
         endpoint:
           type: string
         active:
           type: boolean
+        container:
+          $ref: '#/components/schemas/ContainerSpec'
         status:
           $ref: '#/components/schemas/InstanceStatus'
     InstanceStatus:

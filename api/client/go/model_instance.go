@@ -17,9 +17,9 @@ import (
 // Instance struct for Instance
 type Instance struct {
 	Name string `json:"name"`
-	Target string `json:"target"`
 	Endpoint string `json:"endpoint"`
 	Active bool `json:"active"`
+	Container ContainerSpec `json:"container"`
 	Status InstanceStatus `json:"status"`
 }
 
@@ -27,12 +27,12 @@ type Instance struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstance(name string, target string, endpoint string, active bool, status InstanceStatus, ) *Instance {
+func NewInstance(name string, endpoint string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance {
 	this := Instance{}
 	this.Name = name
-	this.Target = target
 	this.Endpoint = endpoint
 	this.Active = active
+	this.Container = container
 	this.Status = status
 	return &this
 }
@@ -67,30 +67,6 @@ func (o *Instance) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *Instance) SetName(v string) {
 	o.Name = v
-}
-
-// GetTarget returns the Target field value
-func (o *Instance) GetTarget() string {
-	if o == nil  {
-		var ret string
-		return ret
-	}
-
-	return o.Target
-}
-
-// GetTargetOk returns a tuple with the Target field value
-// and a boolean to check if the value has been set.
-func (o *Instance) GetTargetOk() (*string, bool) {
-	if o == nil  {
-		return nil, false
-	}
-	return &o.Target, true
-}
-
-// SetTarget sets field value
-func (o *Instance) SetTarget(v string) {
-	o.Target = v
 }
 
 // GetEndpoint returns the Endpoint field value
@@ -141,6 +117,30 @@ func (o *Instance) SetActive(v bool) {
 	o.Active = v
 }
 
+// GetContainer returns the Container field value
+func (o *Instance) GetContainer() ContainerSpec {
+	if o == nil  {
+		var ret ContainerSpec
+		return ret
+	}
+
+	return o.Container
+}
+
+// GetContainerOk returns a tuple with the Container field value
+// and a boolean to check if the value has been set.
+func (o *Instance) GetContainerOk() (*ContainerSpec, bool) {
+	if o == nil  {
+		return nil, false
+	}
+	return &o.Container, true
+}
+
+// SetContainer sets field value
+func (o *Instance) SetContainer(v ContainerSpec) {
+	o.Container = v
+}
+
 // GetStatus returns the Status field value
 func (o *Instance) GetStatus() InstanceStatus {
 	if o == nil  {
@@ -171,13 +171,13 @@ func (o Instance) MarshalJSON() ([]byte, error) {
 		toSerialize["name"] = o.Name
 	}
 	if true {
-		toSerialize["target"] = o.Target
-	}
-	if true {
 		toSerialize["endpoint"] = o.Endpoint
 	}
 	if true {
 		toSerialize["active"] = o.Active
+	}
+	if true {
+		toSerialize["container"] = o.Container
 	}
 	if true {
 		toSerialize["status"] = o.Status

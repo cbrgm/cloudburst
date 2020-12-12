@@ -12,6 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
+import ContainerSpec from './ContainerSpec';
 import InstanceStatus from './InstanceStatus';
 
 /**
@@ -24,14 +25,14 @@ class Instance {
      * Constructs a new <code>Instance</code>.
      * @alias module:model/Instance
      * @param name {String} 
-     * @param target {String} 
      * @param endpoint {String} 
      * @param active {Boolean} 
+     * @param container {module:model/ContainerSpec} 
      * @param status {module:model/InstanceStatus} 
      */
-    constructor(name, target, endpoint, active, status) { 
+    constructor(name, endpoint, active, container, status) { 
         
-        Instance.initialize(this, name, target, endpoint, active, status);
+        Instance.initialize(this, name, endpoint, active, container, status);
     }
 
     /**
@@ -39,11 +40,11 @@ class Instance {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, name, target, endpoint, active, status) { 
+    static initialize(obj, name, endpoint, active, container, status) { 
         obj['name'] = name;
-        obj['target'] = target;
         obj['endpoint'] = endpoint;
         obj['active'] = active;
+        obj['container'] = container;
         obj['status'] = status;
     }
 
@@ -61,14 +62,14 @@ class Instance {
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
-            if (data.hasOwnProperty('target')) {
-                obj['target'] = ApiClient.convertToType(data['target'], 'String');
-            }
             if (data.hasOwnProperty('endpoint')) {
                 obj['endpoint'] = ApiClient.convertToType(data['endpoint'], 'String');
             }
             if (data.hasOwnProperty('active')) {
                 obj['active'] = ApiClient.convertToType(data['active'], 'Boolean');
+            }
+            if (data.hasOwnProperty('container')) {
+                obj['container'] = ContainerSpec.constructFromObject(data['container']);
             }
             if (data.hasOwnProperty('status')) {
                 obj['status'] = InstanceStatus.constructFromObject(data['status']);
@@ -86,11 +87,6 @@ class Instance {
 Instance.prototype['name'] = undefined;
 
 /**
- * @member {String} target
- */
-Instance.prototype['target'] = undefined;
-
-/**
  * @member {String} endpoint
  */
 Instance.prototype['endpoint'] = undefined;
@@ -99,6 +95,11 @@ Instance.prototype['endpoint'] = undefined;
  * @member {Boolean} active
  */
 Instance.prototype['active'] = undefined;
+
+/**
+ * @member {module:model/ContainerSpec} container
+ */
+Instance.prototype['container'] = undefined;
 
 /**
  * @member {module:model/InstanceStatus} status
