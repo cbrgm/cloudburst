@@ -1,8 +1,8 @@
 # Cloudburst
 
-# Overview
+### Overview
 
-# Example Config
+### Example Config
 
 ```yaml
 prometheus_url: http://localhost:9090
@@ -18,11 +18,11 @@ targets:
         image: cbrgm/example-app:latest
 ```
 
-# Architecture
+### Architecture
 
 ![context.svg](documentation/context.svg)
 
-# Prerequisites
+### Prerequisites
 
 * Go 1.14+
 * Docker (needed to generate OpenAPI spec and build containers)
