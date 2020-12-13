@@ -20,6 +20,12 @@ func newRequester(state *State) *requester {
 }
 
 func (r *requester) ProcessDemand(demand instanceDemand, instances []Instance, scrapeTarget ScrapeTarget) error {
+
+	err := r.cleanupTerminatedInstances(scrapeTarget, instances)
+	if err != nil {
+		return err
+	}
+
 	result := demand.Result
 	if result == 0 {
 		return r.thresholdEquals(scrapeTarget, instances)
@@ -74,26 +80,29 @@ func (r *requester) thresholdAbove(scrapeTarget ScrapeTarget, instances []Instan
 }
 
 func (r *requester) thresholdBelow(scrapeTarget ScrapeTarget, instances []Instance, demand int) error {
-	// delete all pending instances
+
+	// delete all pending instances first
 	pendingInstances := GetInstancesByStatus(instances, Pending)
 	err := r.state.RemoveInstances(scrapeTarget.Name, pendingInstances)
 	if err != nil {
 		return err
 	}
 
-	//
 	runningInstances := GetInstancesByStatus(instances, Running)
 	activeInstances := GetInstancesByActiveStatus(runningInstances, true)
 
+	// we dont want a negative number here
 	numToBeTerminated := 0 - (demand)
 
 	if numToBeTerminated >= len(activeInstances) {
+		// set all instances to active == false
 		res := markToBeTerminated(activeInstances)
 		_, err := r.state.SaveInstances(scrapeTarget.Name, res)
 		if err != nil {
 			return err
 		}
 	} else {
+		// terminate instances according to numToBeTerminated
 		toBeTerminated := activeInstances[:numToBeTerminated]
 		res := markToBeTerminated(toBeTerminated)
 		_, err := r.state.SaveInstances(scrapeTarget.Name, res)
@@ -102,6 +111,17 @@ func (r *requester) thresholdBelow(scrapeTarget ScrapeTarget, instances []Instan
 		}
 	}
 	return nil
+}
+
+func (r *requester) cleanupTerminatedInstances(target ScrapeTarget, instances []Instance) error {
+	for _, instance := range instances {
+		if instance.Status.Status == Terminated {
+			err := r.state.RemoveInstance(target.Name, instance)
+			if err != nil {
+				return err
+			}
+		}
+	}
 }
 
 func markToBeTerminated(instances []Instance) []Instance {
