@@ -1,24 +1,14 @@
 # Cloudburst
 
+Prototype distributed architecture for an autoscaler for cloud bursting that operates within an organization and can provision and scale resources automatically based on metrics as container-as-a-service with a public cloud provider.
+
 ### Overview
 
-### Example Config
+Cloud bursting is an operating model in which an application is run in a private cloud environment or data center, but resources of a public cloud are automatically provisioned when the demand for computing capacity increases. Deciding which criteria to use to offload resources to a public cloud, how to integrate provisioned resources into the locally operated infrastructure, and which cloud provider service model to use has become the focus of current research in recent years. 
 
-```yaml
-prometheus_url: http://localhost:9090
-targets:
-  - name: bubblesort-svc
-    path: /svc/bubblesort
-    description: request duration greater than 0.045ms
-    query: |
-      ceil(((((rate(example_sorting_request_duration_seconds_sum[1m]) / rate(example_sorting_request_duration_seconds_count[1m])) / 0.030) -1) * 10) + 0.5)
-    spec:
-      container:
-        name: "bubblesort-svc"
-        image: cbrgm/example-app:latest
-```
+This "Hauptprojekt" conceptualizes, implements and evaluates an distributed architecture for an autoscaler for cloud bursting that operates within an organization and can provision and scale resources automatically based on metrics as container-as-a-service with a public cloud provider.
 
-### Architecture
+### Context
 
 ![context.svg](documentation/context.svg)
 
