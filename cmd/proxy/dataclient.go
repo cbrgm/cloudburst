@@ -1,34 +1,45 @@
 package main
 
 import (
+	"fmt"
 	apiclient "github.com/cbrgm/cloudburst/api/client/go"
 	"github.com/zalando/skipper/eskip"
-	"github.com/zalando/skipper/routing"
 	"log"
+	"net/url"
 )
 
-type routes struct {
-	parsed []*eskip.Route
+type Client struct {
+	client  *apiclient.APIClient
+	current map[string]*eskip.Route
 }
 
-// NewCloudburst creates a data client that parses a string of eskip routes and
+// NewCloudburst creates a data client that parses a string of eskip Client and
 // serves it for the routing package.
-func NewCloudburst() (routing.DataClient, error) {
-	route := `* -> inlineContent("Hello, world!") -> <shunt>`
-	parsed, err := eskip.Parse(route)
+func NewCloudburst(prometheusURL string) (*Client, error) {
+
+	apiURL, err := url.Parse(prometheusURL)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse API URL: %w", err)
 	}
 
-	return &routes{parsed: parsed}, nil
+	clientCfg := apiclient.NewConfiguration()
+	clientCfg.Scheme = apiURL.Scheme
+	clientCfg.Host = apiURL.Host
+
+	client := apiclient.NewAPIClient(clientCfg)
+
+	return &Client{
+		client:  client,
+		current: make(map[string]*eskip.Route),
+	}, nil
 }
 
-func (r *routes) LoadAll() ([]*eskip.Route, error) {
-	log.Println("loading routes")
-	return r.parsed, nil
+func (r *Client) LoadAll() ([]*eskip.Route, error) {
+	log.Println("loading Client")
+	return nil, nil
 }
 
-func (*routes) LoadUpdate() ([]*eskip.Route, []string, error) {
-	log.Println("updating routes")
+func (*Client) LoadUpdate() ([]*eskip.Route, []string, error) {
+	log.Println("updating Client")
 	return nil, nil, nil
 }
