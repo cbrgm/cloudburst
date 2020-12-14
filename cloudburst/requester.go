@@ -122,6 +122,7 @@ func (r *requester) cleanupTerminatedInstances(target ScrapeTarget, instances []
 			}
 		}
 	}
+	return nil
 }
 
 func markToBeTerminated(instances []Instance) []Instance {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	apiclient "github.com/cbrgm/cloudburst/api/client/go"
 	"github.com/zalando/skipper/eskip"
@@ -34,12 +35,27 @@ func NewCloudburst(prometheusURL string) (*Client, error) {
 	}, nil
 }
 
-func (r *Client) LoadAll() ([]*eskip.Route, error) {
+func (c *Client) loadAndConvert() ([]*eskip.Route, error) {
+	targets, resp, err := c.client.TargetsApi.ListScrapeTargets(context.TODO()).Execute()
+	if err != nil {
+		return []*eskip.Route{}, err
+	}
+
+	for _, target := range targets {
+		instances, resp, err := c.client.InstancesApi.GetInstances(context.TODO(), target.Name).Execute()
+		if err != nil {
+			return []*eskip.Route{}, err
+		}
+	}
+	return nil, nil
+}
+
+func (c *Client) LoadAll() ([]*eskip.Route, error) {
 	log.Println("loading Client")
 	return nil, nil
 }
 
-func (*Client) LoadUpdate() ([]*eskip.Route, []string, error) {
+func (c *Client) LoadUpdate() ([]*eskip.Route, []string, error) {
 	log.Println("updating Client")
 	return nil, nil, nil
 }

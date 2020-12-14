@@ -153,12 +153,12 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	// create/delete items
 	for _, instance := range progress {
 		instance.Status.Status = cloudburst.Running
-		time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(time.Duration(3) * time.Second)
 	}
 
 	for _, instance := range terminate {
 		instance.Status.Status = cloudburst.Terminated
-		time.Sleep(time.Duration(1) * time.Second)
+		time.Sleep(time.Duration(3) * time.Second)
 	}
 
 	result := append(progress, terminate...)
