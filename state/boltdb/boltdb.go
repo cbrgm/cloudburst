@@ -17,7 +17,7 @@ type BoltDB struct {
 	db *bolt.DB
 }
 
-func NewDB(path string, initState []cloudburst.ScrapeTarget) (*BoltDB, func() error, error) {
+func NewDB(path string, initState []*cloudburst.ScrapeTarget) (*BoltDB, func() error, error) {
 	db, err := bolt.Open(path, 0666, nil)
 	if err != nil {
 		return nil, nil, errors.Errorf("failed to open boltdb: %s", err)
@@ -63,8 +63,8 @@ func bucketInstancesName(scrapeTarget string) string {
 	return fmt.Sprintf("%s-%s", scrapeTarget, bucketInstances)
 }
 
-func (bdb *BoltDB) ListScrapeTargets() ([]cloudburst.ScrapeTarget, error) {
-	scrapeTargets := []cloudburst.ScrapeTarget{}
+func (bdb *BoltDB) ListScrapeTargets() ([]*cloudburst.ScrapeTarget, error) {
+	scrapeTargets := []*cloudburst.ScrapeTarget{}
 
 	err := bdb.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bucketScrapeTargets))
@@ -72,7 +72,7 @@ func (bdb *BoltDB) ListScrapeTargets() ([]cloudburst.ScrapeTarget, error) {
 
 		for k, v := c.Last(); k != nil; k, v = c.Prev() {
 			if v != nil {
-				var st cloudburst.ScrapeTarget
+				var st *cloudburst.ScrapeTarget
 				_ = json.Unmarshal(v, &st)
 				scrapeTargets = append(scrapeTargets, st)
 			}
@@ -87,8 +87,8 @@ func (bdb *BoltDB) ListScrapeTargets() ([]cloudburst.ScrapeTarget, error) {
 	return scrapeTargets, nil
 }
 
-func (bdb *BoltDB) GetInstance(scrapeTarget string, name string) (cloudburst.Instance, error) {
-	var instance cloudburst.Instance
+func (bdb *BoltDB) GetInstance(scrapeTarget string, name string) (*cloudburst.Instance, error) {
+	var instance *cloudburst.Instance
 
 	err := bdb.db.View(func(tx *bolt.Tx) error {
 		b := instancesBucketForScrapeTarget(tx, scrapeTarget)
@@ -103,15 +103,15 @@ func (bdb *BoltDB) GetInstance(scrapeTarget string, name string) (cloudburst.Ins
 	return instance, err
 }
 
-func (bdb *BoltDB) GetInstances(scrapeTarget string) ([]cloudburst.Instance, error) {
-	instances := []cloudburst.Instance{}
+func (bdb *BoltDB) GetInstances(scrapeTarget string) ([]*cloudburst.Instance, error) {
+	instances := []*cloudburst.Instance{}
 
 	err := bdb.db.View(func(tx *bolt.Tx) error {
 		b := instancesBucketForScrapeTarget(tx, scrapeTarget)
 		c := b.Cursor()
 
 		for k, v := c.Last(); k != nil; k, v = c.Prev() {
-			var instance cloudburst.Instance
+			var instance *cloudburst.Instance
 			_ = json.Unmarshal(v, &instance)
 			instances = append(instances, instance)
 		}
@@ -125,7 +125,7 @@ func (bdb *BoltDB) GetInstances(scrapeTarget string) ([]cloudburst.Instance, err
 	return instances, nil
 }
 
-func (bdb *BoltDB) SaveInstance(scrapeTarget string, instance cloudburst.Instance) (cloudburst.Instance, error) {
+func (bdb *BoltDB) SaveInstance(scrapeTarget string, instance *cloudburst.Instance) (*cloudburst.Instance, error) {
 	err := bdb.db.Update(func(tx *bolt.Tx) error {
 		b := instancesBucketForScrapeTarget(tx, scrapeTarget)
 
@@ -138,8 +138,8 @@ func (bdb *BoltDB) SaveInstance(scrapeTarget string, instance cloudburst.Instanc
 	return instance, err
 }
 
-func (bdb *BoltDB) SaveInstances(scrapeTarget string, instances []cloudburst.Instance) ([]cloudburst.Instance, error) {
-	var res []cloudburst.Instance
+func (bdb *BoltDB) SaveInstances(scrapeTarget string, instances []*cloudburst.Instance) ([]*cloudburst.Instance, error) {
+	var res []*cloudburst.Instance
 	for _, instance := range instances {
 		updated, err := bdb.SaveInstance(scrapeTarget, instance)
 		if err != nil {
@@ -150,7 +150,7 @@ func (bdb *BoltDB) SaveInstances(scrapeTarget string, instances []cloudburst.Ins
 	return res, nil
 }
 
-func (bdb *BoltDB) RemoveInstances(scrapeTarget string, instances []cloudburst.Instance) error {
+func (bdb *BoltDB) RemoveInstances(scrapeTarget string, instances []*cloudburst.Instance) error {
 	for _, instance := range instances {
 		err := bdb.RemoveInstance(scrapeTarget, instance)
 		if err != nil {
@@ -159,7 +159,7 @@ func (bdb *BoltDB) RemoveInstances(scrapeTarget string, instances []cloudburst.I
 	}
 	return nil
 }
-func (bdb *BoltDB) RemoveInstance(scrapeTarget string, instance cloudburst.Instance) error {
+func (bdb *BoltDB) RemoveInstance(scrapeTarget string, instance *cloudburst.Instance) error {
 	err := bdb.db.Update(func(tx *bolt.Tx) error {
 		b := instancesBucketForScrapeTarget(tx, scrapeTarget)
 		key := []byte(instance.Name)

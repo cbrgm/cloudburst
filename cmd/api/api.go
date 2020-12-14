@@ -47,7 +47,7 @@ type ScrapeTargets struct {
 }
 
 type ScrapeTargetLister interface {
-	ListScrapeTargets() ([]cloudburst.ScrapeTarget, error)
+	ListScrapeTargets() ([]*cloudburst.ScrapeTarget, error)
 }
 
 func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResponse, error) {
@@ -76,12 +76,12 @@ type Instances struct {
 }
 
 type InstanceSetter interface {
-	SaveInstances(targetName string, instances []cloudburst.Instance) ([]cloudburst.Instance, error)
-	SaveInstance(targetName string, instances cloudburst.Instance) (cloudburst.Instance, error)
+	SaveInstances(targetName string, instances []*cloudburst.Instance) ([]*cloudburst.Instance, error)
+	SaveInstance(targetName string, instances *cloudburst.Instance) (*cloudburst.Instance, error)
 }
 
 func (i *Instances) SaveInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
-	var in []cloudburst.Instance
+	var in []*cloudburst.Instance
 	for _, item := range instances {
 		in = append(in, instanceCloudburst(item))
 	}
@@ -101,7 +101,7 @@ func (i *Instances) SaveInstances(ctx context.Context, targetName string, instan
 }
 
 type InstanceGetter interface {
-	GetInstances(scrapeTarget string) ([]cloudburst.Instance, error)
+	GetInstances(scrapeTarget string) ([]*cloudburst.Instance, error)
 }
 
 func (s *Instances) GetInstances(ctx context.Context, targetName string) (openapi.ImplResponse, error) {
@@ -124,7 +124,7 @@ func (s *Instances) GetInstances(ctx context.Context, targetName string) (openap
 	}, nil
 }
 
-func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
+func scrapeTargetOpenAPI(s *cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 	return openapi.ScrapeTarget{
 		Name:        s.Name,
 		Description: s.Description,
@@ -138,7 +138,7 @@ func scrapeTargetOpenAPI(s cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 	}
 }
 
-func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
+func instanceOpenAPI(i *cloudburst.Instance) openapi.Instance {
 	return openapi.Instance{
 		Name:     i.Name,
 		Endpoint: i.Endpoint,
@@ -155,7 +155,7 @@ func instanceOpenAPI(i cloudburst.Instance) openapi.Instance {
 	}
 }
 
-func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
+func instanceCloudburst(i openapi.Instance) *cloudburst.Instance {
 	var status cloudburst.Status
 	switch i.Status.Status {
 	case "unknown":
@@ -172,7 +172,7 @@ func instanceCloudburst(i openapi.Instance) cloudburst.Instance {
 		status = cloudburst.Terminated
 	}
 
-	return cloudburst.Instance{
+	return &cloudburst.Instance{
 		Name:     i.Name,
 		Endpoint: i.Endpoint,
 		Container: cloudburst.ContainerSpec{

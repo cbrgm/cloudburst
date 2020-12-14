@@ -42,7 +42,7 @@ func (sp *ScrapeTargetProcessor) ProcessScrapeTargets(prometheusURL string) erro
 	return nil
 }
 
-func (sp *ScrapeTargetProcessor) processScrapeTarget(promAPI prometheusv1.API, scrapeTarget ScrapeTarget) error {
+func (sp *ScrapeTargetProcessor) processScrapeTarget(promAPI prometheusv1.API, scrapeTarget *ScrapeTarget) error {
 	value, _, err := promAPI.Query(context.TODO(), scrapeTarget.Query, time.Now())
 	if err != nil {
 		return fmt.Errorf("failed to run processScrapeTargets: %w", err)

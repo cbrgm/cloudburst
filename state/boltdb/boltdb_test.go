@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-func initState() []cloudburst.ScrapeTarget {
-	return []cloudburst.ScrapeTarget{
+func initState() []*cloudburst.ScrapeTarget {
+	return []*cloudburst.ScrapeTarget{
 		{
 			Name:        "foo",
 			Description: "",
@@ -34,12 +34,11 @@ func initState() []cloudburst.ScrapeTarget {
 	}
 }
 
-func testInstances() []cloudburst.Instance {
-	return []cloudburst.Instance{
+func testInstances() []*cloudburst.Instance {
+	return []*cloudburst.Instance{
 		{
 			Name:     "foo-instance",
 			Endpoint: "example.com",
-			Target:   "",
 			Active:   true,
 			Status: cloudburst.InstanceStatus{
 				Agent:   "fake-agent",
@@ -50,7 +49,6 @@ func testInstances() []cloudburst.Instance {
 		{
 			Name:     "bar-instance",
 			Endpoint: "example.com",
-			Target:   "",
 			Active:   true,
 			Status: cloudburst.InstanceStatus{
 				Agent:   "fake-agent",
@@ -77,8 +75,9 @@ func TestListScrapeTargets(t *testing.T) {
 	defer dbClose()
 
 	type args struct {
-		scrapeTarget []cloudburst.ScrapeTarget
+		scrapeTarget []*cloudburst.ScrapeTarget
 	}
+
 	tests := []struct {
 		name string
 		args args
@@ -93,13 +92,14 @@ func TestListScrapeTargets(t *testing.T) {
 		},
 	}
 
-	scrapeTargets, err := db.ListScrapeTargets()
-	if err != nil {
-		t.Errorf("err %s", err)
-	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
+			scrapeTargets, err := db.ListScrapeTargets()
+			if err != nil {
+				t.Errorf("err %s", err)
+			}
+
 			if got := reflect.DeepEqual(scrapeTargets, tt.args.scrapeTarget); !got {
 				t.Errorf("%s, got %v, want %v", "TestListScrapeTargets()", got, tt.want)
 			}
@@ -117,8 +117,8 @@ func TestSaveGetInstance(t *testing.T) {
 	defer dbClose()
 
 	type args struct {
-		scrapeTarget cloudburst.ScrapeTarget
-		instance     cloudburst.Instance
+		scrapeTarget *cloudburst.ScrapeTarget
+		instance     *cloudburst.Instance
 	}
 	tests := []struct {
 		name string
@@ -164,8 +164,8 @@ func TestSaveGetInstances(t *testing.T) {
 	defer dbClose()
 
 	type args struct {
-		scrapeTargets []cloudburst.ScrapeTarget
-		instances     []cloudburst.Instance
+		scrapeTargets []*cloudburst.ScrapeTarget
+		instances     []*cloudburst.Instance
 	}
 	tests := []struct {
 		name string

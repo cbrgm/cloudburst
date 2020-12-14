@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"fmt"
@@ -11,6 +12,7 @@ import (
 	"github.com/urfave/cli"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	apiclient "github.com/cbrgm/cloudburst/api/client/go"
@@ -19,6 +21,7 @@ import (
 const (
 	flagName    = "name"
 	flagApiAddr = "api.url"
+	flagDebug   = "debug"
 )
 
 func main() {
@@ -38,6 +41,10 @@ func main() {
 		cli.StringFlag{
 			Name:  flagApiAddr,
 			Usage: "FQDN for the cloudburst-api to connect to, in format http://localhost:6660",
+		},
+		cli.BoolFlag{
+			Name:  flagDebug,
+			Usage: "debug mode",
 		},
 	}
 
@@ -72,6 +79,38 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 
 		var gr run.Group
 		{
+			if c.Bool(flagDebug) {
+				var ticker = make(chan int)
+				gr.Add(func() error {
+					scan := bufio.NewScanner(os.Stdin)
+					for scan.Scan() {
+						s := scan.Text()
+						queryValue, err := strconv.Atoi(s)
+						if err != nil {
+							continue
+						}
+						ticker <- queryValue
+					}
+					return nil
+				}, func(err error) {
+					close(ticker)
+				})
+
+				gr.Add(func() error {
+					for {
+						select {
+						case <-ticker:
+							_ = poll(client, agentName, logger)
+						}
+					}
+				}, func(err error) {
+
+				})
+			}
+
+		}
+
+		if !c.Bool(flagDebug) {
 			ticker := time.NewTicker(time.Duration(5) * time.Second)
 			gr.Add(func() error {
 				for {
@@ -130,8 +169,8 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	}
 
 	instances := cloudburstInstances(items)
-	terminate := getTerminatingInstances(instances)
-	pending := getInstancesByStatus(instances, cloudburst.Pending)
+	terminate := cloudburst.GetInstancesByActiveStatus(instances, false)
+	pending := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 
 	for _, item := range pending {
 		item.Status = cloudburst.InstanceStatus{
@@ -153,12 +192,12 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	// create/delete items
 	for _, instance := range progress {
 		instance.Status.Status = cloudburst.Running
-		time.Sleep(time.Duration(3) * time.Second)
+		time.Sleep(time.Duration(1) * time.Second)
 	}
 
 	for _, instance := range terminate {
 		instance.Status.Status = cloudburst.Terminated
-		time.Sleep(time.Duration(3) * time.Second)
+		time.Sleep(time.Duration(1) * time.Second)
 	}
 
 	result := append(progress, terminate...)
@@ -259,28 +298,4 @@ func instanceOpenAPI(in *cloudburst.Instance) apiclient.Instance {
 			Started: in.Status.Started,
 		},
 	}
-}
-
-func getInstancesByStatus(instances []*cloudburst.Instance, status cloudburst.Status) []*cloudburst.Instance {
-	res := []*cloudburst.Instance{}
-	for _, instance := range instances {
-		if isMatchingStatus(instance, status) {
-			res = append(res, instance)
-		}
-	}
-	return res
-}
-
-func isMatchingStatus(instance *cloudburst.Instance, status cloudburst.Status) bool {
-	return instance.Status.Status == status
-}
-
-func getTerminatingInstances(instances []*cloudburst.Instance) []*cloudburst.Instance {
-	res := []*cloudburst.Instance{}
-	for _, instance := range instances {
-		if instance.Active == false {
-			res = append(res, instance)
-		}
-	}
-	return res
 }

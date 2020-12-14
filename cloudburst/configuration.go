@@ -15,8 +15,8 @@ type Configuration struct {
 	} `json:"targets"`
 }
 
-func ParseConfiguration(config Configuration) ([]ScrapeTarget, error) {
-	var scrapeTargets []ScrapeTarget
+func ParseConfiguration(config Configuration) ([]*ScrapeTarget, error) {
+	var scrapeTargets []*ScrapeTarget
 
 	err := validateConfig(config)
 	if err != nil {
@@ -24,7 +24,7 @@ func ParseConfiguration(config Configuration) ([]ScrapeTarget, error) {
 	}
 
 	for _, item := range config.ScrapeTargets {
-		scrapeTargets = append(scrapeTargets, ScrapeTarget{
+		scrapeTargets = append(scrapeTargets, &ScrapeTarget{
 			Name:        item.Name,
 			Description: item.Description,
 			Query:       item.Query,

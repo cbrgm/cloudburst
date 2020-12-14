@@ -4,7 +4,7 @@ targets:
     path: /svc/bubblesort
     description: request duration greater than 0.045ms
     query: |
-      ceil(((((rate(example_sorting_request_duration_seconds_sum[1m]) / rate(example_sorting_request_duration_seconds_count[1m])) / 0.040) -1) * 10) + 0.5)
+      ceil(((((rate(example_sorting_request_duration_seconds_sum[30s]) / rate(example_sorting_request_duration_seconds_count[30s])) / 0.030) -1) * 25) + 0.5)
     spec:
       container:
         name: "bubblesort-svc"

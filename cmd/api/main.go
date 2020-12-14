@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"github.com/cbrgm/cloudburst/cloudburst"
@@ -16,6 +17,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -23,6 +25,7 @@ const (
 	flagAddr       = "addr"
 	flagBoltPath   = "bolt.path"
 	flagConfigFile = "file"
+	flagDebug      = "debug"
 )
 
 func main() {
@@ -49,6 +52,10 @@ func main() {
 			Name:  flagAddr,
 			Usage: "The address for the public http server",
 			Value: ":6660",
+		},
+		cli.BoolFlag{
+			Name:  flagDebug,
+			Usage: "debug mode",
 		},
 	}
 
@@ -122,24 +129,54 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 		// polling
 		{
-			gr.Add(func() error {
-				ticker := time.NewTicker(time.Duration(5) * time.Second)
-				for {
-					select {
-					case <-ticker.C:
-						err = query.ProcessScrapeTargets(config.PrometheusURL)
+			if c.Bool(flagDebug) {
+				var autoscaler = cloudburst.NewAutoScaler(state)
+				var ticker = make(chan int)
+				gr.Add(func() error {
+					scan := bufio.NewScanner(os.Stdin)
+					for scan.Scan() {
+						s := scan.Text()
+						queryValue, err := strconv.Atoi(s)
 						if err != nil {
-							level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
+							continue
+						}
+						ticker <- queryValue
+					}
+					return nil
+				}, func(err error) {
+					close(ticker)
+				})
+				gr.Add(func() error {
+					for {
+						select {
+						case i := <-ticker:
+							err = autoscaler.Scale(scrapeTargets[0], float64(i))
+							if err != nil {
+								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
+							}
 						}
 					}
-				}
-			}, func(err error) {
+				}, func(err error) {
 
-			})
-		}
+				})
+			}
 
-		{
+			if !c.Bool(flagDebug) {
+				gr.Add(func() error {
+					ticker := time.NewTicker(time.Duration(15) * time.Second)
+					for {
+						select {
+						case <-ticker.C:
+							err = query.ProcessScrapeTargets(config.PrometheusURL)
+							if err != nil {
+								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
+							}
+						}
+					}
+				}, func(err error) {
 
+				})
+			}
 		}
 
 		if err := gr.Run(); err != nil {
@@ -147,7 +184,6 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		}
 
 		return nil
-
 	}
 }
 

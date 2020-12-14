@@ -1,32 +1,45 @@
 package cloudburst
 
-// TODO: add threshold
-const (
-	threshold = 0
-)
+type Threshold struct {
+	Upper int
+	Lower int
+}
+
+func (t *Threshold) inRange(i int) bool {
+	return i >= t.Lower && i <= t.Upper
+}
+
+func newThreshold(upper, lower int) Threshold {
+	return Threshold{
+		Upper: upper,
+		Lower: lower,
+	}
+}
 
 // requester modifies instance states stored in the state to fulfill scaling needs calculated by a requestCalculator.
 // Create requester instances with newRequester.
 type requester struct {
-	state *State
+	threshold Threshold
+	state     *State
 }
 
 // newRequester creates a new requester. The provided State is used to access and modify instance states
 // stored by a database provider implementation. The provided requestCalculator is used to calculate
-func newRequester(state *State) *requester {
+func newRequester(state *State, threshold Threshold) *requester {
 	return &requester{
-		state: state,
+		threshold: threshold,
+		state:     state,
 	}
 }
 
-func (r *requester) ProcessDemand(demand instanceDemand, instances []Instance, scrapeTarget ScrapeTarget) error {
+func (r *requester) ProcessDemand(demand instanceDemand, instances []*Instance, scrapeTarget *ScrapeTarget) error {
+	result := demand.Result
 
-	err := r.cleanupTerminatedInstances(scrapeTarget, instances)
-	if err != nil {
-		return err
+	// if demand is in range of threshold, we don't request/supend new instances
+	if r.threshold.inRange(result) {
+		result = 0
 	}
 
-	result := demand.Result
 	if result == 0 {
 		return r.thresholdEquals(scrapeTarget, instances)
 	}
@@ -41,24 +54,23 @@ func (r *requester) ProcessDemand(demand instanceDemand, instances []Instance, s
 	return nil
 }
 
-func (r *requester) thresholdEquals(scrapeTarget ScrapeTarget, instances []Instance) error {
+func (r *requester) thresholdEquals(scrapeTarget *ScrapeTarget, instances []*Instance) error {
 	pendingInstances := GetInstancesByStatus(instances, Pending)
 	err := r.state.RemoveInstances(scrapeTarget.Name, pendingInstances)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func (r *requester) thresholdAbove(scrapeTarget ScrapeTarget, instances []Instance, demand int) error {
+func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Instance, demand int) error {
 	pendingInstances := GetInstancesByStatus(instances, Pending)
 
 	var result = demand - len(pendingInstances)
 
 	if result > 0 {
 		// on a positive result, create pending instances until we satisfy result
-		var toCreate []Instance
+		var toCreate []*Instance
 		for i := 0; i < result; i++ {
 			toCreate = append(toCreate, NewInstance(scrapeTarget.InstanceSpec))
 		}
@@ -79,7 +91,7 @@ func (r *requester) thresholdAbove(scrapeTarget ScrapeTarget, instances []Instan
 	return nil
 }
 
-func (r *requester) thresholdBelow(scrapeTarget ScrapeTarget, instances []Instance, demand int) error {
+func (r *requester) thresholdBelow(scrapeTarget *ScrapeTarget, instances []*Instance, demand int) error {
 
 	// delete all pending instances first
 	pendingInstances := GetInstancesByStatus(instances, Pending)
@@ -113,20 +125,8 @@ func (r *requester) thresholdBelow(scrapeTarget ScrapeTarget, instances []Instan
 	return nil
 }
 
-func (r *requester) cleanupTerminatedInstances(target ScrapeTarget, instances []Instance) error {
-	for _, instance := range instances {
-		if instance.Status.Status == Terminated {
-			err := r.state.RemoveInstance(target.Name, instance)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
-func markToBeTerminated(instances []Instance) []Instance {
-	var res = []Instance{}
+func markToBeTerminated(instances []*Instance) []*Instance {
+	var res = []*Instance{}
 	for _, instance := range instances {
 		instance.Active = false
 		res = append(res, instance)
