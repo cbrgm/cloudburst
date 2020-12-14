@@ -4,6 +4,7 @@ import (
 	"context"
 	openapi "github.com/cbrgm/cloudburst/api/server/go/go"
 	"github.com/cbrgm/cloudburst/cloudburst"
+	"github.com/cbrgm/cloudburst/cloudburst/convert"
 	"github.com/go-kit/kit/log"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -61,7 +62,7 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 
 	var body []openapi.ScrapeTarget
 	for _, st := range scrapeTargets {
-		body = append(body, scrapeTargetOpenAPI(st))
+		body = append(body, convert.ScrapeTargetToOpenAPI(st))
 	}
 
 	return openapi.ImplResponse{
@@ -83,7 +84,7 @@ type InstanceSetter interface {
 func (i *Instances) SaveInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
 	var in []*cloudburst.Instance
 	for _, item := range instances {
-		in = append(in, instanceCloudburst(item))
+		in = append(in, convert.OpenAPItoInstance(item))
 	}
 
 	body, err := i.setter.SaveInstances(targetName, in)
@@ -115,75 +116,11 @@ func (s *Instances) GetInstances(ctx context.Context, targetName string) (openap
 
 	var body []openapi.Instance
 	for _, st := range instances {
-		body = append(body, instanceOpenAPI(st))
+		body = append(body, convert.InstanceToOpenAPI(st))
 	}
 
 	return openapi.ImplResponse{
 		Code: 200,
 		Body: body,
 	}, nil
-}
-
-func scrapeTargetOpenAPI(s *cloudburst.ScrapeTarget) openapi.ScrapeTarget {
-	return openapi.ScrapeTarget{
-		Name:        s.Name,
-		Description: s.Description,
-		Query:       s.Query,
-		InstanceSpec: openapi.InstanceSpec{
-			Container: openapi.ContainerSpec{
-				Name:  s.InstanceSpec.Container.Name,
-				Image: s.InstanceSpec.Container.Image,
-			},
-		},
-	}
-}
-
-func instanceOpenAPI(i *cloudburst.Instance) openapi.Instance {
-	return openapi.Instance{
-		Name:     i.Name,
-		Endpoint: i.Endpoint,
-		Active:   i.Active,
-		Container: openapi.ContainerSpec{
-			Name:  i.Container.Name,
-			Image: i.Container.Image,
-		},
-		Status: openapi.InstanceStatus{
-			Agent:   i.Status.Agent,
-			Status:  string(i.Status.Status),
-			Started: i.Status.Started,
-		},
-	}
-}
-
-func instanceCloudburst(i openapi.Instance) *cloudburst.Instance {
-	var status cloudburst.Status
-	switch i.Status.Status {
-	case "unknown":
-		status = cloudburst.Unknown
-	case "pending":
-		status = cloudburst.Pending
-	case "running":
-		status = cloudburst.Running
-	case "failure":
-		status = cloudburst.Failure
-	case "progress":
-		status = cloudburst.Progress
-	case "terminated":
-		status = cloudburst.Terminated
-	}
-
-	return &cloudburst.Instance{
-		Name:     i.Name,
-		Endpoint: i.Endpoint,
-		Container: cloudburst.ContainerSpec{
-			Name:  i.Container.Name,
-			Image: i.Container.Image,
-		},
-		Active: i.Active,
-		Status: cloudburst.InstanceStatus{
-			Agent:   i.Status.Agent,
-			Status:  status,
-			Started: i.Status.Started,
-		},
-	}
 }

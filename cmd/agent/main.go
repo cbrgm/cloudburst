@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cbrgm/cloudburst/cloudburst"
+	"github.com/cbrgm/cloudburst/cloudburst/convert"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/oklog/run"
@@ -142,7 +143,7 @@ func poll(client *apiclient.APIClient, agentName string, logger log.Logger) erro
 		level.Info(logger).Log("msg", "failed retrieving scrapeTargets", "err", err)
 	}
 
-	targets := cloudburstScrapeTargets(scrapeTargets)
+	targets := convert.APIClientToScrapeTargets(scrapeTargets)
 
 	err = processScrapeTargets(client, agentName, targets)
 	if err != nil {
@@ -168,7 +169,8 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 		return fmt.Errorf("failed to receive items for scrapeTarget %s", scrapeTarget.Name)
 	}
 
-	instances := cloudburstInstances(items)
+	instances := convert.APIClientToInstances(items)
+
 	terminate := cloudburst.GetInstancesByActiveStatus(instances, false)
 	pending := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 
@@ -181,13 +183,14 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	}
 
 	items, resp, err = client.InstancesApi.SaveInstances(context.TODO(), scrapeTarget.Name).
-		Instance(instancesOpenAPI(pending)).
+		Instance(convert.InstancesToAPIClient(pending)).
 		Execute()
+
 	if err != nil || resp.StatusCode != 200 {
 		return fmt.Errorf("failed to update items for scrapeTarget %s", scrapeTarget.Name)
 	}
 
-	progress := cloudburstInstances(items)
+	progress := convert.APIClientToInstances(items)
 
 	// create/delete items
 	for _, instance := range progress {
@@ -204,98 +207,11 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 
 	// update result
 	_, resp, err = client.InstancesApi.SaveInstances(context.TODO(), scrapeTarget.Name).
-		Instance(instancesOpenAPI(result)).
+		Instance(convert.InstancesToAPIClient(result)).
 		Execute()
+
 	if err != nil || resp.StatusCode != 200 {
 		return fmt.Errorf("failed to update items for scrapeTarget %s", scrapeTarget.Name)
 	}
 	return nil
-}
-
-func cloudburstScrapeTargets(scrapeTargets []apiclient.ScrapeTarget) []*cloudburst.ScrapeTarget {
-	res := []*cloudburst.ScrapeTarget{}
-	for _, scrapeTarget := range scrapeTargets {
-		res = append(res, cloudburstScrapeTarget(scrapeTarget))
-	}
-	return res
-}
-
-func cloudburstScrapeTarget(st apiclient.ScrapeTarget) *cloudburst.ScrapeTarget {
-	return &cloudburst.ScrapeTarget{
-		Name:        st.Name,
-		Description: st.Description,
-		Query:       st.Query,
-		InstanceSpec: cloudburst.InstanceSpec{
-			Container: cloudburst.ContainerSpec{
-				Name:  st.InstanceSpec.Container.Name,
-				Image: st.InstanceSpec.Container.Image,
-			},
-		},
-	}
-}
-
-func cloudburstInstances(instances []apiclient.Instance) []*cloudburst.Instance {
-	res := []*cloudburst.Instance{}
-	for _, instance := range instances {
-		res = append(res, cloudburstInstance(instance))
-	}
-	return res
-}
-
-func cloudburstInstance(in apiclient.Instance) *cloudburst.Instance {
-	var status cloudburst.Status
-	switch in.Status.Status {
-	case "unknown":
-		status = cloudburst.Unknown
-	case "pending":
-		status = cloudburst.Pending
-	case "running":
-		status = cloudburst.Running
-	case "failure":
-		status = cloudburst.Failure
-	case "progress":
-		status = cloudburst.Progress
-	case "terminated":
-		status = cloudburst.Terminated
-	}
-
-	return &cloudburst.Instance{
-		Name:     in.Name,
-		Endpoint: in.Endpoint,
-		Active:   in.Active,
-		Container: cloudburst.ContainerSpec{
-			Name:  in.Container.Name,
-			Image: in.Container.Image,
-		},
-		Status: cloudburst.InstanceStatus{
-			Agent:   in.Status.Agent,
-			Status:  status,
-			Started: in.Status.Started,
-		},
-	}
-}
-
-func instancesOpenAPI(instances []*cloudburst.Instance) []apiclient.Instance {
-	res := []apiclient.Instance{}
-	for _, instance := range instances {
-		res = append(res, instanceOpenAPI(instance))
-	}
-	return res
-}
-
-func instanceOpenAPI(in *cloudburst.Instance) apiclient.Instance {
-	return apiclient.Instance{
-		Name:     in.Name,
-		Endpoint: in.Endpoint,
-		Active:   in.Active,
-		Container: apiclient.ContainerSpec{
-			Name:  in.Container.Name,
-			Image: in.Container.Image,
-		},
-		Status: apiclient.InstanceStatus{
-			Agent:   in.Status.Agent,
-			Status:  string(in.Status.Status),
-			Started: in.Status.Started,
-		},
-	}
 }
