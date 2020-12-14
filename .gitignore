@@ -17,4 +17,5 @@
 
 /cmd/agent/agent
 /cmd/api/api
+/cmd/proxy/proxy
 /vendor/

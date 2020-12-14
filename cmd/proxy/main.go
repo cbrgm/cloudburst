@@ -51,5 +51,7 @@ func proxyAction(logger log.Logger) cli.ActionFunc {
 			Address:           ":9090",
 			CustomDataClients: []routing.DataClient{client},
 		})
+
+		return nil
 	}
 }
