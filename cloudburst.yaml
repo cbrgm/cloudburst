@@ -1,7 +1,7 @@
 prometheus_url: http://localhost:9090
 targets:
-  - name: bubblesort-svc
-    path: /svc/bubblesort
+  - name: bubblesort
+    path: /bubblesort
     description: request duration greater than 0.045ms
     query: |
       ceil(((((rate(example_sorting_request_duration_seconds_sum[30s]) / rate(example_sorting_request_duration_seconds_count[30s])) / 0.030) -1) * 25) + 0.5)
@@ -9,3 +9,7 @@ targets:
       container:
         name: "bubblesort-svc"
         image: cbrgm/example-app:latest
+    static:
+      endpoints:
+        - http://localhost:9997
+        - http://localhost:9998
