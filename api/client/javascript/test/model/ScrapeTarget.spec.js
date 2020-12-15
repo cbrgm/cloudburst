@@ -60,6 +60,12 @@
       //expect(instance).to.be();
     });
 
+    it('should have the property path (base name: "path")', function() {
+      // uncomment below and update the code to test the property path
+      //var instance = new Cloudburst.ScrapeTarget();
+      //expect(instance).to.be();
+    });
+
     it('should have the property description (base name: "description")', function() {
       // uncomment below and update the code to test the property description
       //var instance = new Cloudburst.ScrapeTarget();
@@ -74,6 +80,12 @@
 
     it('should have the property instanceSpec (base name: "instanceSpec")', function() {
       // uncomment below and update the code to test the property instanceSpec
+      //var instance = new Cloudburst.ScrapeTarget();
+      //expect(instance).to.be();
+    });
+
+    it('should have the property staticSpec (base name: "staticSpec")', function() {
+      // uncomment below and update the code to test the property staticSpec
       //var instance = new Cloudburst.ScrapeTarget();
       //expect(instance).to.be();
     });

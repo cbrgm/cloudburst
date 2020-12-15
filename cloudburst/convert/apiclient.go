@@ -13,16 +13,20 @@ func APIClientToScrapeTargets(scrapeTargets []apiclient.ScrapeTarget) []*cloudbu
 	return res
 }
 
-func APIClientToScrapeTarget(st apiclient.ScrapeTarget) *cloudburst.ScrapeTarget {
+func APIClientToScrapeTarget(s apiclient.ScrapeTarget) *cloudburst.ScrapeTarget {
 	return &cloudburst.ScrapeTarget{
-		Name:        st.Name,
-		Description: st.Description,
-		Query:       st.Query,
+		Name:        s.Name,
+		Path:        s.Path,
+		Description: s.Description,
+		Query:       s.Query,
 		InstanceSpec: cloudburst.InstanceSpec{
 			Container: cloudburst.ContainerSpec{
-				Name:  st.InstanceSpec.Container.Name,
-				Image: st.InstanceSpec.Container.Image,
+				Name:  s.InstanceSpec.Container.Name,
+				Image: s.InstanceSpec.Container.Image,
 			},
+		},
+		StaticSpec: cloudburst.StaticSpec{
+			Endpoints: s.StaticSpec.Endpoints,
 		},
 	}
 }

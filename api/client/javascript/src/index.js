@@ -18,6 +18,7 @@ import Instance from './model/Instance';
 import InstanceSpec from './model/InstanceSpec';
 import InstanceStatus from './model/InstanceStatus';
 import ScrapeTarget from './model/ScrapeTarget';
+import StaticSpec from './model/StaticSpec';
 import InstancesApi from './api/InstancesApi';
 import TargetsApi from './api/TargetsApi';
 
@@ -89,6 +90,12 @@ export {
      * @property {module:model/ScrapeTarget}
      */
     ScrapeTarget,
+
+    /**
+     * The StaticSpec model constructor.
+     * @property {module:model/StaticSpec}
+     */
+    StaticSpec,
 
     /**
     * The InstancesApi service constructor.

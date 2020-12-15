@@ -9,6 +9,7 @@ docs/InstanceSpec.md
 docs/InstanceStatus.md
 docs/InstancesApi.md
 docs/ScrapeTarget.md
+docs/StaticSpec.md
 docs/TargetsApi.md
 git_push.sh
 mocha.opts
@@ -22,6 +23,7 @@ src/model/Instance.js
 src/model/InstanceSpec.js
 src/model/InstanceStatus.js
 src/model/ScrapeTarget.js
+src/model/StaticSpec.js
 test/api/InstancesApi.spec.js
 test/api/TargetsApi.spec.js
 test/model/ContainerSpec.spec.js
@@ -29,3 +31,4 @@ test/model/Instance.spec.js
 test/model/InstanceSpec.spec.js
 test/model/InstanceStatus.spec.js
 test/model/ScrapeTarget.spec.js
+test/model/StaticSpec.spec.js

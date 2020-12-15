@@ -6,11 +6,12 @@ import (
 	apiclient "github.com/cbrgm/cloudburst/api/client/go"
 	"github.com/cbrgm/cloudburst/cloudburst"
 	"github.com/cbrgm/cloudburst/cloudburst/convert"
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/zalando/skipper/eskip"
-	"log"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type Client struct {
@@ -68,7 +69,7 @@ func (c *Client) routesForScrapeTargets(scrapeTargets []*cloudburst.ScrapeTarget
 	return res, nil
 }
 
-func (c *Client) routeForScrapeTarget(scrapeTarget cloudburst.ScrapeTarget) (*eskip.Route, error) {
+func (c *Client) routeForScrapeTarget(scrapeTarget *cloudburst.ScrapeTarget) (*eskip.Route, error) {
 	res, resp, err := c.client.InstancesApi.GetInstances(context.TODO(), scrapeTarget.Name).Execute()
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return nil, err
@@ -78,18 +79,28 @@ func (c *Client) routeForScrapeTarget(scrapeTarget cloudburst.ScrapeTarget) (*es
 
 	lbEndpoints := []string{}
 	for _, instance := range instances {
-		lbEndpoints = append(lbEndpoints, instance.Endpoint)
+		if instance.Endpoint != "" {
+			lbEndpoints = append(lbEndpoints, instance.Endpoint)
+		}
 	}
+	lbEndpoints = append(lbEndpoints, scrapeTarget.StaticSpec.Endpoints...)
 
 	return &eskip.Route{
-		Id:          scrapeTarget.Name,
-		Predicates:  nil,
-		Filters:     nil,
-		BackendType: 0,
+		Id: scrapeTarget.Name,
+		Predicates: []*eskip.Predicate{
+			{
+				Name: "Path",
+				Args: []interface{}{
+					scrapeTarget.Path,
+				},
+			},
+		},
+		Filters:     []*eskip.Filter{},
+		BackendType: 4,
 		Backend:     "",
-		LBAlgorithm: "",
+		LBAlgorithm: "roundRobin",
 		LBEndpoints: lbEndpoints,
-	}
+	}, nil
 }
 
 func mapRoutes(r []*eskip.Route) map[string]*eskip.Route {
@@ -132,5 +143,26 @@ func (c *Client) LoadUpdate() ([]*eskip.Route, []string, error) {
 		deletedIDs    []string
 	)
 
-	return nil, nil, nil
+	for id := range c.current {
+		if r, ok := next[id]; ok && r.String() != c.current[id].String() {
+			updatedRoutes = append(updatedRoutes, r)
+		} else if !ok {
+			deletedIDs = append(deletedIDs, id)
+		}
+	}
+
+	for id, r := range next {
+		if _, ok := c.current[id]; !ok {
+			updatedRoutes = append(updatedRoutes, r)
+		}
+	}
+
+	if len(updatedRoutes) > 0 || len(deletedIDs) > 0 {
+		level.Info(c.logger).Log("msg", "diff taken", "updates",  len(updatedRoutes), "deletions", len(deletedIDs))
+	}
+
+	time.Sleep(time.Duration(5) * time.Second)
+
+	c.current = next
+	return updatedRoutes, deletedIDs, nil
 }

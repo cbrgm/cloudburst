@@ -68,10 +68,14 @@ components:
       required:
         - name
         - description
+        - path
         - query
         - instanceSpec
+        - staticSpec
       properties:
         name:
+          type: string
+        path:
           type: string
         description:
           type: string
@@ -79,6 +83,19 @@ components:
           type: string
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
+        staticSpec:
+          $ref: '#/components/schemas/StaticSpec'
+    StaticSpec:
+      type: object
+      required:
+        - endpoints
+      properties:
+        endpoints:
+          $ref: '#/components/schemas/Endpoints'
+    Endpoints:
+      type: array
+      items:
+        type: string
     InstanceSpec:
       type: object
       required:

@@ -17,7 +17,15 @@ services:
   example-app:
     image: cbrgm/example-app:latest
     ports:
-      - 8080:8080
+      - 9997:8080
+    restart: always
+    networks:
+      - promnet
+
+  example-blackhole:
+    image: cbrgm/example-blackhole:latest
+    ports:
+      - 9998:8080
     restart: always
     networks:
       - promnet

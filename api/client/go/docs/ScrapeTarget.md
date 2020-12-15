@@ -5,15 +5,17 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | **string** |  | 
+**Path** | **string** |  | 
 **Description** | **string** |  | 
 **Query** | **string** |  | 
 **InstanceSpec** | [**InstanceSpec**](InstanceSpec.md) |  | 
+**StaticSpec** | [**StaticSpec**](StaticSpec.md) |  | 
 
 ## Methods
 
 ### NewScrapeTarget
 
-`func NewScrapeTarget(name string, description string, query string, instanceSpec InstanceSpec, ) *ScrapeTarget`
+`func NewScrapeTarget(name string, path string, description string, query string, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget`
 
 NewScrapeTarget instantiates a new ScrapeTarget object
 This constructor will assign default values to properties that have it defined,
@@ -46,6 +48,26 @@ and a boolean to check if the value has been set.
 `func (o *ScrapeTarget) SetName(v string)`
 
 SetName sets Name field to given value.
+
+
+### GetPath
+
+`func (o *ScrapeTarget) GetPath() string`
+
+GetPath returns the Path field if non-nil, zero value otherwise.
+
+### GetPathOk
+
+`func (o *ScrapeTarget) GetPathOk() (*string, bool)`
+
+GetPathOk returns a tuple with the Path field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetPath
+
+`func (o *ScrapeTarget) SetPath(v string)`
+
+SetPath sets Path field to given value.
 
 
 ### GetDescription
@@ -106,6 +128,26 @@ and a boolean to check if the value has been set.
 `func (o *ScrapeTarget) SetInstanceSpec(v InstanceSpec)`
 
 SetInstanceSpec sets InstanceSpec field to given value.
+
+
+### GetStaticSpec
+
+`func (o *ScrapeTarget) GetStaticSpec() StaticSpec`
+
+GetStaticSpec returns the StaticSpec field if non-nil, zero value otherwise.
+
+### GetStaticSpecOk
+
+`func (o *ScrapeTarget) GetStaticSpecOk() (*StaticSpec, bool)`
+
+GetStaticSpecOk returns a tuple with the StaticSpec field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetStaticSpec
+
+`func (o *ScrapeTarget) SetStaticSpec(v StaticSpec)`
+
+SetStaticSpec sets StaticSpec field to given value.
 
 
 

@@ -4,6 +4,7 @@ type Configuration struct {
 	PrometheusURL string `json:"prometheus_url"`
 	ScrapeTargets []struct {
 		Name         string `json:"name"`
+		Path         string `json:"path"`
 		Description  string `json:"description"`
 		Query        string `json:"query"`
 		InstanceSpec struct {
@@ -12,6 +13,9 @@ type Configuration struct {
 				Image string `json:"image"`
 			} `json:"container"`
 		} `json:"spec"`
+		StaticSpec struct {
+			Endpoints []string `json:"endpoints"`
+		} `json:"static"`
 	} `json:"targets"`
 }
 
@@ -27,12 +31,16 @@ func ParseConfiguration(config Configuration) ([]*ScrapeTarget, error) {
 		scrapeTargets = append(scrapeTargets, &ScrapeTarget{
 			Name:        item.Name,
 			Description: item.Description,
+			Path:        item.Path,
 			Query:       item.Query,
 			InstanceSpec: InstanceSpec{
 				Container: ContainerSpec{
 					Name:  item.InstanceSpec.ContainerSpec.Name,
 					Image: item.InstanceSpec.ContainerSpec.Image,
 				},
+			},
+			StaticSpec: StaticSpec{
+				Endpoints: item.StaticSpec.Endpoints,
 			},
 		})
 	}

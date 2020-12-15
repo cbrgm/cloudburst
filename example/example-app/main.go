@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/cbrgm/cloudburst/example/sorting"
+	"github.com/cbrgm/cloudburst/example/example-app/sorting"
 	"github.com/go-chi/chi"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"

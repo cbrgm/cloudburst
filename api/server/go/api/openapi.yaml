@@ -69,6 +69,11 @@ components:
   schemas:
     ScrapeTarget:
       example:
+        path: path
+        staticSpec:
+          endpoints:
+          - endpoints
+          - endpoints
         query: query
         instanceSpec:
           container:
@@ -79,18 +84,41 @@ components:
       properties:
         name:
           type: string
+        path:
+          type: string
         description:
           type: string
         query:
           type: string
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
+        staticSpec:
+          $ref: '#/components/schemas/StaticSpec'
       required:
       - description
       - instanceSpec
       - name
+      - path
       - query
+      - staticSpec
       type: object
+    StaticSpec:
+      example:
+        endpoints:
+        - endpoints
+        - endpoints
+      properties:
+        endpoints:
+          items:
+            type: string
+          type: array
+      required:
+      - endpoints
+      type: object
+    Endpoints:
+      items:
+        type: string
+      type: array
     InstanceSpec:
       example:
         container:

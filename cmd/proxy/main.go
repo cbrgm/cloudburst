@@ -6,10 +6,9 @@ import (
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"
-	"os"
-
 	"github.com/zalando/skipper"
 	"github.com/zalando/skipper/routing"
+	"os"
 )
 
 const (
@@ -21,6 +20,8 @@ func main() {
 	logger := log.NewLogfmtLogger(log.NewSyncWriter(os.Stderr))
 	logger = log.WithPrefix(logger, "ts", log.DefaultTimestampUTC)
 	logger = log.WithPrefix(logger, "caller", log.DefaultCaller)
+
+	level.AllowInfo()
 
 	app := cli.NewApp()
 	app.Name = "cloudburst-proxy"
@@ -47,7 +48,7 @@ func main() {
 func proxyAction(logger log.Logger) cli.ActionFunc {
 	return func(c *cli.Context) error {
 
-		if c.String(flagApiAddr) == "" {
+		if c.String(flagAddr) == "" {
 			return errors.New("no proxy addr provided, please set an address to bind on using --addr flag")
 		}
 
@@ -55,7 +56,7 @@ func proxyAction(logger log.Logger) cli.ActionFunc {
 			return errors.New("no api.url provided, please set the remote cloudburst-api url using --api.url flag")
 		}
 
-		client, err := NewCloudburst(c.String(flagApiAddr))
+		client, err := NewCloudburst(logger, c.String(flagApiAddr))
 		if err != nil {
 			logger.Log("msg", "failed to create client for proxy", "err", err)
 		}

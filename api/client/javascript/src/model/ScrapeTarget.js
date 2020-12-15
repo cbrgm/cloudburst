@@ -13,6 +13,7 @@
 
 import ApiClient from '../ApiClient';
 import InstanceSpec from './InstanceSpec';
+import StaticSpec from './StaticSpec';
 
 /**
  * The ScrapeTarget model module.
@@ -24,13 +25,15 @@ class ScrapeTarget {
      * Constructs a new <code>ScrapeTarget</code>.
      * @alias module:model/ScrapeTarget
      * @param name {String} 
+     * @param path {String} 
      * @param description {String} 
      * @param query {String} 
      * @param instanceSpec {module:model/InstanceSpec} 
+     * @param staticSpec {module:model/StaticSpec} 
      */
-    constructor(name, description, query, instanceSpec) { 
+    constructor(name, path, description, query, instanceSpec, staticSpec) { 
         
-        ScrapeTarget.initialize(this, name, description, query, instanceSpec);
+        ScrapeTarget.initialize(this, name, path, description, query, instanceSpec, staticSpec);
     }
 
     /**
@@ -38,11 +41,13 @@ class ScrapeTarget {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, name, description, query, instanceSpec) { 
+    static initialize(obj, name, path, description, query, instanceSpec, staticSpec) { 
         obj['name'] = name;
+        obj['path'] = path;
         obj['description'] = description;
         obj['query'] = query;
         obj['instanceSpec'] = instanceSpec;
+        obj['staticSpec'] = staticSpec;
     }
 
     /**
@@ -59,6 +64,9 @@ class ScrapeTarget {
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
+            if (data.hasOwnProperty('path')) {
+                obj['path'] = ApiClient.convertToType(data['path'], 'String');
+            }
             if (data.hasOwnProperty('description')) {
                 obj['description'] = ApiClient.convertToType(data['description'], 'String');
             }
@@ -67,6 +75,9 @@ class ScrapeTarget {
             }
             if (data.hasOwnProperty('instanceSpec')) {
                 obj['instanceSpec'] = InstanceSpec.constructFromObject(data['instanceSpec']);
+            }
+            if (data.hasOwnProperty('staticSpec')) {
+                obj['staticSpec'] = StaticSpec.constructFromObject(data['staticSpec']);
             }
         }
         return obj;
@@ -79,6 +90,11 @@ class ScrapeTarget {
  * @member {String} name
  */
 ScrapeTarget.prototype['name'] = undefined;
+
+/**
+ * @member {String} path
+ */
+ScrapeTarget.prototype['path'] = undefined;
 
 /**
  * @member {String} description
@@ -94,6 +110,11 @@ ScrapeTarget.prototype['query'] = undefined;
  * @member {module:model/InstanceSpec} instanceSpec
  */
 ScrapeTarget.prototype['instanceSpec'] = undefined;
+
+/**
+ * @member {module:model/StaticSpec} staticSpec
+ */
+ScrapeTarget.prototype['staticSpec'] = undefined;
 
 
 

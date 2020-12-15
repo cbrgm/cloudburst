@@ -130,6 +130,7 @@ Class | Method | HTTP request | Description
  - [Cloudburst.InstanceSpec](docs/InstanceSpec.md)
  - [Cloudburst.InstanceStatus](docs/InstanceStatus.md)
  - [Cloudburst.ScrapeTarget](docs/ScrapeTarget.md)
+ - [Cloudburst.StaticSpec](docs/StaticSpec.md)
 
 
 ## Documentation for Authorization

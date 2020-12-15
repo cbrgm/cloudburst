@@ -59,12 +59,16 @@ func ScrapeTargetToOpenAPI(s *cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 	return openapi.ScrapeTarget{
 		Name:        s.Name,
 		Description: s.Description,
+		Path:        s.Path,
 		Query:       s.Query,
 		InstanceSpec: openapi.InstanceSpec{
 			Container: openapi.ContainerSpec{
 				Name:  s.InstanceSpec.Container.Name,
 				Image: s.InstanceSpec.Container.Image,
 			},
+		},
+		StaticSpec: openapi.StaticSpec{
+			Endpoints: s.StaticSpec.Endpoints,
 		},
 	}
 }

@@ -9,17 +9,7 @@
 
 package openapi
 
-type ScrapeTarget struct {
+type StaticSpec struct {
 
-	Name string `json:"name"`
-
-	Path string `json:"path"`
-
-	Description string `json:"description"`
-
-	Query string `json:"query"`
-
-	InstanceSpec InstanceSpec `json:"instanceSpec"`
-
-	StaticSpec StaticSpec `json:"staticSpec"`
+	Endpoints []string `json:"endpoints"`
 }

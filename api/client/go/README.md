@@ -90,6 +90,7 @@ Class | Method | HTTP request | Description
  - [InstanceSpec](docs/InstanceSpec.md)
  - [InstanceStatus](docs/InstanceStatus.md)
  - [ScrapeTarget](docs/ScrapeTarget.md)
+ - [StaticSpec](docs/StaticSpec.md)
 
 
 ## Documentation For Authorization

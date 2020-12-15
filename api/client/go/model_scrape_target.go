@@ -17,21 +17,25 @@ import (
 // ScrapeTarget struct for ScrapeTarget
 type ScrapeTarget struct {
 	Name string `json:"name"`
+	Path string `json:"path"`
 	Description string `json:"description"`
 	Query string `json:"query"`
 	InstanceSpec InstanceSpec `json:"instanceSpec"`
+	StaticSpec StaticSpec `json:"staticSpec"`
 }
 
 // NewScrapeTarget instantiates a new ScrapeTarget object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewScrapeTarget(name string, description string, query string, instanceSpec InstanceSpec, ) *ScrapeTarget {
+func NewScrapeTarget(name string, path string, description string, query string, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget {
 	this := ScrapeTarget{}
 	this.Name = name
+	this.Path = path
 	this.Description = description
 	this.Query = query
 	this.InstanceSpec = instanceSpec
+	this.StaticSpec = staticSpec
 	return &this
 }
 
@@ -65,6 +69,30 @@ func (o *ScrapeTarget) GetNameOk() (*string, bool) {
 // SetName sets field value
 func (o *ScrapeTarget) SetName(v string) {
 	o.Name = v
+}
+
+// GetPath returns the Path field value
+func (o *ScrapeTarget) GetPath() string {
+	if o == nil  {
+		var ret string
+		return ret
+	}
+
+	return o.Path
+}
+
+// GetPathOk returns a tuple with the Path field value
+// and a boolean to check if the value has been set.
+func (o *ScrapeTarget) GetPathOk() (*string, bool) {
+	if o == nil  {
+		return nil, false
+	}
+	return &o.Path, true
+}
+
+// SetPath sets field value
+func (o *ScrapeTarget) SetPath(v string) {
+	o.Path = v
 }
 
 // GetDescription returns the Description field value
@@ -139,10 +167,37 @@ func (o *ScrapeTarget) SetInstanceSpec(v InstanceSpec) {
 	o.InstanceSpec = v
 }
 
+// GetStaticSpec returns the StaticSpec field value
+func (o *ScrapeTarget) GetStaticSpec() StaticSpec {
+	if o == nil  {
+		var ret StaticSpec
+		return ret
+	}
+
+	return o.StaticSpec
+}
+
+// GetStaticSpecOk returns a tuple with the StaticSpec field value
+// and a boolean to check if the value has been set.
+func (o *ScrapeTarget) GetStaticSpecOk() (*StaticSpec, bool) {
+	if o == nil  {
+		return nil, false
+	}
+	return &o.StaticSpec, true
+}
+
+// SetStaticSpec sets field value
+func (o *ScrapeTarget) SetStaticSpec(v StaticSpec) {
+	o.StaticSpec = v
+}
+
 func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["name"] = o.Name
+	}
+	if true {
+		toSerialize["path"] = o.Path
 	}
 	if true {
 		toSerialize["description"] = o.Description
@@ -152,6 +207,9 @@ func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["instanceSpec"] = o.InstanceSpec
+	}
+	if true {
+		toSerialize["staticSpec"] = o.StaticSpec
 	}
 	return json.Marshal(toSerialize)
 }
