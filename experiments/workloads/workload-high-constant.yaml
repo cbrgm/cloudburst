@@ -1,0 +1,16 @@
+config:
+  target: 'http://localhost:6661'
+  http:
+    pool: 750
+  phases:
+    - duration: 600s
+      arrivalRate: 1000
+  processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
+  defaults:
+
+scenarios:
+  - flow:
+      - post:
+          url: '/bubblesort'
+          beforeRequest: "beforeRequest"
+    name: 'bubblesort'
