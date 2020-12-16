@@ -1,12 +1,14 @@
 package cloudburst
 
+import "math"
+
 type AutoScaler struct {
 	state     *State
 	requester *requester
 }
 
 func NewAutoScaler(state *State) *AutoScaler {
-	threshold := newThreshold(0, 0)
+	threshold := newThreshold(0, -1)
 	return &AutoScaler{
 		state:     state,
 		requester: newRequester(state, threshold),
@@ -26,7 +28,7 @@ func (s *AutoScaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) erro
 		return err
 	}
 
-	demand := s.calculateDemand(instances, queryResult)
+	demand := s.calculateDemand(scrapeTarget, instances, queryResult)
 	err = s.processDemand(demand, instances, scrapeTarget)
 	if err != nil {
 		return err
@@ -42,9 +44,13 @@ type instanceDemand struct {
 // CalculateDemand calculates the queryResult for Instance objects. The provided instances slice is a list of all instances
 // to be filtered for calculation. The provided queryResult value is the result of a metric query.
 // CalculateDemand returns instanceDemand.
-func (s *AutoScaler) calculateDemand(instances []*Instance, queryResult float64) instanceDemand {
-	sumTerminating := CountInstancesByActiveStatus(instances, false)
+func (s *AutoScaler) calculateDemand(scrapeTarget *ScrapeTarget, instances []*Instance, queryResult float64) instanceDemand {
 
+	sumRunningInstancesExternAndIntern := float64(CountInstancesByStatus(instances, Running) + len(scrapeTarget.StaticSpec.Endpoints))
+	queryResult = math.Round(((queryResult - 1) * sumRunningInstancesExternAndIntern) + 0.5)
+	println("VALUE--------------------> %d", queryResult)
+
+	sumTerminating := CountInstancesByActiveStatus(instances, false)
 	progress := GetInstancesByStatus(instances, Progress)
 	sumProgressStart := CountInstancesByActiveStatus(progress, true)
 

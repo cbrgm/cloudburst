@@ -58,8 +58,6 @@ func (sp *ScrapeTargetProcessor) processScrapeTarget(promAPI prometheusv1.API, s
 		}
 	}
 
-	fmt.Println(queryResult)
-
 	err = sp.autoscaler.Scale(scrapeTarget, queryResult)
 	if err != nil {
 		return err

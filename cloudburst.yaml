@@ -4,20 +4,13 @@ targets:
     path: /bubblesort
     description: request duration greater than 0.045ms
     query: |
-      round(((((rate(example_sorting_request_duration_seconds_sum[1m]) / rate(example_sorting_request_duration_seconds_count[1m])) / 0.035) -1) * 10) + 0.5)
+      (sum(rate(example_sorting_requests_total[30s])) / 15)
+    # query: |
+    #  round(((((rate(example_sorting_request_duration_seconds_sum[1m]) / rate(example_sorting_request_duration_seconds_count[1m])) / 0.035) -1) * 10) + 0.5)
     spec:
       container:
         name: "bubblesort-svc"
         image: cbrgm/example-app:latest
     static:
       endpoints:
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
-        - http://localhost:9997
         - http://localhost:9997

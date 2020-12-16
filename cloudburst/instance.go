@@ -93,6 +93,16 @@ func GetInstancesByStatus(instances []*Instance, status Status) []*Instance {
 	return res
 }
 
+func GetInstancesByWithoutStatus(instances []*Instance, status Status) []*Instance {
+	var res []*Instance
+	for _, instance := range instances {
+		if !isMatchingStatus(instance, status) {
+			res = append(res, instance)
+		}
+	}
+	return res
+}
+
 func isMatchingStatus(instance *Instance, status Status) bool {
 	return instance.Status.Status == status
 }
