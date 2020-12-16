@@ -6,7 +6,7 @@ type AutoScaler struct {
 }
 
 func NewAutoScaler(state *State) *AutoScaler {
-	threshold := newThreshold(0, -1)
+	threshold := newThreshold(0, 0)
 	return &AutoScaler{
 		state:     state,
 		requester: newRequester(state, threshold),

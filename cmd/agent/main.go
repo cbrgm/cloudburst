@@ -195,6 +195,7 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	// create/delete items
 	for _, instance := range progress {
 		instance.Status.Status = cloudburst.Running
+		instance.Endpoint = "http://localhost:9998"
 		time.Sleep(time.Duration(1) * time.Second)
 	}
 

@@ -1,22 +1,24 @@
 config:
-  target: 'http://localhost:8080'
+  target: 'http://localhost:6661'
+  http:
+    pool: 150
   phases:
     - duration: 20
-      arrivalRate: 5
+      arrivalRate: 15
       name: Warm up
     - duration: 40
       arrivalRate: 5
-      rampTo: 50
+      rampTo: 150
       name: Ramp up load
     - duration: 200
-      arrivalRate: 50
+      arrivalRate: 200
       name: Sustained load
     - duration: 40
       arrivalRate: 5
-      rampTo: 50
+      rampTo: 150
       name: Cool down load
     - duration: 20
-      arrivalRate: 5
+      arrivalRate: 15
       name: cool down
   processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
   defaults:

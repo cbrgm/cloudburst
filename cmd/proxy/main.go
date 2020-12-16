@@ -9,6 +9,7 @@ import (
 	"github.com/zalando/skipper"
 	"github.com/zalando/skipper/routing"
 	"os"
+	"time"
 )
 
 const (
@@ -69,8 +70,19 @@ func proxyAction(logger log.Logger) cli.ActionFunc {
 					"addr", c.String(flagAddr),
 				)
 				err := skipper.Run(skipper.Options{
-					Address:           c.String(flagAddr),
-					CustomDataClients: []routing.DataClient{client},
+					Address:                      c.String(flagAddr),
+					CustomDataClients:            []routing.DataClient{client},
+					SourcePollTimeout:            time.Duration(5) * time.Second,
+					TimeoutBackend:               time.Duration(2) * time.Second,
+					WaitFirstRouteLoad:           true,
+					KeepAliveBackend:             time.Duration(30) * time.Second,
+					MaxIdleConnsBackend:          0,
+					ResponseHeaderTimeoutBackend: time.Duration(1) * time.Minute,
+					TLSHandshakeTimeoutBackend:   time.Duration(1) * time.Minute,
+					CloseIdleConnsPeriod:         time.Duration(20) * time.Second,
+					IdleTimeoutServer:            time.Duration(62) * time.Second,
+					ReadTimeoutServer:            time.Duration(5) * time.Minute,
+					WriteTimeoutServer:           time.Duration(60) * time.Second,
 				})
 				return err
 			}, func(err error) {

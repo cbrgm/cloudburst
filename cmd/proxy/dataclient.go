@@ -11,13 +11,12 @@ import (
 	"github.com/zalando/skipper/eskip"
 	"net/http"
 	"net/url"
-	"time"
 )
 
 type Client struct {
-	client  *apiclient.APIClient
-	current map[string]*eskip.Route
-	logger  log.Logger
+	client *apiclient.APIClient
+	old    map[string]*eskip.Route
+	logger log.Logger
 }
 
 // NewCloudburst creates a data client that parses a string of eskip Client and
@@ -35,9 +34,9 @@ func NewCloudburst(logger log.Logger, prometheusURL string) (*Client, error) {
 	client := apiclient.NewAPIClient(clientCfg)
 
 	return &Client{
-		client:  client,
-		logger:  logger,
-		current: make(map[string]*eskip.Route),
+		client: client,
+		logger: logger,
+		old:    make(map[string]*eskip.Route),
 	}, nil
 }
 
@@ -98,7 +97,7 @@ func (c *Client) routeForScrapeTarget(scrapeTarget *cloudburst.ScrapeTarget) (*e
 		Filters:     []*eskip.Filter{},
 		BackendType: 4,
 		Backend:     "",
-		LBAlgorithm: "roundRobin",
+		LBAlgorithm: "random",
 		LBEndpoints: lbEndpoints,
 	}, nil
 }
@@ -120,7 +119,7 @@ func (c *Client) LoadAll() ([]*eskip.Route, error) {
 		return nil, fmt.Errorf("failed to load routes from cloudburst-api: %v", err)
 	}
 
-	c.current = mapRoutes(r)
+	c.old = mapRoutes(r)
 	level.Debug(c.logger).Log("msg", "all routes loaded and mapped")
 
 	return r, nil
@@ -135,24 +134,24 @@ func (c *Client) LoadUpdate() ([]*eskip.Route, []string, error) {
 		return nil, nil, fmt.Errorf("polling for updates from cloudburst-api failed: %s", err)
 	}
 
-	next := mapRoutes(r)
-	level.Debug(c.logger).Log("msg", "next version of routes loaded and mapped")
+	new := mapRoutes(r)
+	level.Debug(c.logger).Log("msg", "new version of routes loaded and mapped")
 
 	var (
 		updatedRoutes []*eskip.Route
 		deletedIDs    []string
 	)
 
-	for id := range c.current {
-		if r, ok := next[id]; ok && r.String() != c.current[id].String() {
-			updatedRoutes = append(updatedRoutes, r)
+	for key := range c.old {
+		if value, ok := new[key]; ok && value.String() != c.old[key].String() {
+			updatedRoutes = append(updatedRoutes, value)
 		} else if !ok {
-			deletedIDs = append(deletedIDs, id)
+			deletedIDs = append(deletedIDs, key)
 		}
 	}
 
-	for id, r := range next {
-		if _, ok := c.current[id]; !ok {
+	for id, r := range new {
+		if _, ok := c.old[id]; !ok {
 			updatedRoutes = append(updatedRoutes, r)
 		}
 	}
@@ -161,8 +160,6 @@ func (c *Client) LoadUpdate() ([]*eskip.Route, []string, error) {
 		level.Info(c.logger).Log("msg", "diff taken", "updates",  len(updatedRoutes), "deletions", len(deletedIDs))
 	}
 
-	time.Sleep(time.Duration(5) * time.Second)
-
-	c.current = next
+	c.old = new
 	return updatedRoutes, deletedIDs, nil
 }
