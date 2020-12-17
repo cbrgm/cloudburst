@@ -55,6 +55,14 @@ func OpenAPItoInstance(i openapi.Instance) *cloudburst.Instance {
 	}
 }
 
+func InstanceEventToOpenAPI(e cloudburst.InstanceEvent) openapi.InstanceEvent {
+	return openapi.InstanceEvent{
+		Type:   string(e.EventType),
+		Target: e.ScrapeTarget,
+		Data:   InstanceToOpenAPI(e.Instance),
+	}
+}
+
 func ScrapeTargetToOpenAPI(s *cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 	return openapi.ScrapeTarget{
 		Name:        s.Name,

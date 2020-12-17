@@ -10,11 +10,11 @@ import (
 )
 
 type ScrapeTargetProcessor struct {
-	state      *State
+	state      State
 	autoscaler *AutoScaler
 }
 
-func NewScrapeTargetProcessor(state *State) *ScrapeTargetProcessor {
+func NewScrapeTargetProcessor(state State) *ScrapeTargetProcessor {
 	return &ScrapeTargetProcessor{
 		state:      state,
 		autoscaler: NewAutoScaler(state),

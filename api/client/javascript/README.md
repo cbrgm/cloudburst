@@ -127,6 +127,7 @@ Class | Method | HTTP request | Description
 
  - [Cloudburst.ContainerSpec](docs/ContainerSpec.md)
  - [Cloudburst.Instance](docs/Instance.md)
+ - [Cloudburst.InstanceEvent](docs/InstanceEvent.md)
  - [Cloudburst.InstanceSpec](docs/InstanceSpec.md)
  - [Cloudburst.InstanceStatus](docs/InstanceStatus.md)
  - [Cloudburst.ScrapeTarget](docs/ScrapeTarget.md)

@@ -9,6 +9,7 @@ client.go
 configuration.go
 docs/ContainerSpec.md
 docs/Instance.md
+docs/InstanceEvent.md
 docs/InstanceSpec.md
 docs/InstanceStatus.md
 docs/InstancesApi.md
@@ -20,6 +21,7 @@ go.mod
 go.sum
 model_container_spec.go
 model_instance.go
+model_instance_event.go
 model_instance_spec.go
 model_instance_status.go
 model_scrape_target.go

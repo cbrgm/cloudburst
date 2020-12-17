@@ -82,24 +82,27 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			return fmt.Errorf("failed to parse scrapeTargets from config: %w", err)
 		}
 
-		var db State
+		events := cloudburst.NewEvents()
 
-		var dbPath = c.String(flagBoltPath)
-		bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
-		if err != nil {
-			return fmt.Errorf("failed to create bolt db: %s", err)
+		var db cloudburst.State
+		{
+			var dbPath = c.String(flagBoltPath)
+			bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
+			if err != nil {
+				return fmt.Errorf("failed to create bolt db: %s", err)
+			}
+			defer dbClose()
+
+			boltEvents := boltdb.NewEvents(bolt, events)
+			db = boltEvents
 		}
-		defer dbClose()
 
-		var state = cloudburst.NewStateWithProvider(bolt)
-		var query = cloudburst.NewScrapeTargetProcessor(state)
-
-		db = state
+		var query = cloudburst.NewScrapeTargetProcessor(db)
 
 		var gr run.Group
 		// api
 		{
-			apiV1, err := NewV1(logger, db)
+			apiV1, err := NewV1(logger, db, events)
 			if err != nil {
 				return fmt.Errorf("failed to initialize api: %w", err)
 			}
@@ -130,7 +133,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		// polling
 		{
 			if c.Bool(flagDebug) {
-				var autoscaler = cloudburst.NewAutoScaler(state)
+				var autoscaler = cloudburst.NewAutoScaler(db)
 				var ticker = make(chan int)
 				gr.Add(func() error {
 					scan := bufio.NewScanner(os.Stdin)

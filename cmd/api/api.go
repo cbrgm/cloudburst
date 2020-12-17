@@ -16,7 +16,7 @@ type State interface {
 	InstanceGetter
 }
 
-func NewV1(logger log.Logger, state State) (http.Handler, error) {
+func NewV1(logger log.Logger, state State, events Events) (http.Handler, error) {
 
 	routes := []openapi.Router{
 		openapi.NewTargetsApiController(&ScrapeTargets{
@@ -39,6 +39,10 @@ func NewV1(logger log.Logger, state State) (http.Handler, error) {
 				Handler(route.HandlerFunc)
 		}
 	}
+
+	router.Methods(http.MethodGet).
+		Path("/api/v1/instances/events").
+		HandlerFunc(instanceEventsHandler(logger, events))
 
 	return router, nil
 }
