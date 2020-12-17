@@ -56,6 +56,9 @@ func NewDB(path string, initState []*cloudburst.ScrapeTarget) (*BoltDB, func() e
 
 func instancesBucketForScrapeTarget(tx *bolt.Tx, scrapeTarget string) *bolt.Bucket {
 	b := tx.Bucket([]byte(bucketScrapeTargets))
+	if b == nil {
+		return nil
+	}
 	return b.Bucket([]byte(bucketInstancesName(scrapeTarget)))
 }
 
