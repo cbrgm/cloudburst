@@ -20,12 +20,12 @@ func newThreshold(upper, lower int) Threshold {
 // Create requester instances with newRequester.
 type requester struct {
 	threshold Threshold
-	state     *State
+	state     State
 }
 
 // newRequester creates a new requester. The provided State is used to access and modify instance states
 // stored by a database provider implementation. The provided requestCalculator is used to calculate
-func newRequester(state *State, threshold Threshold) *requester {
+func newRequester(state State, threshold Threshold) *requester {
 	return &requester{
 		threshold: threshold,
 		state:     state,

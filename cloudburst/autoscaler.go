@@ -3,11 +3,11 @@ package cloudburst
 import "math"
 
 type AutoScaler struct {
-	state     *State
+	state     State
 	requester *requester
 }
 
-func NewAutoScaler(state *State) *AutoScaler {
+func NewAutoScaler(state State) *AutoScaler {
 	threshold := newThreshold(0, -1)
 	return &AutoScaler{
 		state:     state,

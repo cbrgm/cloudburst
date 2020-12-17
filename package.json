@@ -1,0 +1,31 @@
+{
+  "name": "cloudburst",
+  "version": "1.0.0",
+  "description": "A distributed autoscaler for cloud bursting ",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbrgm/cloudburst.git"
+  },
+  "author": "Christian Bargmann",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cbrgm/cloudburst/issues"
+  },
+  "homepage": "https://github.com/cbrgm/cloudburst#readme",
+  "devDependencies": {
+    "esbuild": "^0.5.3"
+  },
+  "browser": {
+    "fs": false
+  },
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "lit-element": "^2.3.1",
+    "querystring": "^0.2.0",
+    "superagent": "^5.2.2"
+  }
+}

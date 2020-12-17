@@ -15,6 +15,7 @@
 import ApiClient from './ApiClient';
 import ContainerSpec from './model/ContainerSpec';
 import Instance from './model/Instance';
+import InstanceEvent from './model/InstanceEvent';
 import InstanceSpec from './model/InstanceSpec';
 import InstanceStatus from './model/InstanceStatus';
 import ScrapeTarget from './model/ScrapeTarget';
@@ -72,6 +73,12 @@ export {
      * @property {module:model/Instance}
      */
     Instance,
+
+    /**
+     * The InstanceEvent model constructor.
+     * @property {module:model/InstanceEvent}
+     */
+    InstanceEvent,
 
     /**
      * The InstanceSpec model constructor.

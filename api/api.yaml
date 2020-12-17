@@ -155,3 +155,17 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Instance'
+    InstanceEvent:
+      type: object
+      required:
+        - type
+        - target
+        - data
+      properties:
+        type:
+          type: string
+          enum: ['save', 'remove']
+        target:
+          type: string
+        data:
+          $ref: '#/components/schemas/Instances'

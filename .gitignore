@@ -10,14 +10,29 @@
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
-
 .idea
+
+/api/**/.travis.yml
+/api/**/api/openapi.yaml
+/api/**/git_push.sh
+/api/**/go.mod
+/api/**/go.sum
+/api/client/javascript/.babelrc
+/api/client/javascript/mocha.opts
+/api/client/javascript/package.json
+/api/server/go/Dockerfile
+/api/server/go/main.go
+/api/server/go/README.md
+/cmd/agent/agent
+/cmd/api/api
+/cmd/api/assets/*
+/cmd/proxy/proxy
+/development/data
 /example/config/data/
 /example/example-app/example-app
 /example/example-blackhole/example-blackhole
-/development/data
 
-/cmd/agent/agent
-/cmd/api/api
-/cmd/proxy/proxy
+/node_modules/
+/ui/bundle.js
+/ui/bundle.js.map
 /vendor/

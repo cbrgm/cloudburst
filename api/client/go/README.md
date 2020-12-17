@@ -87,6 +87,7 @@ Class | Method | HTTP request | Description
 
  - [ContainerSpec](docs/ContainerSpec.md)
  - [Instance](docs/Instance.md)
+ - [InstanceEvent](docs/InstanceEvent.md)
  - [InstanceSpec](docs/InstanceSpec.md)
  - [InstanceStatus](docs/InstanceStatus.md)
  - [ScrapeTarget](docs/ScrapeTarget.md)

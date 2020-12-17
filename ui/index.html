@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cloudburst</title>
+    <base href="/">
+    <link rel="stylesheet" href="bulma.min.css">
+    <script type="module" src="bundle.js"></script>
+    <style>
+        html, body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            height: 100%;
+            background: #ECF0F3;
+        }
+        nav.navbar {
+            border-top: 4px solid #276cda;
+            margin-bottom: 1rem;
+        }
+        .navbar-item.brand-text {
+            font-weight: 300;
+        }
+        .navbar-item, .navbar-link {
+            font-size: 14px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar is-white">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item brand-text" href="./index.html">
+                Cloudburst Autoscaler
+            </a>
+        </div>
+        <div id="navMenu" class="navbar-menu">
+            <div class="navbar-start">
+            </div>
+        </div>
+    </div>
+</nav>
+
+<cloudburst-app></cloudburst-app>
+
+</body>
+</html>

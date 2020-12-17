@@ -206,3 +206,21 @@ components:
       items:
         $ref: '#/components/schemas/Instance'
       type: array
+    InstanceEvent:
+      properties:
+        type:
+          enum:
+          - save
+          - remove
+          type: string
+        target:
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/Instance'
+          type: array
+      required:
+      - data
+      - target
+      - type
+      type: object

@@ -22,6 +22,14 @@ func InstanceToOpenAPI(i *cloudburst.Instance) openapi.Instance {
 	}
 }
 
+func InstancesToOpenAPI(instances []*cloudburst.Instance) []openapi.Instance {
+	res := []openapi.Instance{}
+	for _, instance := range instances {
+		res = append(res, InstanceToOpenAPI(instance))
+	}
+	return res
+}
+
 func OpenAPItoInstance(i openapi.Instance) *cloudburst.Instance {
 	var status cloudburst.Status
 	switch i.Status.Status {
@@ -52,6 +60,14 @@ func OpenAPItoInstance(i openapi.Instance) *cloudburst.Instance {
 			Status:  status,
 			Started: i.Status.Started,
 		},
+	}
+}
+
+func InstanceEventToOpenAPI(e cloudburst.InstanceEvent) openapi.InstanceEvent {
+	return openapi.InstanceEvent{
+		Type:   string(e.EventType),
+		Target: e.ScrapeTarget,
+		Data:   InstancesToOpenAPI(e.Instances),
 	}
 }
 

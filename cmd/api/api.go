@@ -16,7 +16,7 @@ type State interface {
 	InstanceGetter
 }
 
-func NewV1(logger log.Logger, state State) (http.Handler, error) {
+func NewV1(logger log.Logger, state State, events Events) (http.Handler, error) {
 
 	routes := []openapi.Router{
 		openapi.NewTargetsApiController(&ScrapeTargets{
@@ -40,6 +40,10 @@ func NewV1(logger log.Logger, state State) (http.Handler, error) {
 		}
 	}
 
+	router.Methods(http.MethodGet).
+		Path("/api/v1/instances/events").
+		HandlerFunc(instanceEventsHandler(logger, events))
+
 	return router, nil
 }
 
@@ -60,7 +64,7 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 		}, err
 	}
 
-	var body []openapi.ScrapeTarget
+	body :=  []openapi.ScrapeTarget{}
 	for _, st := range scrapeTargets {
 		body = append(body, convert.ScrapeTargetToOpenAPI(st))
 	}
@@ -82,7 +86,7 @@ type InstanceSetter interface {
 }
 
 func (i *Instances) SaveInstances(ctx context.Context, targetName string, instances []openapi.Instance) (openapi.ImplResponse, error) {
-	var in []*cloudburst.Instance
+	in := []*cloudburst.Instance{}
 	for _, item := range instances {
 		in = append(in, convert.OpenAPItoInstance(item))
 	}
@@ -114,7 +118,7 @@ func (s *Instances) GetInstances(ctx context.Context, targetName string) (openap
 		}, err
 	}
 
-	var body []openapi.Instance
+	body := []openapi.Instance{}
 	for _, st := range instances {
 		body = append(body, convert.InstanceToOpenAPI(st))
 	}

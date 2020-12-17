@@ -1,6 +1,6 @@
 prometheus_url: http://localhost:9090
 targets:
-  - name: bubblesort
+  - name: bubblesort-service
     path: /bubblesort
     description: request duration greater than 0.045ms
     query: |

@@ -13,6 +13,7 @@ go/impl.go
 go/logger.go
 go/model_container_spec.go
 go/model_instance.go
+go/model_instance_event.go
 go/model_instance_spec.go
 go/model_instance_status.go
 go/model_scrape_target.go
