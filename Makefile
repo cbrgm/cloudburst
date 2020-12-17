@@ -51,3 +51,12 @@ cmd/agent/agent:
 .PHONY: cmd/proxy/proxy
 cmd/proxy/proxy:
 	$(GO) build -v -o ./cmd/proxy/proxy ./cmd/proxy
+
+# ui related
+
+node_modules: package.json package-lock.json
+	npm install
+	touch $@
+
+ui/bundle.js: node_modules $(shell find ./ui -iname '*.js' | grep -v ./ui/bundle.js)
+	node_modules/esbuild/bin/esbuild --external:fs --bundle ui/index.js --outfile=ui/bundle.js --sourcemap
