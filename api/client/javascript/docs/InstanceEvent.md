@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **type** | **String** |  | 
 **target** | **String** |  | 
-**data** | [**Instance**](Instance.md) |  | 
+**data** | [**[Instance]**](Instance.md) |  | 
 
 
 

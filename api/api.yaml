@@ -168,4 +168,4 @@ components:
         target:
           type: string
         data:
-          $ref: '#/components/schemas/Instance'
+          $ref: '#/components/schemas/Instances'

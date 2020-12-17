@@ -18,14 +18,14 @@ import (
 type InstanceEvent struct {
 	Type string `json:"type"`
 	Target string `json:"target"`
-	Data Instance `json:"data"`
+	Data []Instance `json:"data"`
 }
 
 // NewInstanceEvent instantiates a new InstanceEvent object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstanceEvent(type_ string, target string, data Instance, ) *InstanceEvent {
+func NewInstanceEvent(type_ string, target string, data []Instance, ) *InstanceEvent {
 	this := InstanceEvent{}
 	this.Type = type_
 	this.Target = target
@@ -90,9 +90,9 @@ func (o *InstanceEvent) SetTarget(v string) {
 }
 
 // GetData returns the Data field value
-func (o *InstanceEvent) GetData() Instance {
+func (o *InstanceEvent) GetData() []Instance {
 	if o == nil  {
-		var ret Instance
+		var ret []Instance
 		return ret
 	}
 
@@ -101,7 +101,7 @@ func (o *InstanceEvent) GetData() Instance {
 
 // GetDataOk returns a tuple with the Data field value
 // and a boolean to check if the value has been set.
-func (o *InstanceEvent) GetDataOk() (*Instance, bool) {
+func (o *InstanceEvent) GetDataOk() (*[]Instance, bool) {
 	if o == nil  {
 		return nil, false
 	}
@@ -109,7 +109,7 @@ func (o *InstanceEvent) GetDataOk() (*Instance, bool) {
 }
 
 // SetData sets field value
-func (o *InstanceEvent) SetData(v Instance) {
+func (o *InstanceEvent) SetData(v []Instance) {
 	o.Data = v
 }
 

@@ -216,7 +216,9 @@ components:
         target:
           type: string
         data:
-          $ref: '#/components/schemas/Instance'
+          items:
+            $ref: '#/components/schemas/Instance'
+          type: array
       required:
       - data
       - target

@@ -25,7 +25,7 @@ class InstanceEvent {
      * @alias module:model/InstanceEvent
      * @param type {module:model/InstanceEvent.TypeEnum} 
      * @param target {String} 
-     * @param data {module:model/Instance} 
+     * @param data {Array.<module:model/Instance>} 
      */
     constructor(type, target, data) { 
         
@@ -61,7 +61,7 @@ class InstanceEvent {
                 obj['target'] = ApiClient.convertToType(data['target'], 'String');
             }
             if (data.hasOwnProperty('data')) {
-                obj['data'] = Instance.constructFromObject(data['data']);
+                obj['data'] = ApiClient.convertToType(data['data'], [Instance]);
             }
         }
         return obj;
@@ -81,7 +81,7 @@ InstanceEvent.prototype['type'] = undefined;
 InstanceEvent.prototype['target'] = undefined;
 
 /**
- * @member {module:model/Instance} data
+ * @member {Array.<module:model/Instance>} data
  */
 InstanceEvent.prototype['data'] = undefined;
 

@@ -6,13 +6,13 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Type** | **string** |  | 
 **Target** | **string** |  | 
-**Data** | [**Instance**](Instance.md) |  | 
+**Data** | [**[]Instance**](Instance.md) |  | 
 
 ## Methods
 
 ### NewInstanceEvent
 
-`func NewInstanceEvent(type_ string, target string, data Instance, ) *InstanceEvent`
+`func NewInstanceEvent(type_ string, target string, data []Instance, ) *InstanceEvent`
 
 NewInstanceEvent instantiates a new InstanceEvent object
 This constructor will assign default values to properties that have it defined,
@@ -69,20 +69,20 @@ SetTarget sets Target field to given value.
 
 ### GetData
 
-`func (o *InstanceEvent) GetData() Instance`
+`func (o *InstanceEvent) GetData() []Instance`
 
 GetData returns the Data field if non-nil, zero value otherwise.
 
 ### GetDataOk
 
-`func (o *InstanceEvent) GetDataOk() (*Instance, bool)`
+`func (o *InstanceEvent) GetDataOk() (*[]Instance, bool)`
 
 GetDataOk returns a tuple with the Data field if it's non-nil, zero value otherwise
 and a boolean to check if the value has been set.
 
 ### SetData
 
-`func (o *InstanceEvent) SetData(v Instance)`
+`func (o *InstanceEvent) SetData(v []Instance)`
 
 SetData sets Data field to given value.
 

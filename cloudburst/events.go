@@ -16,14 +16,14 @@ type InstanceEvent struct {
 	EventType    EventType `json:"type"`
 
 	ScrapeTarget string    `json:"target"`
-	Instance     *Instance `json:"data"`
+	Instances     []*Instance `json:"data"`
 }
 
 // NewInstanceEvent creates a new event to be published via instance event bus.
-func NewInstanceEvent(eventType EventType, instance *Instance) InstanceEvent {
+func NewInstanceEvent(eventType EventType, instance []*Instance) InstanceEvent {
 	return InstanceEvent{
 		EventType: eventType,
-		Instance:  instance,
+		Instances:  instance,
 	}
 }
 

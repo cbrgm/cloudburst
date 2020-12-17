@@ -134,7 +134,6 @@ func (bdb *BoltDB) SaveInstance(scrapeTarget string, instance *cloudburst.Instan
 
 		return b.Put([]byte(key), value)
 	})
-
 	return instance, err
 }
 

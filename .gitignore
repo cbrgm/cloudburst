@@ -25,6 +25,7 @@
 /api/server/go/README.md
 /cmd/agent/agent
 /cmd/api/api
+/cmd/api/assets/*
 /cmd/proxy/proxy
 /development/data
 /example/config/data/

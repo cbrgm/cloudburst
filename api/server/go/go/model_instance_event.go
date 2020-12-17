@@ -15,5 +15,5 @@ type InstanceEvent struct {
 
 	Target string `json:"target"`
 
-	Data Instance `json:"data"`
+	Data []Instance `json:"data"`
 }

@@ -27,7 +27,17 @@ func (e *Events) GetInstances(scrapeTarget string) ([]*cloudburst.Instance, erro
 }
 
 func (e *Events) RemoveInstances(scrapeTarget string, instances []*cloudburst.Instance) error {
-	return e.BoltDB.RemoveInstances(scrapeTarget, instances)
+	err :=  e.BoltDB.RemoveInstances(scrapeTarget, instances)
+	if err != nil {
+		return err
+	}
+	e.events.PublishInstanceEvent(cloudburst.InstanceEvent{
+		EventType:    cloudburst.InstanceRemoveEvent,
+		ScrapeTarget: scrapeTarget,
+		Instances:    instances,
+	})
+
+	return err
 }
 
 func (e *Events) RemoveInstance(scrapeTarget string, instance *cloudburst.Instance) error {
@@ -39,13 +49,23 @@ func (e *Events) RemoveInstance(scrapeTarget string, instance *cloudburst.Instan
 	e.events.PublishInstanceEvent(cloudburst.InstanceEvent{
 		EventType:    cloudburst.InstanceRemoveEvent,
 		ScrapeTarget: scrapeTarget,
-		Instance:     instance,
+		Instances:    []*cloudburst.Instance{instance},
 	})
 	return err
 }
 
 func (e *Events) SaveInstances(scrapeTarget string, instances []*cloudburst.Instance) ([]*cloudburst.Instance, error) {
-	return e.BoltDB.SaveInstances(scrapeTarget, instances)
+	saved, err := e.BoltDB.SaveInstances(scrapeTarget, instances)
+	if err != nil {
+		return saved, err
+	}
+
+	e.events.PublishInstanceEvent(cloudburst.InstanceEvent{
+		EventType:    cloudburst.InstanceSaveEvent,
+		ScrapeTarget: scrapeTarget,
+		Instances:    saved,
+	})
+	return saved, nil
 }
 
 func (e *Events) SaveInstance(scrapeTarget string, instance *cloudburst.Instance) (*cloudburst.Instance, error) {
@@ -57,7 +77,7 @@ func (e *Events) SaveInstance(scrapeTarget string, instance *cloudburst.Instance
 	e.events.PublishInstanceEvent(cloudburst.InstanceEvent{
 		EventType:    cloudburst.InstanceSaveEvent,
 		ScrapeTarget: scrapeTarget,
-		Instance:     saved,
+		Instances:    []*cloudburst.Instance{saved},
 	})
 	return saved, err
 }

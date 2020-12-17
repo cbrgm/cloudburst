@@ -17,6 +17,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -24,8 +25,9 @@ import (
 const (
 	flagAddr       = "addr"
 	flagBoltPath   = "bolt.path"
-	flagConfigFile = "file"
 	flagDebug      = "debug"
+	flagConfigFile = "file"
+	flagUIAssets   = "ui.assets"
 )
 
 func main() {
@@ -52,6 +54,11 @@ func main() {
 			Name:  flagAddr,
 			Usage: "The address for the public http server",
 			Value: ":6660",
+		},
+		cli.StringFlag{
+			Name:  flagUIAssets,
+			Usage: "The path to the ui assets",
+			Value: "./ui",
 		},
 		cli.BoolFlag{
 			Name:  flagDebug,
@@ -112,6 +119,19 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 			{
 				r.Mount("/", apiV1)
+			}
+			{
+				directory := c.String(flagUIAssets)
+				if _, err := os.Stat(directory); os.IsNotExist(err) {
+					return fmt.Errorf("assets path not found: %s", directory)
+				}
+
+				// serve ui
+				r.Get("/", file(directory, "index.html"))
+				r.Get("/bulma.min.css", file(directory, "bulma.min.css"))
+				r.Get("/bundle.js", file(directory, "bundle.js"))
+				r.Get("/bundle.js.map", file(directory, "bundle.js.map"))
+				r.NotFound(file(directory, "index.html"))
 			}
 
 			s := http.Server{
@@ -187,6 +207,12 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		}
 
 		return nil
+	}
+}
+
+func file(directory, name string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(directory, name))
 	}
 }
 
