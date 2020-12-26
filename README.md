@@ -1,4 +1,9 @@
-<img align="right" src="https://github.com/cbrgm/cloudburst/blob/master/documentation/logo.svg" width="100" height="100">
+
+<p align="center">
+<img align="center" src="https://github.com/cbrgm/cloudburst/blob/master/documentation/logo.svg" width="100" height="100">
+</p>
+
+<p align="center"><b>A Distributed Autoscaler For Cloud Bursting</b></p>
 
 # Cloudburst
 
