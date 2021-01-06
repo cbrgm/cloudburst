@@ -1,16 +1,35 @@
-<svg width="310" height="310" xmlns="http://www.w3.org/2000/svg">
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
  <g>
   <title>background</title>
-  <rect x="-1" y="-1" width="312" height="312" id="canvas_background" fill="none"/>
+  <rect fill="none" id="canvas_background" height="302" width="302" y="-1" x="-1"/>
  </g>
-
+ <defs>
+  <linearGradient id="svg_44" x1="1" y1="1" x2="1" y2="0">
+   <stop stop-color="#efac41" stop-opacity="0.99609" offset="0"/>
+   <stop stop-color="#de8531" stop-opacity="0.98828" offset="0.49609"/>
+   <stop stop-color="#b32900" stop-opacity="0.99609" offset="1"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+   <stop stop-color="0" stop-opacity="0" offset="NaN"/>
+  </linearGradient>
+ </defs>
  <g>
   <title>Layer 1</title>
-  <g id="svg_65" stroke="null">
-   <path d="m210.91605,304.73529c51.24,0 92.931,-47.19511 92.931,-105.21041c0,-56.81847 -87.094,-185.7742 -90.803,-191.23411l-2.128,-3.11947l-2.128,3.13985c-3.704,5.44973 -90.802,134.41451 -90.802,191.22392c0.001,58.00511 41.691,105.20022 92.93,105.20022z" id="svg_64" fill="#f2720d" stroke-width="10" stroke="#ffffff"/>
+  <g stroke="null" id="svg_65">
+   <path stroke="#ffffff" stroke-width="10" fill="url(#svg_44)" id="svg_64" d="m203.91264,334.09204c51.24,0 92.931,-47.19511 92.931,-105.21041c0,-56.81847 -87.094,-185.7742 -90.803,-191.23411l-2.128,-3.11947l-2.128,3.13985c-3.704,5.44973 -90.802,134.41451 -90.802,191.22392c0.001,58.00511 41.691,105.20022 92.93,105.20022z"/>
   </g>
-  <g id="svg_67" stroke="null">
-   <path d="m150.91605,305.08255c51.24,0 92.931,-41.681 92.931,-92.918c0,-50.18 -87.094,-164.069 -90.803,-168.891l-2.128,-2.755l-2.128,2.773c-3.704,4.813 -90.802,118.71 -90.802,168.882c0.001,51.228 41.691,92.909 92.93,92.909z" id="svg_66" fill="#cb3804" stroke-width="10" stroke="#ffffff"/>
+  <g stroke="null" id="svg_67">
+   <path stroke="#ffffff" stroke-width="10" fill="url(#svg_44)" id="svg_66" d="m133.91264,334.4393c51.24,0 92.931,-41.681 92.931,-92.918c0,-50.18 -87.094,-164.069 -90.803,-168.891l-2.128,-2.755l-2.128,2.773c-3.704,4.813 -90.802,118.71 -90.802,168.882c0.001,51.228 41.691,92.909 92.93,92.909z"/>
   </g>
   <g id="svg_4"/>
   <g id="svg_5"/>
@@ -42,8 +61,11 @@
   <g id="svg_33"/>
   <g id="svg_34"/>
   <g id="svg_35"/>
-  <g id="svg_73" stroke="null">
-   <path d="m100.52671,305.3603c51.24,0 92.931,-34.59143 92.931,-77.11347c0,-41.64483 -87.094,-136.16231 -90.803,-140.16414l-2.128,-2.2864l-2.128,2.30134c-3.704,3.99435 -90.802,98.51848 -90.802,140.15667c0.001,42.51457 41.691,77.106 92.93,77.106z" id="svg_72" fill="#fac40a" stroke-width="10" stroke="#ffffff"/>
+  <g stroke="null" id="svg_73">
+   <path stroke="#ffffff" stroke-width="10" fill="url(#svg_44)" id="svg_72" d="m63.5233,333.71705c51.24,0 92.931,-34.59143 92.931,-77.11347c0,-41.64483 -87.094,-136.16231 -90.803,-140.16414l-2.128,-2.2864l-2.128,2.30134c-3.704,3.99435 -90.802,98.51848 -90.802,140.15667c0.001,42.51457 41.691,77.106 92.93,77.106z"/>
+  </g>
+  <g id="svg_36" transform="rotate(-29.562307357788086 84.67043304443364,388.00836181640625) " stroke="null">
+   <path stroke-width="10" fill="#ffffff" id="svg_20" d="m84.66895,612.46523c154.62641,0 280.43691,-70.72461 280.43691,-157.66391c0,-85.14578 -262.82265,-278.39341 -274.01526,-286.57543l-6.42164,-4.67471l-6.42164,4.70525c-11.17752,8.16673 -274.01225,201.42796 -274.01225,286.56016c0.00302,86.92403 125.8105,157.64864 280.43389,157.64864l-0.00001,0z" stroke="#ffffff"/>
   </g>
  </g>
 </svg>
