@@ -1,5 +1,5 @@
 config:
-  target: 'http://localhost:6661'
+  target: 'http://localhost:6670'
   http:
     pool: 50
   phases:

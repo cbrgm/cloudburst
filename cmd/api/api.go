@@ -56,7 +56,7 @@ func NewV1(logger log.Logger, registry *prometheus.Registry, state State, events
 func instrument(r *prometheus.Registry) func(next http.Handler, name string) http.Handler {
 	requests := prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Name: "openapi_http_request_duration_seconds",
-		Help: "http latency to openapi hhttp handlers",
+		Help: "http latency to openapi http handlers",
 	}, []string{"code", "method", "name"})
 	r.MustRegister(requests)
 

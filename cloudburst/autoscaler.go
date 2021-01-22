@@ -13,23 +13,23 @@ type autoscaler struct {
 	state     State
 	requester *requester
 
-	instancesCounter *prometheus.CounterVec
+	instancesGauge *prometheus.GaugeVec
 }
 
 func NewAutoScaler(r *prometheus.Registry, state State) Autoscaler {
 
-	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "instances_total",
+	metrics := prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "cloudburst_api_instances_total",
 		Help: "instances total",
 	}, []string{"target", "status"})
 
-	r.MustRegister(counter)
+	r.MustRegister(metrics)
 
 	threshold := newThreshold(0, -1)
 	return &autoscaler{
-		state:            state,
-		requester:        newRequester(state, threshold),
-		instancesCounter: counter,
+		state:          state,
+		requester:      newRequester(state, threshold),
+		instancesGauge: metrics,
 	}
 }
 
@@ -46,9 +46,20 @@ func (s *autoscaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) erro
 		return err
 	}
 
+
+	metrics := make(map[Status]float64)
 	for _, instance := range instances {
-		s.instancesCounter.WithLabelValues(scrapeTarget.Name, string(instance.Status.Status)).Inc()
+		if val, ok := metrics[instance.Status.Status]; ok {
+			metrics[instance.Status.Status] = val + 1
+		} else {
+			metrics[instance.Status.Status] = 1
+		}
 	}
+	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Pending)).Set(metrics[Pending])
+	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Progress)).Set(metrics[Progress])
+	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Running)).Set(metrics[Running])
+	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Terminated)).Set(metrics[Terminated])
+	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Failure)).Set(metrics[Failure])
 
 	demand := s.calculateDemand(scrapeTarget, instances, queryResult)
 	err = s.processDemand(demand, instances, scrapeTarget)

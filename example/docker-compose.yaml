@@ -20,6 +20,12 @@ services:
       - 6660:6660
       - 6661:6661
     restart: always
+    volumes:
+      - ../cloudburst.yaml:/cloudburst.yaml
+    command:
+      - '--ui.assets=/assets/'
+      - '--bolt.path=/tmp/data'
+      - '--file=/cloudburst.yaml'
     networks:
       - promnet
 
