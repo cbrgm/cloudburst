@@ -5,19 +5,20 @@ import (
 	"fmt"
 	"github.com/prometheus/client_golang/api"
 	prometheusv1 "github.com/prometheus/client_golang/api/prometheus/v1"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	"time"
 )
 
 type ScrapeTargetProcessor struct {
 	state      State
-	autoscaler *AutoScaler
+	autoscaler Autoscaler
 }
 
-func NewScrapeTargetProcessor(state State) *ScrapeTargetProcessor {
+func NewScrapeTargetProcessor(r *prometheus.Registry, state State) *ScrapeTargetProcessor {
 	return &ScrapeTargetProcessor{
 		state:      state,
-		autoscaler: NewAutoScaler(state),
+		autoscaler: NewAutoScaler(r, state),
 	}
 }
 

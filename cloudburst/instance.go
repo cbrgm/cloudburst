@@ -53,7 +53,7 @@ func newInstanceName(spec InstanceSpec) string {
 	return fmt.Sprintf("%s-%s-%s", spec.Container.Name, "instance", strconv.Itoa(rand.Intn(100000)))
 }
 
-func CountInstancesByActiveStatus(instances []*Instance, active bool) int {
+func CountActiveInstances(instances []*Instance, active bool) int {
 	var sum int
 	for _, instance := range instances {
 		if instance.Active == active {
@@ -73,7 +73,7 @@ func CountInstancesByStatus(instances []*Instance, status Status) int {
 	return sum
 }
 
-func GetInstancesByActiveStatus(instances []*Instance, active bool) []*Instance {
+func GetActiveInstances(instances []*Instance, active bool) []*Instance {
 	var res []*Instance
 	for _, instance := range instances {
 		if instance.Active == active {
@@ -93,7 +93,7 @@ func GetInstancesByStatus(instances []*Instance, status Status) []*Instance {
 	return res
 }
 
-func GetInstancesByWithoutStatus(instances []*Instance, status Status) []*Instance {
+func GetInstancesWithoutStatus(instances []*Instance, status Status) []*Instance {
 	var res []*Instance
 	for _, instance := range instances {
 		if !isMatchingStatus(instance, status) {

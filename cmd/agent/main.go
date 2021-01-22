@@ -172,8 +172,8 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	instances := convert.APIClientToInstances(items)
 
 	// TODO: ignore instances with active = false and status = Terminated
-	terminate := cloudburst.GetInstancesByActiveStatus(instances, false)
-	terminate = cloudburst.GetInstancesByWithoutStatus(terminate, cloudburst.Terminated)
+	terminate := cloudburst.GetActiveInstances(instances, false)
+	terminate = cloudburst.GetInstancesWithoutStatus(terminate, cloudburst.Terminated)
 	pending := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 
 	for _, item := range pending {

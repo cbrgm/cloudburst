@@ -14,6 +14,15 @@ services:
     networks:
       - promnet
 
+  cloudburst-api:
+    image: cbrgm/cloudburst-api:latest
+    ports:
+      - 6660:6660
+      - 6661:6661
+    restart: always
+    networks:
+      - promnet
+
   example-app:
     image: cbrgm/example-app:latest
     ports:
@@ -21,7 +30,6 @@ services:
     restart: always
     networks:
       - promnet
-
 
   example-blackhole:
     image: cbrgm/example-blackhole:latest

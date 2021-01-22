@@ -1,21 +1,39 @@
 package cloudburst
 
-import "math"
+import (
+	"github.com/prometheus/client_golang/prometheus"
+	"math"
+)
 
-type AutoScaler struct {
-	state     State
-	requester *requester
+type Autoscaler interface {
+	Scale(scrapeTarget *ScrapeTarget, queryResult float64) error
 }
 
-func NewAutoScaler(state State) *AutoScaler {
+type autoscaler struct {
+	state     State
+	requester *requester
+
+	instancesCounter *prometheus.CounterVec
+}
+
+func NewAutoScaler(r *prometheus.Registry, state State) Autoscaler {
+
+	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "instances_total",
+		Help: "instances total",
+	}, []string{"target", "status"})
+
+	r.MustRegister(counter)
+
 	threshold := newThreshold(0, -1)
-	return &AutoScaler{
-		state:     state,
-		requester: newRequester(state, threshold),
+	return &autoscaler{
+		state:            state,
+		requester:        newRequester(state, threshold),
+		instancesCounter: counter,
 	}
 }
 
-func (s *AutoScaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) error {
+func (s *autoscaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) error {
 
 	// TODO: don't call state twice
 	err := s.cleanupTerminatedInstances(scrapeTarget)
@@ -26,6 +44,10 @@ func (s *AutoScaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) erro
 	instances, err := s.state.GetInstances(scrapeTarget.Name)
 	if err != nil {
 		return err
+	}
+
+	for _, instance := range instances {
+		s.instancesCounter.WithLabelValues(scrapeTarget.Name, string(instance.Status.Status)).Inc()
 	}
 
 	demand := s.calculateDemand(scrapeTarget, instances, queryResult)
@@ -44,15 +66,14 @@ type instanceDemand struct {
 // CalculateDemand calculates the queryResult for Instance objects. The provided instances slice is a list of all instances
 // to be filtered for calculation. The provided queryResult value is the result of a metric query.
 // CalculateDemand returns instanceDemand.
-func (s *AutoScaler) calculateDemand(scrapeTarget *ScrapeTarget, instances []*Instance, queryResult float64) instanceDemand {
+func (s *autoscaler) calculateDemand(scrapeTarget *ScrapeTarget, instances []*Instance, queryResult float64) instanceDemand {
 
 	sumRunningInstancesExternAndIntern := float64(CountInstancesByStatus(instances, Running) + len(scrapeTarget.StaticSpec.Endpoints))
 	queryResult = math.Round(((queryResult - 1) * sumRunningInstancesExternAndIntern) + 0.5)
-	println("VALUE--------------------> %d", queryResult)
 
-	sumTerminating := CountInstancesByActiveStatus(instances, false)
+	sumTerminating := CountActiveInstances(instances, false)
 	progress := GetInstancesByStatus(instances, Progress)
-	sumProgressStart := CountInstancesByActiveStatus(progress, true)
+	sumProgressStart := CountActiveInstances(progress, true)
 
 	var demand = (int(queryResult) + sumTerminating) - sumProgressStart
 
@@ -61,7 +82,7 @@ func (s *AutoScaler) calculateDemand(scrapeTarget *ScrapeTarget, instances []*In
 	}
 }
 
-func (s *AutoScaler) cleanupTerminatedInstances(target *ScrapeTarget) error {
+func (s *autoscaler) cleanupTerminatedInstances(target *ScrapeTarget) error {
 	instances, err := s.state.GetInstances(target.Name)
 	if err != nil {
 		return err
@@ -78,6 +99,6 @@ func (s *AutoScaler) cleanupTerminatedInstances(target *ScrapeTarget) error {
 	return nil
 }
 
-func (s *AutoScaler) processDemand(demand instanceDemand, instances []*Instance, scrapeTarget *ScrapeTarget) error {
+func (s *autoscaler) processDemand(demand instanceDemand, instances []*Instance, scrapeTarget *ScrapeTarget) error {
 	return s.requester.ProcessDemand(demand, instances, scrapeTarget)
 }

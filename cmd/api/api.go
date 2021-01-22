@@ -2,12 +2,16 @@ package main
 
 import (
 	"context"
+	"fmt"
 	openapi "github.com/cbrgm/cloudburst/api/server/go/go"
 	"github.com/cbrgm/cloudburst/cloudburst"
 	"github.com/cbrgm/cloudburst/cloudburst/convert"
+	"github.com/go-chi/chi/middleware"
 	"github.com/go-kit/kit/log"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
+	"time"
 )
 
 type State interface {
@@ -16,8 +20,8 @@ type State interface {
 	InstanceGetter
 }
 
-func NewV1(logger log.Logger, state State, events Events) (http.Handler, error) {
-
+func NewV1(logger log.Logger, registry *prometheus.Registry, state State, events Events) (http.Handler, error) {
+	instrument := instrument(registry)
 	routes := []openapi.Router{
 		openapi.NewTargetsApiController(&ScrapeTargets{
 			lister: state,
@@ -30,21 +34,46 @@ func NewV1(logger log.Logger, state State, events Events) (http.Handler, error) 
 
 	router := mux.NewRouter().StrictSlash(true)
 
-	// TODO: add prometheus instrumentation
 	for _, api := range routes {
 		for _, route := range api.Routes() {
 			router.Methods(route.Method).
 				Path(route.Pattern).
 				Name(route.Name).
-				Handler(route.HandlerFunc)
+				Handler(instrument(
+					route.HandlerFunc,
+					route.Name,
+				))
 		}
 	}
 
 	router.Methods(http.MethodGet).
 		Path("/api/v1/instances/events").
-		HandlerFunc(instanceEventsHandler(logger, events))
+		HandlerFunc(instanceEventsHandler(logger, registry, events))
 
 	return router, nil
+}
+
+func instrument(r *prometheus.Registry) func(next http.Handler, name string) http.Handler {
+	requests := prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name: "openapi_http_request_duration_seconds",
+		Help: "http latency to openapi hhttp handlers",
+	}, []string{"code", "method", "name"})
+	r.MustRegister(requests)
+
+	return func(next http.Handler, name string) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			start := time.Now()
+
+			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+			next.ServeHTTP(ww, r)
+
+			requests.WithLabelValues(
+				fmt.Sprintf("%d", ww.Status()),
+				r.Method,
+				name,
+			).Observe(time.Since(start).Seconds())
+		})
+	}
 }
 
 type ScrapeTargets struct {
@@ -64,7 +93,7 @@ func (s *ScrapeTargets) ListScrapeTargets(ctx context.Context) (openapi.ImplResp
 		}, err
 	}
 
-	body :=  []openapi.ScrapeTarget{}
+	body := []openapi.ScrapeTarget{}
 	for _, st := range scrapeTargets {
 		body = append(body, convert.ScrapeTargetToOpenAPI(st))
 	}

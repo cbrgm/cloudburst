@@ -13,6 +13,8 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"net/http"
@@ -23,11 +25,12 @@ import (
 )
 
 const (
-	flagAddr       = "addr"
-	flagBoltPath   = "bolt.path"
-	flagDebug      = "debug"
-	flagConfigFile = "file"
-	flagUIAssets   = "ui.assets"
+	flagAddr         = "addr"
+	flagInternalAddr = "internal.addr"
+	flagBoltPath     = "bolt.path"
+	flagDebug        = "debug"
+	flagConfigFile   = "file"
+	flagUIAssets     = "ui.assets"
 )
 
 func main() {
@@ -56,6 +59,11 @@ func main() {
 			Value: ":6660",
 		},
 		cli.StringFlag{
+			Name:  flagInternalAddr,
+			Usage: "The internal address for the public http server",
+			Value: ":6661",
+		},
+		cli.StringFlag{
 			Name:  flagUIAssets,
 			Usage: "The path to the ui assets",
 			Value: "./ui",
@@ -74,6 +82,12 @@ func main() {
 
 func apiAction(logger log.Logger) cli.ActionFunc {
 	return func(c *cli.Context) error {
+		registry := prometheus.NewRegistry()
+		registry.MustRegister(
+			prometheus.NewGoCollector(),
+			prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}),
+		)
+
 		bytes, err := ioutil.ReadFile(c.String(flagConfigFile))
 		if err != nil {
 			return fmt.Errorf("failed to read config file: %w", err)
@@ -104,18 +118,19 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			db = boltEvents
 		}
 
-		var query = cloudburst.NewScrapeTargetProcessor(db)
+		var engine = cloudburst.NewScrapeTargetProcessor(registry, db)
 
 		var gr run.Group
 		// api
 		{
-			apiV1, err := NewV1(logger, db, events)
+			apiV1, err := NewV1(logger, registry, db, events)
 			if err != nil {
 				return fmt.Errorf("failed to initialize api: %w", err)
 			}
 
 			r := chi.NewRouter()
 			r.Use(Logger(logger))
+			r.Use(HTTPMetrics(registry))
 
 			{
 				r.Mount("/", apiV1)
@@ -141,9 +156,29 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 			gr.Add(func() error {
 				level.Info(logger).Log(
-					"msg", "running HTTP API server",
+					"msg", "running public HTTP API server",
 					"addr", s.Addr,
 				)
+				return s.ListenAndServe()
+			}, func(err error) {
+				_ = s.Shutdown(context.TODO())
+			})
+		}
+		{
+			r := chi.NewRouter()
+			r.Mount("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
+			r.Mount("/debug", middleware.Profiler())
+
+			s := http.Server{
+				Addr:    c.String(flagInternalAddr),
+				Handler: r,
+			}
+			gr.Add(func() error {
+				level.Info(logger).Log(
+					"msg", "running internal HTTP API server",
+					"addr", s.Addr,
+				)
+
 				return s.ListenAndServe()
 			}, func(err error) {
 				_ = s.Shutdown(context.TODO())
@@ -153,7 +188,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		// polling
 		{
 			if c.Bool(flagDebug) {
-				var autoscaler = cloudburst.NewAutoScaler(db)
+				var autoscaler = cloudburst.NewAutoScaler(registry, db)
 				var ticker = make(chan int)
 				gr.Add(func() error {
 					scan := bufio.NewScanner(os.Stdin)
@@ -190,7 +225,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 					for {
 						select {
 						case <-ticker.C:
-							err = query.ProcessScrapeTargets(config.PrometheusURL)
+							err = engine.ProcessScrapeTargets(config.PrometheusURL)
 							if err != nil {
 								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 							}
@@ -235,5 +270,26 @@ func Logger(logger log.Logger) func(next http.Handler) http.Handler {
 				"bytes", ww.BytesWritten(),
 			)
 		})
+	}
+}
+
+// HTTPMetrics returns a middleware component to track http requests by prometheus
+func HTTPMetrics(registry *prometheus.Registry) func(next http.Handler) http.Handler {
+	duration := prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name: "http_request_duration_seconds",
+		Help: "latency of http requests",
+	}, nil)
+
+	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
+		Name: "http_requests_total",
+		Help: "http requests total",
+	}, []string{"code", "method"})
+
+	registry.MustRegister(duration, counter)
+
+	return func(next http.Handler) http.Handler {
+		return promhttp.InstrumentHandlerDuration(duration,
+			promhttp.InstrumentHandlerCounter(counter, next),
+		)
 	}
 }

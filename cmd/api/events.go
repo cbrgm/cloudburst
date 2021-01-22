@@ -8,6 +8,7 @@ import (
 	"github.com/cbrgm/cloudburst/cloudburst/convert"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/prometheus/client_golang/prometheus"
 	"net/http"
 	"time"
 )
@@ -17,9 +18,22 @@ type Events interface {
 	UnsubscribeFromInstanceEvents(s cloudburst.Subscription)
 }
 
-func instanceEventsHandler(logger log.Logger, events Events) func(w http.ResponseWriter, r *http.Request) {
+func instanceEventsHandler(logger log.Logger, r *prometheus.Registry, events Events) func(w http.ResponseWriter, r *http.Request) {
 
-	start := time.Now()
+	labels := prometheus.Labels{"events": "instances"}
+	eventDuration := prometheus.NewHistogramVec(prometheus.HistogramOpts{
+		Name:        "http_event_duration_seconds",
+		Help:        "Duration and error code for server sent events",
+		ConstLabels: labels,
+	}, []string{"status"})
+
+	subscribers := prometheus.NewGauge(prometheus.GaugeOpts{
+		Name:        "http_event_subscriptions",
+		Help:        "Number of current subscribers",
+		ConstLabels: labels,
+	})
+
+	r.MustRegister(eventDuration, subscribers)
 
 	observeEvent := func(duration time.Duration, err error) {
 		if err != nil {
@@ -27,18 +41,22 @@ func instanceEventsHandler(logger log.Logger, events Events) func(w http.Respons
 				"msg", "failed to send server sent event",
 				"err", err,
 			)
+			eventDuration.WithLabelValues("error").Observe(duration.Seconds())
 		} else {
 			level.Debug(logger).Log(
 				"msg", "successfully sent server sent event",
 			)
+			eventDuration.WithLabelValues("success").Observe(duration.Seconds())
 		}
 	}
 
 	observeSubscription := func() {
+		subscribers.Inc()
 		level.Debug(logger).Log("msg", "subscriber to events")
 	}
 
 	observeUnsubscription := func() {
+		subscribers.Dec()
 		level.Debug(logger).Log("msg", "unsubscriber from events")
 	}
 
@@ -72,6 +90,7 @@ func instanceEventsHandler(logger log.Logger, events Events) func(w http.Respons
 				close(instanceEvents)
 				return
 			case event := <-instanceEvents:
+				start := time.Now()
 				payload, err := json.Marshal(convert.InstanceEventToOpenAPI(event))
 				if err != nil {
 					observeEvent(time.Since(start), err)

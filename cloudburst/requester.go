@@ -101,7 +101,7 @@ func (r *requester) thresholdBelow(scrapeTarget *ScrapeTarget, instances []*Inst
 	}
 
 	runningInstances := GetInstancesByStatus(instances, Running)
-	activeInstances := GetInstancesByActiveStatus(runningInstances, true)
+	activeInstances := GetActiveInstances(runningInstances, true)
 
 	// we dont want a negative number here
 	numToBeTerminated := 0 - (demand)

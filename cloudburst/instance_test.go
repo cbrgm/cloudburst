@@ -112,7 +112,7 @@ func TestCountInstancesByActiveStatus(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := CountInstancesByActiveStatus(tt.args.instances, tt.args.active)
+			got := CountActiveInstances(tt.args.instances, tt.args.active)
 			if got != tt.want {
 				t.Errorf("want %d, got %d", tt.want, got)
 			}

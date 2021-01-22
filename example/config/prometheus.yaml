@@ -1,11 +1,11 @@
 # prometheus global config
 global:
-  scrape_interval:     15s
-  evaluation_interval: 15s
+  scrape_interval:     10s
+  evaluation_interval: 10s
   # scrape_timeout is set to the global default (10s).
 
   external_labels:
-    monitor: codelab
+    monitor: haw
     environment: Production
     service: Prometheus
     region: EU
@@ -28,6 +28,15 @@ scrape_configs:
 
     static_configs:
       - targets: ['prometheus:9090']
+
+  - job_name: cloudburst-api
+
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+
+    static_configs:
+      - targets: ['cloudburst-api:6661']
 
   - job_name: example-app
 
