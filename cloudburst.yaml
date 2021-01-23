@@ -11,4 +11,4 @@ targets:
         image: cbrgm/example-app:latest
     static:
       endpoints:
-        - http://localhost:9997
+        - http://example-app:9997

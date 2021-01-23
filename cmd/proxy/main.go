@@ -15,6 +15,7 @@ import (
 const (
 	flagApiAddr = "api.url"
 	flagAddr    = "addr"
+	flagInternalAddr    = "internal.addr"
 )
 
 func main() {
@@ -32,7 +33,12 @@ func main() {
 		cli.StringFlag{
 			Name:  flagAddr,
 			Usage: "The address for the public http server",
-			Value: ":6661",
+			Value: ":6670",
+		},
+		cli.StringFlag{
+			Name:  flagInternalAddr,
+			Usage: "The address for the internal http server",
+			Value: ":6671",
 		},
 		cli.StringFlag{
 			Name:  flagApiAddr,
@@ -70,19 +76,37 @@ func proxyAction(logger log.Logger) cli.ActionFunc {
 					"addr", c.String(flagAddr),
 				)
 				err := skipper.Run(skipper.Options{
-					Address:                      c.String(flagAddr),
-					CustomDataClients:            []routing.DataClient{client},
-					SourcePollTimeout:            time.Duration(5) * time.Second,
-					TimeoutBackend:               time.Duration(2) * time.Second,
-					WaitFirstRouteLoad:           true,
-					KeepAliveBackend:             time.Duration(30) * time.Second,
-					MaxIdleConnsBackend:          0,
-					ResponseHeaderTimeoutBackend: time.Duration(1) * time.Minute,
-					TLSHandshakeTimeoutBackend:   time.Duration(1) * time.Minute,
-					CloseIdleConnsPeriod:         time.Duration(20) * time.Second,
-					IdleTimeoutServer:            time.Duration(62) * time.Second,
-					ReadTimeoutServer:            time.Duration(5) * time.Minute,
-					WriteTimeoutServer:           time.Duration(60) * time.Second,
+					Address:                            c.String(flagAddr),
+					CustomDataClients:                  []routing.DataClient{client},
+					SourcePollTimeout:                  time.Duration(5) * time.Second,
+					TimeoutBackend:                     time.Duration(2) * time.Second,
+					WaitFirstRouteLoad:                 true,
+					KeepAliveBackend:                   time.Duration(30) * time.Second,
+					MaxIdleConnsBackend:                0,
+					ResponseHeaderTimeoutBackend:       time.Duration(1) * time.Minute,
+					TLSHandshakeTimeoutBackend:         time.Duration(1) * time.Minute,
+					CloseIdleConnsPeriod:               time.Duration(20) * time.Second,
+					IdleTimeoutServer:                  time.Duration(62) * time.Second,
+					ReadTimeoutServer:                  time.Duration(5) * time.Minute,
+					WriteTimeoutServer:                 time.Duration(60) * time.Second,
+					MetricsFlavours:                    []string{"prometheus"},
+					SupportListener:                    c.String(flagInternalAddr),
+					EnableServeRouteMetrics:            true,
+					MetricsPrefix:                      "cloudburst_proxy",
+					EnableProfile:                      false,
+					EnableDebugGcMetrics:               false,
+					EnableRuntimeMetrics:               false,
+					EnableServeHostMetrics:             false,
+					EnableBackendHostMetrics:           false,
+					EnableAllFiltersMetrics:            false,
+					EnableCombinedResponseMetrics:      false,
+					EnableRouteResponseMetrics:         false,
+					EnableRouteBackendErrorsCounters:   false,
+					EnableRouteStreamingErrorsCounters: false,
+					EnableRouteBackendMetrics:          false,
+					EnableRouteCreationMetrics:         false,
+					MetricsUseExpDecaySample:           false,
+					EnableConnMetricsServer:            true,
 				})
 				return err
 			}, func(err error) {

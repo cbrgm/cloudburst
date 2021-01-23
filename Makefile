@@ -63,6 +63,12 @@ ui/bundle.js: node_modules $(shell find ./ui -iname '*.js' | grep -v ./ui/bundle
 
 # container related
 
+.PHONY: build
+container: \
+	container-api \
+	container-agent \
+	container-proxy
+
 .PHONY: container-api
 container-api: cmd/api/api ui/bundle.js
 	mkdir -p ./cmd/api/assets
@@ -70,3 +76,11 @@ container-api: cmd/api/api ui/bundle.js
 	cp ./ui/bundle.js ./cmd/api/assets
 	cp ./ui/bulma.min.css ./cmd/api/assets
 	docker build -t cbrgm/cloudburst-api ./cmd/api
+
+.PHONY: container-agent
+container-agent: cmd/agent/agent
+	docker build -t cbrgm/cloudburst-agent ./cmd/agent
+
+.PHONY: container-proxy
+container-proxy: cmd/proxy/proxy
+	docker build -t cbrgm/cloudburst-proxy ./cmd/proxy

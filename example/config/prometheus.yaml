@@ -38,6 +38,15 @@ scrape_configs:
     static_configs:
       - targets: ['cloudburst-api:6661']
 
+  - job_name: cloudburst-proxy
+
+    scrape_interval: 5s
+    scrape_timeout: 2s
+    honor_labels: true
+
+    static_configs:
+      - targets: ['cloudburst-proxy:6671']
+
   - job_name: example-app
 
     scrape_interval: 5s
@@ -45,4 +54,4 @@ scrape_configs:
     honor_labels: true
 
     static_configs:
-      - targets: ['example-app:8080']
+      - targets: ['example-app:9997']

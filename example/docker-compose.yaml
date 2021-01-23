@@ -29,19 +29,44 @@ services:
     networks:
       - promnet
 
+  cloudburst-agent:
+    image: cbrgm/cloudburst-agent:latest
+    restart: always
+    command:
+      - '--name=mock-agent'
+      - '--api.url=http://cloudburst-api:6660'
+    networks:
+      - promnet
+
+  cloudburst-proxy:
+    image: cbrgm/cloudburst-proxy:latest
+    ports:
+      - 6670:6670
+      - 6671:6671
+    restart: always
+    command:
+      - '--internal.addr=:6671'
+      - '--api.url=http://cloudburst-api:6660'
+    networks:
+      - promnet
+
   example-app:
     image: cbrgm/example-app:latest
     ports:
-      - 9997:8080
+      - 9997:9997
     restart: always
+    command:
+      - '-port=9997'
     networks:
       - promnet
 
   example-blackhole:
     image: cbrgm/example-blackhole:latest
     ports:
-      - 9998:8080
+      - 9998:9998
     restart: always
+    command:
+      - '-port=9998'
     networks:
       - promnet
 
