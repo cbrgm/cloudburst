@@ -3,7 +3,7 @@ config:
   http:
     pool: 750
   phases:
-    - duration: 600s
+    - duration: 60s
       arrivalRate: 1000
   processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
   defaults:

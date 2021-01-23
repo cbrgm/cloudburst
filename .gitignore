@@ -31,6 +31,7 @@
 /example/config/data/
 /example/example-app/example-app
 /example/example-blackhole/example-blackhole
+/experiments/results/*
 
 /node_modules/
 /ui/bundle.js

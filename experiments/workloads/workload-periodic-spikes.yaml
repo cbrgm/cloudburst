@@ -4,31 +4,31 @@ config:
     pool: 750
   phases:
     - duration: 30s
-      arrivalRate: 1
+      arrivalRate: 10
       name: cold
     - duration: 30s
       arrivalRate: 200
       name: spike
     - duration: 30s
-      arrivalRate: 1
+      arrivalRate: 10
       name: cold
     - duration: 30s
       arrivalRate: 200
       name: spike
     - duration: 30s
-      arrivalRate: 1
+      arrivalRate: 10
       name: cold
     - duration: 30s
       arrivalRate: 200
       name: spike
     - duration: 30s
-      arrivalRate: 1
+      arrivalRate: 10
       name: cold
     - duration: 30s
       arrivalRate: 200
       name: spike
     - duration: 30s
-      arrivalRate: 1
+      arrivalRate: 10
       name: cold
     - duration: 30s
       arrivalRate: 200
