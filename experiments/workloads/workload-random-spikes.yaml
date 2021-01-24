@@ -3,27 +3,20 @@ config:
   http:
     pool: 750
   phases:
-    - duration: 30s
+    - duration: 30
       arrivalRate: 10
-      name: cold
-    - duration: 30s
-      arrivalRate: 70
-      name: spike
-    - duration: 30s
-      arrivalRate: 40
-      name: cold
-    - duration: 60s
-      arrivalRate: 200
-      name: spike
-    - duration: 60s
+    - duration: 30
+      arrivalRate: 35
+    - duration: 30
+      arrivalRate: 25
+    - duration: 60
+      arrivalRate: 50
+    - duration: 60
       arrivalRate: 30
-      name: cold
-    - duration: 60s
-      arrivalRate: 90
-      name: spike
-    - duration: 30s
+    - duration: 60
+      arrivalRate: 30
+    - duration: 30
       arrivalRate: 10
-      name: cold
   processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
   defaults:
 
