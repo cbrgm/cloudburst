@@ -26,6 +26,7 @@ services:
       - '--ui.assets=/assets/'
       - '--bolt.path=/tmp/data'
       - '--file=/cloudburst.yaml'
+      - '--polling.interval=25'
     networks:
       - promnet
 

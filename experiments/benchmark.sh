@@ -9,10 +9,13 @@ benchmark_results () {
 }
 
 get_benchmark_data () {
-  styx matplotlib --prometheus http://localhost:9090 --duration 5m 'rate(cloudburst_proxy_custom_total{key="incoming.HTTP/1.1"}[30s])' > $1/http_requests_total.py
-  styx matplotlib --prometheus http://localhost:9090 --duration 5m 'rate(cloudburst_proxy_custom_total{key="incoming.HTTP/1.1"}[30s]) / 15' > $1/http_requests_slo.py
-  styx matplotlib --prometheus http://localhost:9090 --duration 5m 'cloudburst_api_instances_total{status="running"} + 1' > $1/instances_total.py
-  styx matplotlib --prometheus http://localhost:9090 --duration 5m 'sum(rate(example_sorting_requests_total[30s]))' > $1/http_requests_single_service.py
+  echo "creating benchmark graphs..."
+  styx matplotlib --prometheus http://localhost:9090 --duration 10m 'rate(cloudburst_proxy_custom_total{key="incoming.HTTP/1.1"}[30s])' > $1/http_requests_total.py
+  styx matplotlib --prometheus http://localhost:9090 --duration 10m '(rate(cloudburst_proxy_custom_total{key="incoming.HTTP/1.1"}[30s]) / 15)' > $1/http_requests_slo.py
+  styx matplotlib --prometheus http://localhost:9090 --duration 10m 'cloudburst_api_instances_total{status="running"} + 1' > $1/instances_total.py
+  styx matplotlib --prometheus http://localhost:9090 --duration 10m 'sum(rate(example_sorting_requests_total[30s])) * 10' > $1/http_requests_single_service.py
+  echo "done!"
+  sleep 120
 }
 
 for filename in workloads/*.yaml; do

@@ -4,7 +4,7 @@ targets:
     path: /bubblesort
     description: requests amount greater than 15 rps
     query: |
-      (sum(rate(example_sorting_requests_total[30s])) / 15)
+      (sum(rate(example_sorting_requests_total[15s])) / 15)
     spec:
       container:
         name: "bubblesort-svc"

@@ -3,21 +3,18 @@ config:
   http:
     pool: 750
   phases:
-    - duration: 40
+    - duration: 80
       arrivalRate: 1
-    - duration: 60
-      arrivalRate: 20
-      rampTo: 40
-    - duration: 40
+    - duration: 120
+      arrivalRate: 40
+    - duration: 80
       arrivalRate: 1
-    - duration: 60
-      arrivalRate: 20
-      rampTo: 40
-    - duration: 40
+    - duration: 120
+      arrivalRate: 40
+    - duration: 80
       arrivalRate: 1
-    - duration: 60
-      arrivalRate: 20
-      rampTo: 40
+    - duration: 120
+      arrivalRate: 40
   processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
   defaults:
 

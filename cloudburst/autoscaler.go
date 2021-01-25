@@ -14,6 +14,8 @@ type autoscaler struct {
 	requester *requester
 
 	instancesGauge *prometheus.GaugeVec
+	demandGauge *prometheus.GaugeVec
+	queryGauge *prometheus.GaugeVec
 }
 
 func NewAutoScaler(r *prometheus.Registry, state State) Autoscaler {
@@ -23,13 +25,27 @@ func NewAutoScaler(r *prometheus.Registry, state State) Autoscaler {
 		Help: "instances total",
 	}, []string{"target", "status"})
 
-	r.MustRegister(metrics)
+	demand := prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "cloudburst_api_demand",
+		Help: "autoscaler demand",
+	}, []string{"target"})
 
-	threshold := newThreshold(0, -1)
+	query := prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: "cloudburst_api_query",
+		Help: "autoscaler query",
+	}, []string{"target"})
+
+	r.MustRegister(metrics)
+	r.MustRegister(demand)
+	r.MustRegister(query)
+
+	threshold := newThreshold(0, 0)
 	return &autoscaler{
 		state:          state,
 		requester:      newRequester(state, threshold),
 		instancesGauge: metrics,
+		demandGauge: demand,
+		queryGauge: query,
 	}
 }
 
@@ -62,6 +78,10 @@ func (s *autoscaler) Scale(scrapeTarget *ScrapeTarget, queryResult float64) erro
 	s.instancesGauge.WithLabelValues(scrapeTarget.Name, string(Failure)).Set(metrics[Failure])
 
 	demand := s.calculateDemand(scrapeTarget, instances, queryResult)
+
+	s.demandGauge.WithLabelValues(scrapeTarget.Name).Set(float64(demand.Result))
+	s.queryGauge.WithLabelValues(scrapeTarget.Name).Set(queryResult)
+
 	err = s.processDemand(demand, instances, scrapeTarget)
 	if err != nil {
 		return err
@@ -79,17 +99,17 @@ type instanceDemand struct {
 // CalculateDemand returns instanceDemand.
 func (s *autoscaler) calculateDemand(scrapeTarget *ScrapeTarget, instances []*Instance, queryResult float64) instanceDemand {
 
-	sumRunningInstancesExternAndIntern := float64(CountInstancesByStatus(instances, Running) + len(scrapeTarget.StaticSpec.Endpoints))
-	queryResult = math.Round(((queryResult - 1) * sumRunningInstancesExternAndIntern) + 0.5)
+	sumInternal := float64(len(scrapeTarget.StaticSpec.Endpoints))
+	sumExternal := float64(CountInstancesByStatus(instances, Running))
+	sumTerminating := float64(CountActiveInstances(instances, false))
+	sumProgressActive := float64(CountActiveInstances(GetInstancesByStatus(instances, Progress), true))
 
-	sumTerminating := CountActiveInstances(instances, false)
-	progress := GetInstancesByStatus(instances, Progress)
-	sumProgressStart := CountActiveInstances(progress, true)
-
-	var demand = (int(queryResult) + sumTerminating) - sumProgressStart
+	// queryResult == (sum(rate(example_sorting_requests_total[15s])) / 15) => CONFIG
+	sumEffective := math.Round((queryResult -1) * (sumInternal + sumExternal) + 0.5)
+	demand := (sumEffective + sumTerminating) - sumProgressActive
 
 	return instanceDemand{
-		Result: demand,
+		Result: int(demand),
 	}
 }
 

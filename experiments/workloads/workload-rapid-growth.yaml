@@ -3,21 +3,21 @@ config:
   http:
     pool: 150
   phases:
-    - duration: 30
-      arrivalRate: 10
-      name: Warm up
-    - duration: 60
+    - duration: 80
       arrivalRate: 5
-      rampTo: 50
+      name: Warm up
+    - duration: 140
+      arrivalRate: 5
+      rampTo: 40
       name: Ramp up load
-    - duration: 120
-      arrivalRate: 50
+    - duration: 160
+      arrivalRate: 40
       name: Sustained load
-    - duration: 60
+    - duration: 140
       arrivalRate: 20
       name: Cool down load
-    - duration: 30
-      arrivalRate: 10
+    - duration: 80
+      arrivalRate: 4
       name: cool down
   processor: '{{ $processEnvironment.PROCESSOR_DIR }}/processor.js'
   defaults:

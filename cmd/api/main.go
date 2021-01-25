@@ -25,12 +25,13 @@ import (
 )
 
 const (
-	flagAddr         = "addr"
-	flagInternalAddr = "internal.addr"
-	flagBoltPath     = "bolt.path"
-	flagDebug        = "debug"
-	flagConfigFile   = "file"
-	flagUIAssets     = "ui.assets"
+	flagAddr            = "addr"
+	flagInternalAddr    = "internal.addr"
+	flagBoltPath        = "bolt.path"
+	flagDebug           = "debug"
+	flagConfigFile      = "file"
+	flagUIAssets        = "ui.assets"
+	flagPollingInterval = "polling.interval"
 )
 
 func main() {
@@ -67,6 +68,11 @@ func main() {
 			Name:  flagUIAssets,
 			Usage: "The path to the ui assets",
 			Value: "./ui",
+		},
+		cli.IntFlag{
+			Name:  flagPollingInterval,
+			Usage: "The interval in seconds to check slo rules",
+			Value: 10,
 		},
 		cli.BoolFlag{
 			Name:  flagDebug,
@@ -221,7 +227,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 			if !c.Bool(flagDebug) {
 				gr.Add(func() error {
-					ticker := time.NewTicker(time.Duration(15) * time.Second)
+					ticker := time.NewTicker(time.Duration(c.Int(flagPollingInterval)) * time.Second)
 					for {
 						select {
 						case <-ticker.C:
