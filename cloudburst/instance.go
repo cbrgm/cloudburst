@@ -35,12 +35,12 @@ type (
 	}
 )
 
-// TODO: add instance spec as attribute to Instances
-func NewInstance(spec InstanceSpec) *Instance {
+// TODO: add instance spec as attribute to InstanceDemand
+func NewInstance(provider string, spec InstanceSpec) *Instance {
 	return &Instance{
 		Name:      newInstanceName(spec),
 		Endpoint:  "",
-		Provider:  "",
+		Provider:  provider,
 		Active:    true,
 		Container: spec.Container,
 		Status: InstanceStatus{

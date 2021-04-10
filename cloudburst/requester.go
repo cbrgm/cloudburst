@@ -32,24 +32,33 @@ func newRequester(state State, threshold Threshold) *requester {
 	}
 }
 
-func (r *requester) ProcessDemand(demand instanceDemand, instances []*Instance, scrapeTarget *ScrapeTarget) error {
-	result := demand.Result
+func (r *requester) ProcessDemand(result ScalingResult, scrapeTarget *ScrapeTarget) error {
+	for _, value := range result.Result {
+		err := r.ProcessDemandForProvider(value, scrapeTarget)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
-	// if demand is in range of threshold, we don't request/supend new instances
+func (r *requester) ProcessDemandForProvider(value ResultValue, scrapeTarget *ScrapeTarget) error {
+	// if demand is in range of threshold, we don't request/suspend new instances
+	result := value.InstanceDemand
 	if r.threshold.inRange(result) {
 		result = 0
 	}
 
 	if result == 0 {
-		return r.thresholdEquals(scrapeTarget, instances)
+		return r.thresholdEquals(scrapeTarget, value.Instances)
 	}
 
 	if result > 0 {
-		return r.thresholdAbove(scrapeTarget, instances, result)
+		return r.thresholdAbove(scrapeTarget, value.Instances, value.Provider, result)
 	}
 
 	if result < 0 {
-		return r.thresholdBelow(scrapeTarget, instances, result)
+		return r.thresholdBelow(scrapeTarget, value.Instances, result)
 	}
 	return nil
 }
@@ -63,7 +72,7 @@ func (r *requester) thresholdEquals(scrapeTarget *ScrapeTarget, instances []*Ins
 	return nil
 }
 
-func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Instance, demand int) error {
+func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Instance, provider string, demand int) error {
 	pendingInstances := GetInstancesByStatus(instances, Pending)
 
 	var result = demand - len(pendingInstances)
@@ -72,7 +81,7 @@ func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Inst
 		// on a positive result, create pending instances until we satisfy result
 		var toCreate []*Instance
 		for i := 0; i < result; i++ {
-			toCreate = append(toCreate, NewInstance(scrapeTarget.InstanceSpec))
+			toCreate = append(toCreate, NewInstance(provider, scrapeTarget.InstanceSpec))
 		}
 		_, err := r.state.SaveInstances(scrapeTarget.Name, toCreate)
 		if err != nil {

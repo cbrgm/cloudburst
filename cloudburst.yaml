@@ -7,9 +7,8 @@ targets:
       (sum(rate(example_sorting_requests_total[15s])) / 15)
     provider:
       weights:
-        aws: 20
-        google: 30
-        uwe-cloud: 50
+        cloud-provider-A: 50
+        cloud-provider-B: 50
     spec:
       container:
         name: "bubblesort-svc"

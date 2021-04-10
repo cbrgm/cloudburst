@@ -34,19 +34,24 @@ func NewAutoScaler(scale ScalingFunc, state State) Autoscaler {
 
 func (s *autoscaler) Scale(scrapeTarget *ScrapeTarget, metricValue float64) error {
 	// TODO: don't call state twice
+
 	err := s.cleanupTerminatedInstances(scrapeTarget)
 	if err != nil {
 		return err
 	}
+
 	instances, err := s.state.GetInstances(scrapeTarget.Name)
 	if err != nil {
 		return err
 	}
+
 	demand := s.scale(scrapeTarget, instances, metricValue)
-	err = s.processDemand(demand, instances, scrapeTarget)
+
+	err = s.processDemand(demand, scrapeTarget)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -67,6 +72,6 @@ func (s *autoscaler) cleanupTerminatedInstances(target *ScrapeTarget) error {
 	return nil
 }
 
-func (s *autoscaler) processDemand(demand instanceDemand, instances []*Instance, scrapeTarget *ScrapeTarget) error {
-	return s.requester.ProcessDemand(demand, instances, scrapeTarget)
+func (s *autoscaler) processDemand(demand ScalingResult, scrapeTarget *ScrapeTarget) error {
+	return s.requester.ProcessDemand(demand, scrapeTarget)
 }

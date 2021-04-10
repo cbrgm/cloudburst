@@ -20,9 +20,10 @@ import (
 )
 
 const (
-	flagName    = "name"
-	flagApiAddr = "api.url"
-	flagDebug   = "debug"
+	flagName     = "name"
+	flagProvider = "provider"
+	flagApiAddr  = "api.url"
+	flagDebug    = "debug"
 )
 
 func main() {
@@ -38,6 +39,10 @@ func main() {
 		cli.StringFlag{
 			Name:  flagName,
 			Usage: "The name of the agent instance",
+		},
+		cli.StringFlag{
+			Name:  flagProvider,
+			Usage: "The name of the provider to scale resources to",
 		},
 		cli.StringFlag{
 			Name:  flagApiAddr,
@@ -66,6 +71,12 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 		if c.String(flagApiAddr) == "" {
 			return errors.New("no api.url provided, please set the remote cloudburst-api url using --api.url flag")
 		}
+
+		if c.String(flagProvider) == "" {
+			return errors.New("no provider specified, please set the provider key using --provider flag")
+		}
+
+		providerName := c.String(flagProvider)
 
 		apiURL, err := url.Parse(c.String(flagApiAddr))
 		if err != nil {
@@ -101,7 +112,7 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 					for {
 						select {
 						case <-ticker:
-							_ = poll(client, agentName, logger)
+							_ = poll(client, agentName, providerName, logger)
 						}
 					}
 				}, func(err error) {
@@ -117,7 +128,7 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 				for {
 					select {
 					case <-ticker.C:
-						_ = poll(client, agentName, logger)
+						_ = poll(client, agentName, providerName, logger)
 					}
 				}
 			}, func(err error) {
@@ -137,7 +148,7 @@ func agentAction(logger log.Logger) cli.ActionFunc {
 	}
 }
 
-func poll(client *apiclient.APIClient, agentName string, logger log.Logger) error {
+func poll(client *apiclient.APIClient, agentName string, provider string, logger log.Logger) error {
 	scrapeTargets, res, err := client.TargetsApi.ListScrapeTargets(context.TODO()).Execute()
 	if err != nil || res.StatusCode != 200 {
 		level.Info(logger).Log("msg", "failed retrieving scrapeTargets", "err", err)
@@ -145,16 +156,16 @@ func poll(client *apiclient.APIClient, agentName string, logger log.Logger) erro
 
 	targets := convert.APIClientToScrapeTargets(scrapeTargets)
 
-	err = processScrapeTargets(client, agentName, targets)
+	err = processScrapeTargets(client, agentName, provider, targets)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func processScrapeTargets(client *apiclient.APIClient, agentName string, scrapeTargets []*cloudburst.ScrapeTarget) error {
+func processScrapeTargets(client *apiclient.APIClient, agentName string, provider string, scrapeTargets []*cloudburst.ScrapeTarget) error {
 	for _, target := range scrapeTargets {
-		err := processScrapeTarget(client, agentName, target)
+		err := processScrapeTarget(client, agentName, provider, target)
 		if err != nil {
 			return err
 		}
@@ -162,7 +173,7 @@ func processScrapeTargets(client *apiclient.APIClient, agentName string, scrapeT
 	return nil
 }
 
-func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTarget *cloudburst.ScrapeTarget) error {
+func processScrapeTarget(client *apiclient.APIClient, agentName string, provider string, scrapeTarget *cloudburst.ScrapeTarget) error {
 
 	items, resp, err := client.InstancesApi.GetInstances(context.TODO(), scrapeTarget.Name).Execute()
 	if err != nil || resp.StatusCode != 200 {
@@ -170,6 +181,7 @@ func processScrapeTarget(client *apiclient.APIClient, agentName string, scrapeTa
 	}
 
 	instances := convert.APIClientToInstances(items)
+	instances = cloudburst.GetInstancesByProvider(instances, provider)
 
 	// TODO: ignore instances with active = false and status = Terminated
 	terminate := cloudburst.GetActiveInstances(instances, false)
