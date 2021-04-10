@@ -6,8 +6,13 @@ type (
 		Path         string       `json:"path"`
 		Description  string       `json:"description"`
 		Query        string       `json:"query"`
+		ProviderSpec ProviderSpec `json:"provider"`
 		InstanceSpec InstanceSpec `json:"instanceSpec"`
 		StaticSpec   StaticSpec   `json:"static"`
+	}
+
+	ProviderSpec struct {
+		Weights map[string]float32 `json:"weights"`
 	}
 
 	InstanceSpec struct {

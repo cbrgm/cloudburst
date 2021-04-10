@@ -7,6 +7,9 @@ type Configuration struct {
 		Path         string `json:"path"`
 		Description  string `json:"description"`
 		Query        string `json:"query"`
+		ProviderSpec struct {
+			Weights map[string]int `json:"weights"`
+		} `json:"provider"`
 		InstanceSpec struct {
 			ContainerSpec struct {
 				Name  string `json:"name"`
@@ -29,10 +32,13 @@ func ParseConfiguration(config Configuration) ([]*ScrapeTarget, error) {
 
 	for _, item := range config.ScrapeTargets {
 		scrapeTargets = append(scrapeTargets, &ScrapeTarget{
-			Name:        item.Name,
-			Description: item.Description,
-			Path:        item.Path,
-			Query:       item.Query,
+			Name:         item.Name,
+			Description:  item.Description,
+			Path:         item.Path,
+			Query:        item.Query,
+			ProviderSpec: ProviderSpec{
+				Weights: calculateWeights(item.ProviderSpec.Weights),
+			},
 			InstanceSpec: InstanceSpec{
 				Container: ContainerSpec{
 					Name:  item.InstanceSpec.ContainerSpec.Name,
@@ -44,11 +50,47 @@ func ParseConfiguration(config Configuration) ([]*ScrapeTarget, error) {
 			},
 		})
 	}
-
 	return scrapeTargets, nil
 }
 
+func calculateWeights(weights map[string]int) map[string]float32 {
+	var res = make(map[string]float32)
+	var sumWeights int
+	for _, v := range weights {
+		sumWeights += v
+	}
+
+	for k, v := range weights {
+		res[k] = float32(v) / float32(sumWeights)
+		println(res[k])
+	}
+	return res
+}
+
 func validateConfig(config Configuration) error {
-	// TODO: add config validation checks
 	return nil
 }
+
+/*
+func validateScrapeTarget(target) error {
+	validateProviderSpec()
+	return nil
+}
+
+func validateProviderSpec(config Configuration) error {
+	hasIllegalProviderWeights(config.)
+}
+
+func hasIllegalProviderWeights(weights map[string]int) error {
+	var sumWeights int
+	for _,v := range weights {
+		if v < 0 {
+			return errors.New("negative values not allowed")
+		}
+		sumWeights += v
+	}
+	if sumWeights <= 0 {
+		return errors.New("provider weight sum must be greater then 0")
+	}
+}
+*/

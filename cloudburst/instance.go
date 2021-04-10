@@ -22,6 +22,7 @@ type (
 	Instance struct {
 		Name      string         `json:"name"`
 		Endpoint  string         `json:"endpoint"`
+		Provider  string         `json:"provider"`
 		Active    bool           `json:"active"`
 		Container ContainerSpec  `json:"container"`
 		Status    InstanceStatus `json:"status"`
@@ -39,6 +40,7 @@ func NewInstance(spec InstanceSpec) *Instance {
 	return &Instance{
 		Name:      newInstanceName(spec),
 		Endpoint:  "",
+		Provider:  "",
 		Active:    true,
 		Container: spec.Container,
 		Status: InstanceStatus{
@@ -81,6 +83,20 @@ func GetActiveInstances(instances []*Instance, active bool) []*Instance {
 		}
 	}
 	return res
+}
+
+func GetInstancesByProvider(instances []*Instance, provider string) []*Instance {
+	var res []*Instance
+	for _, instance := range instances {
+		if isMatchingProvider(instance, provider) {
+			res = append(res, instance)
+		}
+	}
+	return res
+}
+
+func isMatchingProvider(instance *Instance, provider string) bool {
+	return instance.Provider == provider
 }
 
 func GetInstancesByStatus(instances []*Instance, status Status) []*Instance {

@@ -13,6 +13,7 @@ docs/InstanceEvent.md
 docs/InstanceSpec.md
 docs/InstanceStatus.md
 docs/InstancesApi.md
+docs/ProviderSpec.md
 docs/ScrapeTarget.md
 docs/StaticSpec.md
 docs/TargetsApi.md
@@ -24,6 +25,7 @@ model_instance.go
 model_instance_event.go
 model_instance_spec.go
 model_instance_status.go
+model_provider_spec.go
 model_scrape_target.go
 model_static_spec.go
 response.go

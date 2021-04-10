@@ -18,6 +18,7 @@ import Instance from './model/Instance';
 import InstanceEvent from './model/InstanceEvent';
 import InstanceSpec from './model/InstanceSpec';
 import InstanceStatus from './model/InstanceStatus';
+import ProviderSpec from './model/ProviderSpec';
 import ScrapeTarget from './model/ScrapeTarget';
 import StaticSpec from './model/StaticSpec';
 import InstancesApi from './api/InstancesApi';
@@ -91,6 +92,12 @@ export {
      * @property {module:model/InstanceStatus}
      */
     InstanceStatus,
+
+    /**
+     * The ProviderSpec model constructor.
+     * @property {module:model/ProviderSpec}
+     */
+    ProviderSpec,
 
     /**
      * The ScrapeTarget model constructor.

@@ -66,6 +66,12 @@
       //expect(instance).to.be();
     });
 
+    it('should have the property provider (base name: "provider")', function() {
+      // uncomment below and update the code to test the property provider
+      //var instance = new Cloudburst.Instance();
+      //expect(instance).to.be();
+    });
+
     it('should have the property active (base name: "active")', function() {
       // uncomment below and update the code to test the property active
       //var instance = new Cloudburst.Instance();

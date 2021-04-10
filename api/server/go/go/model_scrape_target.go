@@ -19,6 +19,8 @@ type ScrapeTarget struct {
 
 	Query string `json:"query"`
 
+	ProviderSpec ProviderSpec `json:"providerSpec"`
+
 	InstanceSpec InstanceSpec `json:"instanceSpec"`
 
 	StaticSpec StaticSpec `json:"staticSpec"`

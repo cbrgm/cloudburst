@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **Path** | **string** |  | 
 **Description** | **string** |  | 
 **Query** | **string** |  | 
+**ProviderSpec** | [**ProviderSpec**](ProviderSpec.md) |  | 
 **InstanceSpec** | [**InstanceSpec**](InstanceSpec.md) |  | 
 **StaticSpec** | [**StaticSpec**](StaticSpec.md) |  | 
 
@@ -15,7 +16,7 @@ Name | Type | Description | Notes
 
 ### NewScrapeTarget
 
-`func NewScrapeTarget(name string, path string, description string, query string, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget`
+`func NewScrapeTarget(name string, path string, description string, query string, providerSpec ProviderSpec, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget`
 
 NewScrapeTarget instantiates a new ScrapeTarget object
 This constructor will assign default values to properties that have it defined,
@@ -108,6 +109,26 @@ and a boolean to check if the value has been set.
 `func (o *ScrapeTarget) SetQuery(v string)`
 
 SetQuery sets Query field to given value.
+
+
+### GetProviderSpec
+
+`func (o *ScrapeTarget) GetProviderSpec() ProviderSpec`
+
+GetProviderSpec returns the ProviderSpec field if non-nil, zero value otherwise.
+
+### GetProviderSpecOk
+
+`func (o *ScrapeTarget) GetProviderSpecOk() (*ProviderSpec, bool)`
+
+GetProviderSpecOk returns a tuple with the ProviderSpec field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetProviderSpec
+
+`func (o *ScrapeTarget) SetProviderSpec(v ProviderSpec)`
+
+SetProviderSpec sets ProviderSpec field to given value.
 
 
 ### GetInstanceSpec

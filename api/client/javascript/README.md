@@ -130,6 +130,7 @@ Class | Method | HTTP request | Description
  - [Cloudburst.InstanceEvent](docs/InstanceEvent.md)
  - [Cloudburst.InstanceSpec](docs/InstanceSpec.md)
  - [Cloudburst.InstanceStatus](docs/InstanceStatus.md)
+ - [Cloudburst.ProviderSpec](docs/ProviderSpec.md)
  - [Cloudburst.ScrapeTarget](docs/ScrapeTarget.md)
  - [Cloudburst.StaticSpec](docs/StaticSpec.md)
 

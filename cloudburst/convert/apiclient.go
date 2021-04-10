@@ -19,6 +19,9 @@ func APIClientToScrapeTarget(s apiclient.ScrapeTarget) *cloudburst.ScrapeTarget 
 		Path:        s.Path,
 		Description: s.Description,
 		Query:       s.Query,
+		ProviderSpec: cloudburst.ProviderSpec{
+			Weights: s.ProviderSpec.Weights,
+		},
 		InstanceSpec: cloudburst.InstanceSpec{
 			Container: cloudburst.ContainerSpec{
 				Name:  s.InstanceSpec.Container.Name,
@@ -35,6 +38,7 @@ func InstanceToAPIClient(in *cloudburst.Instance) apiclient.Instance {
 	return apiclient.Instance{
 		Name:     in.Name,
 		Endpoint: in.Endpoint,
+		Provider: in.Provider,
 		Active:   in.Active,
 		Container: apiclient.ContainerSpec{
 			Name:  in.Container.Name,
@@ -76,6 +80,7 @@ func APIClientToInstance(in apiclient.Instance) *cloudburst.Instance {
 	return &cloudburst.Instance{
 		Name:     in.Name,
 		Endpoint: in.Endpoint,
+		Provider: in.Provider,
 		Active:   in.Active,
 		Container: cloudburst.ContainerSpec{
 			Name:  in.Container.Name,
