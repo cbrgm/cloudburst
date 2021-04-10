@@ -15,10 +15,26 @@ type ScrapeTargetProcessor struct {
 	autoscaler Autoscaler
 }
 
-func NewScrapeTargetProcessor(r *prometheus.Registry, state State) *ScrapeTargetProcessor {
+func NewInstrumentedScrapeTargetProcessor(r *prometheus.Registry, state State) *ScrapeTargetProcessor {
+	scalingFunc := NewDefaultScalingFunc()
 	return &ScrapeTargetProcessor{
-		state:      state,
-		autoscaler: NewAutoScaler(r, state),
+		state: state,
+		autoscaler: NewInstrumentedAutoScaler(
+			r,
+			scalingFunc,
+			state,
+		),
+	}
+}
+
+func NewScrapeTargetProcessor(state State) *ScrapeTargetProcessor {
+	scalingFunc := NewDefaultScalingFunc()
+	return &ScrapeTargetProcessor{
+		state: state,
+		autoscaler: NewAutoScaler(
+			scalingFunc,
+			state,
+		),
 	}
 }
 
@@ -49,17 +65,17 @@ func (sp *ScrapeTargetProcessor) processScrapeTarget(promAPI prometheusv1.API, s
 		return fmt.Errorf("failed to run processScrapeTargets: %w", err)
 	}
 	vec := value.(model.Vector)
-	var queryResult float64
+	var metricValue float64
 
 	for _, v := range vec {
 		if v.Value.String() == "NaN" {
-			queryResult = 0
+			metricValue = 0
 		} else {
-			queryResult = float64(v.Value)
+			metricValue = float64(v.Value)
 		}
 	}
 
-	err = sp.autoscaler.Scale(scrapeTarget, queryResult)
+	err = sp.autoscaler.Scale(scrapeTarget, metricValue)
 	if err != nil {
 		return err
 	}

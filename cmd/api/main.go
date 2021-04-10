@@ -124,7 +124,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			db = boltEvents
 		}
 
-		var engine = cloudburst.NewScrapeTargetProcessor(registry, db)
+		var cloudburstapi = cloudburst.NewInstrumentedScrapeTargetProcessor(registry, db)
 
 		var gr run.Group
 		// api
@@ -194,7 +194,8 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		// polling
 		{
 			if c.Bool(flagDebug) {
-				var autoscaler = cloudburst.NewAutoScaler(registry, db)
+				var scalingFunc = cloudburst.NewDefaultScalingFunc()
+				var autoscaler = cloudburst.NewInstrumentedAutoScaler(registry, scalingFunc, db)
 				var ticker = make(chan int)
 				gr.Add(func() error {
 					scan := bufio.NewScanner(os.Stdin)
@@ -231,7 +232,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 					for {
 						select {
 						case <-ticker.C:
-							err = engine.ProcessScrapeTargets(config.PrometheusURL)
+							err = cloudburstapi.ProcessScrapeTargets(config.PrometheusURL)
 							if err != nil {
 								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 							}
