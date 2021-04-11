@@ -71,7 +71,7 @@ func InstrumentedScalingFunc(r *prometheus.Registry, scalingFunc ScalingFunc) Sc
 	metricValueGauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "cloudburst_api_query",
 		Help: "metric value received from prometheus for the current scaling iteration",
-	}, []string{"target", "provider"})
+	}, []string{"target"})
 
 	r.MustRegister(instancesGauge)
 	r.MustRegister(instanceDemandGauge)
