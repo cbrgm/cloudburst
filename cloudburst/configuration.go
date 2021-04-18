@@ -62,7 +62,6 @@ func calculateWeights(weights map[string]int) map[string]float32 {
 
 	for k, v := range weights {
 		res[k] = float32(v) / float32(sumWeights)
-		println(res[k])
 	}
 	return res
 }

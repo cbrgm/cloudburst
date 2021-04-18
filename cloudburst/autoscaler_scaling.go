@@ -8,19 +8,16 @@ import (
 // ScalingFunc calculates the demand for Instance objects.
 //
 // instances slice is a list of all instances  to be filtered for calculation.
-// metricValue value is the result of a metric query.
+// metricValue value is the vars of a metric query.
 // CalculateDemand returns ScalingResult.
 type ScalingFunc func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) ScalingResult
 
-// ScalingResult represents the calculated demand for instances
-type ScalingResult struct {
-	Result []ResultValue // the rounded demand for new instances
-}
-
-type ResultValue struct {
-	Provider       string
-	InstanceDemand int
-	Instances      []*Instance
+func (s *ScalingResult) Sum() int {
+	var sum int
+	for _, result := range s.Result {
+		sum = sum + result.InstanceDemand
+	}
+	return sum
 }
 
 // NewDefaultScalingFunc returns the default scaling func
@@ -32,12 +29,34 @@ func NewDefaultScalingFunc() ScalingFunc {
 		sumEffective := math.Round((metricValue-1)*(sumInternal+sumExternal) + 0.5)
 
 		res := ScalingResult{
-			Result: []ResultValue{},
+			Result: []*ResultValue{},
 		}
 
 		for provider, weight := range scrapeTarget.ProviderSpec.Weights {
 			val := calculateDemandForProvider(instances, sumEffective, provider, weight)
-			res.Result = append(res.Result, val)
+			res.Result = append(res.Result, &val)
+		}
+
+		ByResultValues(func(p1, p2 *ResultValue) bool {
+			return p1.Weight > p2.Weight
+		}).Sort(res.Result)
+
+		demand := sumEffective - float64(res.Sum())
+		if demand == 0 {
+			return res
+		}
+		if demand > 0 {
+			res.Result[0].InstanceDemand = res.Result[0].InstanceDemand + int(demand)
+		}
+		if demand < 0 {
+			for _, in := range res.Result {
+				if in.InstanceDemand-int(demand) <= 0 {
+					continue
+				} else {
+					in.InstanceDemand = in.InstanceDemand + int(demand)
+					break
+				}
+			}
 		}
 		return res
 	}
@@ -51,6 +70,7 @@ func calculateDemandForProvider(instances []*Instance, sumEffective float64, pro
 	demand := ((math.Round(sumEffective * float64(weight))) + sumTerminating) - sumProgressActive
 	return ResultValue{
 		Provider:       provider,
+		Weight:         weight,
 		InstanceDemand: int(demand),
 		Instances:      in,
 	}

@@ -42,7 +42,7 @@ func (r *requester) ProcessDemand(result ScalingResult, scrapeTarget *ScrapeTarg
 	return nil
 }
 
-func (r *requester) ProcessDemandForProvider(value ResultValue, scrapeTarget *ScrapeTarget) error {
+func (r *requester) ProcessDemandForProvider(value *ResultValue, scrapeTarget *ScrapeTarget) error {
 	// if demand is in range of threshold, we don't request/suspend new instances
 	result := value.InstanceDemand
 	if r.threshold.inRange(result) {
@@ -78,7 +78,7 @@ func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Inst
 	var result = demand - len(pendingInstances)
 
 	if result > 0 {
-		// on a positive result, create pending instances until we satisfy result
+		// on a positive vars, create pending instances until we satisfy vars
 		var toCreate []*Instance
 		for i := 0; i < result; i++ {
 			toCreate = append(toCreate, NewInstance(provider, scrapeTarget.InstanceSpec))
@@ -89,7 +89,7 @@ func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Inst
 		}
 	}
 	if result < 0 {
-		// on negative result, convert result to a positive int and delete the first n pending instances from the state.
+		// on negative vars, convert vars to a positive int and delete the first n pending instances from the state.
 		index := 0 - (result)
 		toDelete := pendingInstances[:index]
 		err := r.state.RemoveInstances(scrapeTarget.Name, toDelete)

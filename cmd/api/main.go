@@ -124,8 +124,6 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			db = boltEvents
 		}
 
-		var cloudburstapi = cloudburst.NewInstrumentedScrapeTargetProcessor(registry, db)
-
 		var gr run.Group
 		// api
 		{
@@ -229,6 +227,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 			if !c.Bool(flagDebug) {
 				gr.Add(func() error {
 					ticker := time.NewTicker(time.Duration(c.Int(flagPollingInterval)) * time.Second)
+					cloudburstapi := cloudburst.NewInstrumentedScrapeTargetProcessor(registry, db)
 					for {
 						select {
 						case <-ticker.C:
