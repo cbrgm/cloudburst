@@ -8,30 +8,71 @@ import (
 // ScalingFunc calculates the demand for Instance objects.
 //
 // instances slice is a list of all instances  to be filtered for calculation.
-// metricValue value is the result of a metric query.
-// CalculateDemand returns instanceDemand.
-type ScalingFunc func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) instanceDemand
+// metricValue value is the vars of a metric query.
+// CalculateDemand returns ScalingResult.
+type ScalingFunc func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) ScalingResult
 
-// instanceDemand represents the calculated demand for instances
-type instanceDemand struct {
-	Result int // the rounded demand for new instances
+func (s *ScalingResult) Sum() int {
+	var sum int
+	for _, result := range s.Result {
+		sum = sum + result.InstanceDemand
+	}
+	return sum
 }
 
 // NewDefaultScalingFunc returns the default scaling func
 func NewDefaultScalingFunc() ScalingFunc {
-	return func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) instanceDemand {
+	return func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) ScalingResult {
 
 		sumInternal := float64(len(scrapeTarget.StaticSpec.Endpoints))
 		sumExternal := float64(CountInstancesByStatus(instances, Running))
-		sumTerminating := float64(CountActiveInstances(instances, false))
-		sumProgressActive := float64(CountActiveInstances(GetInstancesByStatus(instances, Progress), true))
-
 		sumEffective := math.Round((metricValue-1)*(sumInternal+sumExternal) + 0.5)
-		demand := (sumEffective + sumTerminating) - sumProgressActive
 
-		return instanceDemand{
-			Result: int(demand),
+		res := ScalingResult{
+			Result: []*ResultValue{},
 		}
+
+		for provider, weight := range scrapeTarget.ProviderSpec.Weights {
+			val := calculateDemandForProvider(instances, sumEffective, provider, weight)
+			res.Result = append(res.Result, &val)
+		}
+
+		ByResultValues(func(p1, p2 *ResultValue) bool {
+			return p1.Weight > p2.Weight
+		}).Sort(res.Result)
+
+		demand := sumEffective - float64(res.Sum())
+		if demand == 0 {
+			return res
+		}
+		if demand > 0 {
+			res.Result[0].InstanceDemand = res.Result[0].InstanceDemand + int(demand)
+		}
+		if demand < 0 {
+			for _, in := range res.Result {
+				if in.InstanceDemand-int(demand) <= 0 {
+					continue
+				} else {
+					in.InstanceDemand = in.InstanceDemand + int(demand)
+					break
+				}
+			}
+		}
+		return res
+	}
+}
+
+func calculateDemandForProvider(instances []*Instance, sumEffective float64, provider string, weight float32) ResultValue {
+	in := GetInstancesByProvider(instances, provider)
+	sumTerminating := float64(CountActiveInstances(in, false))
+	sumProgressActive := float64(CountActiveInstances(GetInstancesByStatus(in, Progress), true))
+
+	demand := ((math.Round(sumEffective * float64(weight))) + sumTerminating) - sumProgressActive
+	return ResultValue{
+		Provider:       provider,
+		Weight:         weight,
+		InstanceDemand: int(demand),
+		Instances:      in,
 	}
 }
 
@@ -40,12 +81,12 @@ func InstrumentedScalingFunc(r *prometheus.Registry, scalingFunc ScalingFunc) Sc
 	instancesGauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "cloudburst_api_instances_total",
 		Help: "instances total",
-	}, []string{"target", "status"})
+	}, []string{"target", "provider", "status"})
 
 	instanceDemandGauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "cloudburst_api_demand",
 		Help: "calculated instance demand for the current scaling iteration",
-	}, []string{"target"})
+	}, []string{"target", "provider"})
 
 	metricValueGauge := prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "cloudburst_api_query",
@@ -56,26 +97,30 @@ func InstrumentedScalingFunc(r *prometheus.Registry, scalingFunc ScalingFunc) Sc
 	r.MustRegister(instanceDemandGauge)
 	r.MustRegister(metricValueGauge)
 
-	return func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) instanceDemand {
-		metrics := make(map[Status]float64)
-		for _, instance := range instances {
-			if val, ok := metrics[instance.Status.Status]; ok {
-				metrics[instance.Status.Status] = val + 1
-			} else {
-				metrics[instance.Status.Status] = 1
+	return func(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) ScalingResult {
+		metricValueGauge.WithLabelValues(scrapeTarget.Name).Set(metricValue)
+		for provider, _ := range scrapeTarget.ProviderSpec.Weights {
+			in := GetInstancesByProvider(instances, provider)
+			metrics := make(map[Status]float64)
+			for _, instance := range in {
+				if val, ok := metrics[instance.Status.Status]; ok {
+					metrics[instance.Status.Status] = val + 1
+				} else {
+					metrics[instance.Status.Status] = 1
+				}
 			}
+			instancesGauge.WithLabelValues(scrapeTarget.Name, provider, string(Pending)).Set(metrics[Pending])
+			instancesGauge.WithLabelValues(scrapeTarget.Name, provider, string(Progress)).Set(metrics[Progress])
+			instancesGauge.WithLabelValues(scrapeTarget.Name, provider, string(Running)).Set(metrics[Running])
+			instancesGauge.WithLabelValues(scrapeTarget.Name, provider, string(Terminated)).Set(metrics[Terminated])
+			instancesGauge.WithLabelValues(scrapeTarget.Name, provider, string(Failure)).Set(metrics[Failure])
 		}
 
-		instancesGauge.WithLabelValues(scrapeTarget.Name, string(Pending)).Set(metrics[Pending])
-		instancesGauge.WithLabelValues(scrapeTarget.Name, string(Progress)).Set(metrics[Progress])
-		instancesGauge.WithLabelValues(scrapeTarget.Name, string(Running)).Set(metrics[Running])
-		instancesGauge.WithLabelValues(scrapeTarget.Name, string(Terminated)).Set(metrics[Terminated])
-		instancesGauge.WithLabelValues(scrapeTarget.Name, string(Failure)).Set(metrics[Failure])
+		result := scalingFunc(scrapeTarget, instances, metricValue)
 
-		demand := scalingFunc(scrapeTarget, instances, metricValue)
-
-		instanceDemandGauge.WithLabelValues(scrapeTarget.Name).Set(float64(demand.Result))
-		metricValueGauge.WithLabelValues(scrapeTarget.Name).Set(metricValue)
-		return demand
+		for _, result := range result.Result {
+			instanceDemandGauge.WithLabelValues(scrapeTarget.Name, result.Provider).Set(float64(result.InstanceDemand))
+		}
+		return result
 	}
 }

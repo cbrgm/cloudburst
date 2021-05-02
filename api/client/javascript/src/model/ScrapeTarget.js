@@ -13,6 +13,7 @@
 
 import ApiClient from '../ApiClient';
 import InstanceSpec from './InstanceSpec';
+import ProviderSpec from './ProviderSpec';
 import StaticSpec from './StaticSpec';
 
 /**
@@ -28,12 +29,13 @@ class ScrapeTarget {
      * @param path {String} 
      * @param description {String} 
      * @param query {String} 
+     * @param providerSpec {module:model/ProviderSpec} 
      * @param instanceSpec {module:model/InstanceSpec} 
      * @param staticSpec {module:model/StaticSpec} 
      */
-    constructor(name, path, description, query, instanceSpec, staticSpec) { 
+    constructor(name, path, description, query, providerSpec, instanceSpec, staticSpec) { 
         
-        ScrapeTarget.initialize(this, name, path, description, query, instanceSpec, staticSpec);
+        ScrapeTarget.initialize(this, name, path, description, query, providerSpec, instanceSpec, staticSpec);
     }
 
     /**
@@ -41,11 +43,12 @@ class ScrapeTarget {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, name, path, description, query, instanceSpec, staticSpec) { 
+    static initialize(obj, name, path, description, query, providerSpec, instanceSpec, staticSpec) { 
         obj['name'] = name;
         obj['path'] = path;
         obj['description'] = description;
         obj['query'] = query;
+        obj['providerSpec'] = providerSpec;
         obj['instanceSpec'] = instanceSpec;
         obj['staticSpec'] = staticSpec;
     }
@@ -72,6 +75,9 @@ class ScrapeTarget {
             }
             if (data.hasOwnProperty('query')) {
                 obj['query'] = ApiClient.convertToType(data['query'], 'String');
+            }
+            if (data.hasOwnProperty('providerSpec')) {
+                obj['providerSpec'] = ProviderSpec.constructFromObject(data['providerSpec']);
             }
             if (data.hasOwnProperty('instanceSpec')) {
                 obj['instanceSpec'] = InstanceSpec.constructFromObject(data['instanceSpec']);
@@ -105,6 +111,11 @@ ScrapeTarget.prototype['description'] = undefined;
  * @member {String} query
  */
 ScrapeTarget.prototype['query'] = undefined;
+
+/**
+ * @member {module:model/ProviderSpec} providerSpec
+ */
+ScrapeTarget.prototype['providerSpec'] = undefined;
 
 /**
  * @member {module:model/InstanceSpec} instanceSpec

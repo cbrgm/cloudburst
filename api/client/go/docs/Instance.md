@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | **string** |  | 
 **Endpoint** | **string** |  | 
+**Provider** | **string** |  | 
 **Active** | **bool** |  | 
 **Container** | [**ContainerSpec**](ContainerSpec.md) |  | 
 **Status** | [**InstanceStatus**](InstanceStatus.md) |  | 
@@ -14,7 +15,7 @@ Name | Type | Description | Notes
 
 ### NewInstance
 
-`func NewInstance(name string, endpoint string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance`
+`func NewInstance(name string, endpoint string, provider string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance`
 
 NewInstance instantiates a new Instance object
 This constructor will assign default values to properties that have it defined,
@@ -67,6 +68,26 @@ and a boolean to check if the value has been set.
 `func (o *Instance) SetEndpoint(v string)`
 
 SetEndpoint sets Endpoint field to given value.
+
+
+### GetProvider
+
+`func (o *Instance) GetProvider() string`
+
+GetProvider returns the Provider field if non-nil, zero value otherwise.
+
+### GetProviderOk
+
+`func (o *Instance) GetProviderOk() (*string, bool)`
+
+GetProviderOk returns a tuple with the Provider field if it's non-nil, zero value otherwise
+and a boolean to check if the value has been set.
+
+### SetProvider
+
+`func (o *Instance) SetProvider(v string)`
+
+SetProvider sets Provider field to given value.
 
 
 ### GetActive

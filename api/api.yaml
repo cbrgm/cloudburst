@@ -70,6 +70,7 @@ components:
         - description
         - path
         - query
+        - providerSpec
         - instanceSpec
         - staticSpec
       properties:
@@ -81,10 +82,20 @@ components:
           type: string
         query:
           type: string
+        providerSpec:
+          $ref: '#/components/schemas/ProviderSpec'
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
         staticSpec:
           $ref: '#/components/schemas/StaticSpec'
+    ProviderSpec:
+      type: object
+      required:
+        - weights
+      properties:
+        weights:
+          additionalProperties:
+            type: number
     StaticSpec:
       type: object
       required:
@@ -123,12 +134,15 @@ components:
         - name
         - endpoint
         - active
+        - provider
         - container
         - status
       properties:
         name:
           type: string
         endpoint:
+          type: string
+        provider:
           type: string
         active:
           type: boolean

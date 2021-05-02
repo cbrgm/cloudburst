@@ -5,19 +5,20 @@ import (
 	"github.com/cbrgm/cloudburst/cloudburst"
 )
 
-func InstanceToOpenAPI(i *cloudburst.Instance) openapi.Instance {
+func InstanceToOpenAPI(in *cloudburst.Instance) openapi.Instance {
 	return openapi.Instance{
-		Name:     i.Name,
-		Endpoint: i.Endpoint,
-		Active:   i.Active,
+		Name:     in.Name,
+		Endpoint: in.Endpoint,
+		Provider: in.Provider,
+		Active:   in.Active,
 		Container: openapi.ContainerSpec{
-			Name:  i.Container.Name,
-			Image: i.Container.Image,
+			Name:  in.Container.Name,
+			Image: in.Container.Image,
 		},
 		Status: openapi.InstanceStatus{
-			Agent:   i.Status.Agent,
-			Status:  string(i.Status.Status),
-			Started: i.Status.Started,
+			Agent:   in.Status.Agent,
+			Status:  string(in.Status.Status),
+			Started: in.Status.Started,
 		},
 	}
 }
@@ -30,9 +31,9 @@ func InstancesToOpenAPI(instances []*cloudburst.Instance) []openapi.Instance {
 	return res
 }
 
-func OpenAPItoInstance(i openapi.Instance) *cloudburst.Instance {
+func OpenAPItoInstance(in openapi.Instance) *cloudburst.Instance {
 	var status cloudburst.Status
-	switch i.Status.Status {
+	switch in.Status.Status {
 	case "unknown":
 		status = cloudburst.Unknown
 	case "pending":
@@ -48,17 +49,18 @@ func OpenAPItoInstance(i openapi.Instance) *cloudburst.Instance {
 	}
 
 	return &cloudburst.Instance{
-		Name:     i.Name,
-		Endpoint: i.Endpoint,
+		Name:     in.Name,
+		Endpoint: in.Endpoint,
+		Provider: in.Provider,
+		Active:   in.Active,
 		Container: cloudburst.ContainerSpec{
-			Name:  i.Container.Name,
-			Image: i.Container.Image,
+			Name:  in.Container.Name,
+			Image: in.Container.Image,
 		},
-		Active: i.Active,
 		Status: cloudburst.InstanceStatus{
-			Agent:   i.Status.Agent,
+			Agent:   in.Status.Agent,
 			Status:  status,
-			Started: i.Status.Started,
+			Started: in.Status.Started,
 		},
 	}
 }
@@ -77,6 +79,9 @@ func ScrapeTargetToOpenAPI(s *cloudburst.ScrapeTarget) openapi.ScrapeTarget {
 		Description: s.Description,
 		Path:        s.Path,
 		Query:       s.Query,
+		ProviderSpec: openapi.ProviderSpec{
+			Weights: s.ProviderSpec.Weights,
+		},
 		InstanceSpec: openapi.InstanceSpec{
 			Container: openapi.ContainerSpec{
 				Name:  s.InstanceSpec.Container.Name,

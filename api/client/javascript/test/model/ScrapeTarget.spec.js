@@ -78,6 +78,12 @@
       //expect(instance).to.be();
     });
 
+    it('should have the property providerSpec (base name: "providerSpec")', function() {
+      // uncomment below and update the code to test the property providerSpec
+      //var instance = new Cloudburst.ScrapeTarget();
+      //expect(instance).to.be();
+    });
+
     it('should have the property instanceSpec (base name: "instanceSpec")', function() {
       // uncomment below and update the code to test the property instanceSpec
       //var instance = new Cloudburst.ScrapeTarget();

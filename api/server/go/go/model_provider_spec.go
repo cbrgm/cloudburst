@@ -9,17 +9,7 @@
 
 package openapi
 
-type Instance struct {
+type ProviderSpec struct {
 
-	Name string `json:"name"`
-
-	Endpoint string `json:"endpoint"`
-
-	Provider string `json:"provider"`
-
-	Active bool `json:"active"`
-
-	Container ContainerSpec `json:"container"`
-
-	Status InstanceStatus `json:"status"`
+	Weights map[string]float32 `json:"weights"`
 }

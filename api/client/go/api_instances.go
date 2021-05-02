@@ -38,7 +38,7 @@ func (r ApiGetInstancesRequest) Execute() ([]Instance, *_nethttp.Response, error
 }
 
 /*
- * GetInstances Get Instances for a ScrapeTarget
+ * GetInstances Get InstanceDemand for a ScrapeTarget
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param target
  * @return ApiGetInstancesRequest
@@ -147,7 +147,7 @@ func (r ApiSaveInstancesRequest) Execute() ([]Instance, *_nethttp.Response, erro
 }
 
 /*
- * SaveInstances Update Instances for a ScrapeTarget
+ * SaveInstances Update InstanceDemand for a ScrapeTarget
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  * @param target
  * @return ApiSaveInstancesRequest

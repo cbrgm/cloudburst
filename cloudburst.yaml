@@ -5,6 +5,11 @@ targets:
     description: requests amount greater than 15 rps
     query: |
       (sum(rate(example_sorting_requests_total[15s])) / 15)
+    provider:
+      weights:
+        cloud-provider-A: 50
+        cloud-provider-B: 40
+        cloud-provider-C: 10
     spec:
       container:
         name: "bubblesort-svc"

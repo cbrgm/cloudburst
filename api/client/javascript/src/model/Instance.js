@@ -26,13 +26,14 @@ class Instance {
      * @alias module:model/Instance
      * @param name {String} 
      * @param endpoint {String} 
+     * @param provider {String} 
      * @param active {Boolean} 
      * @param container {module:model/ContainerSpec} 
      * @param status {module:model/InstanceStatus} 
      */
-    constructor(name, endpoint, active, container, status) { 
+    constructor(name, endpoint, provider, active, container, status) { 
         
-        Instance.initialize(this, name, endpoint, active, container, status);
+        Instance.initialize(this, name, endpoint, provider, active, container, status);
     }
 
     /**
@@ -40,9 +41,10 @@ class Instance {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, name, endpoint, active, container, status) { 
+    static initialize(obj, name, endpoint, provider, active, container, status) { 
         obj['name'] = name;
         obj['endpoint'] = endpoint;
+        obj['provider'] = provider;
         obj['active'] = active;
         obj['container'] = container;
         obj['status'] = status;
@@ -64,6 +66,9 @@ class Instance {
             }
             if (data.hasOwnProperty('endpoint')) {
                 obj['endpoint'] = ApiClient.convertToType(data['endpoint'], 'String');
+            }
+            if (data.hasOwnProperty('provider')) {
+                obj['provider'] = ApiClient.convertToType(data['provider'], 'String');
             }
             if (data.hasOwnProperty('active')) {
                 obj['active'] = ApiClient.convertToType(data['active'], 'Boolean');
@@ -90,6 +95,11 @@ Instance.prototype['name'] = undefined;
  * @member {String} endpoint
  */
 Instance.prototype['endpoint'] = undefined;
+
+/**
+ * @member {String} provider
+ */
+Instance.prototype['provider'] = undefined;
 
 /**
  * @member {Boolean} active

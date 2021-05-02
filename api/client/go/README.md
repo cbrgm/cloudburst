@@ -90,6 +90,7 @@ Class | Method | HTTP request | Description
  - [InstanceEvent](docs/InstanceEvent.md)
  - [InstanceSpec](docs/InstanceSpec.md)
  - [InstanceStatus](docs/InstanceStatus.md)
+ - [ProviderSpec](docs/ProviderSpec.md)
  - [ScrapeTarget](docs/ScrapeTarget.md)
  - [StaticSpec](docs/StaticSpec.md)
 

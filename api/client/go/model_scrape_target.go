@@ -20,6 +20,7 @@ type ScrapeTarget struct {
 	Path string `json:"path"`
 	Description string `json:"description"`
 	Query string `json:"query"`
+	ProviderSpec ProviderSpec `json:"providerSpec"`
 	InstanceSpec InstanceSpec `json:"instanceSpec"`
 	StaticSpec StaticSpec `json:"staticSpec"`
 }
@@ -28,12 +29,13 @@ type ScrapeTarget struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewScrapeTarget(name string, path string, description string, query string, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget {
+func NewScrapeTarget(name string, path string, description string, query string, providerSpec ProviderSpec, instanceSpec InstanceSpec, staticSpec StaticSpec, ) *ScrapeTarget {
 	this := ScrapeTarget{}
 	this.Name = name
 	this.Path = path
 	this.Description = description
 	this.Query = query
+	this.ProviderSpec = providerSpec
 	this.InstanceSpec = instanceSpec
 	this.StaticSpec = staticSpec
 	return &this
@@ -143,6 +145,30 @@ func (o *ScrapeTarget) SetQuery(v string) {
 	o.Query = v
 }
 
+// GetProviderSpec returns the ProviderSpec field value
+func (o *ScrapeTarget) GetProviderSpec() ProviderSpec {
+	if o == nil  {
+		var ret ProviderSpec
+		return ret
+	}
+
+	return o.ProviderSpec
+}
+
+// GetProviderSpecOk returns a tuple with the ProviderSpec field value
+// and a boolean to check if the value has been set.
+func (o *ScrapeTarget) GetProviderSpecOk() (*ProviderSpec, bool) {
+	if o == nil  {
+		return nil, false
+	}
+	return &o.ProviderSpec, true
+}
+
+// SetProviderSpec sets field value
+func (o *ScrapeTarget) SetProviderSpec(v ProviderSpec) {
+	o.ProviderSpec = v
+}
+
 // GetInstanceSpec returns the InstanceSpec field value
 func (o *ScrapeTarget) GetInstanceSpec() InstanceSpec {
 	if o == nil  {
@@ -204,6 +230,9 @@ func (o ScrapeTarget) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["query"] = o.Query
+	}
+	if true {
+		toSerialize["providerSpec"] = o.ProviderSpec
 	}
 	if true {
 		toSerialize["instanceSpec"] = o.InstanceSpec

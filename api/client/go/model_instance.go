@@ -18,6 +18,7 @@ import (
 type Instance struct {
 	Name string `json:"name"`
 	Endpoint string `json:"endpoint"`
+	Provider string `json:"provider"`
 	Active bool `json:"active"`
 	Container ContainerSpec `json:"container"`
 	Status InstanceStatus `json:"status"`
@@ -27,10 +28,11 @@ type Instance struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewInstance(name string, endpoint string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance {
+func NewInstance(name string, endpoint string, provider string, active bool, container ContainerSpec, status InstanceStatus, ) *Instance {
 	this := Instance{}
 	this.Name = name
 	this.Endpoint = endpoint
+	this.Provider = provider
 	this.Active = active
 	this.Container = container
 	this.Status = status
@@ -91,6 +93,30 @@ func (o *Instance) GetEndpointOk() (*string, bool) {
 // SetEndpoint sets field value
 func (o *Instance) SetEndpoint(v string) {
 	o.Endpoint = v
+}
+
+// GetProvider returns the Provider field value
+func (o *Instance) GetProvider() string {
+	if o == nil  {
+		var ret string
+		return ret
+	}
+
+	return o.Provider
+}
+
+// GetProviderOk returns a tuple with the Provider field value
+// and a boolean to check if the value has been set.
+func (o *Instance) GetProviderOk() (*string, bool) {
+	if o == nil  {
+		return nil, false
+	}
+	return &o.Provider, true
+}
+
+// SetProvider sets field value
+func (o *Instance) SetProvider(v string) {
+	o.Provider = v
 }
 
 // GetActive returns the Active field value
@@ -172,6 +198,9 @@ func (o Instance) MarshalJSON() ([]byte, error) {
 	}
 	if true {
 		toSerialize["endpoint"] = o.Endpoint
+	}
+	if true {
+		toSerialize["provider"] = o.Provider
 	}
 	if true {
 		toSerialize["active"] = o.Active

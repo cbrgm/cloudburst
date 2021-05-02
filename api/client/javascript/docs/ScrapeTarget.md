@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **path** | **String** |  | 
 **description** | **String** |  | 
 **query** | **String** |  | 
+**providerSpec** | [**ProviderSpec**](ProviderSpec.md) |  | 
 **instanceSpec** | [**InstanceSpec**](InstanceSpec.md) |  | 
 **staticSpec** | [**StaticSpec**](StaticSpec.md) |  | 
 

@@ -81,6 +81,9 @@ components:
             name: name
         name: name
         description: description
+        providerSpec:
+          weights:
+            key: 0.8008281904610115
       properties:
         name:
           type: string
@@ -90,6 +93,8 @@ components:
           type: string
         query:
           type: string
+        providerSpec:
+          $ref: '#/components/schemas/ProviderSpec'
         instanceSpec:
           $ref: '#/components/schemas/InstanceSpec'
         staticSpec:
@@ -99,8 +104,21 @@ components:
       - instanceSpec
       - name
       - path
+      - providerSpec
       - query
       - staticSpec
+      type: object
+    ProviderSpec:
+      example:
+        weights:
+          key: 0.8008281904610115
+      properties:
+        weights:
+          additionalProperties:
+            type: number
+          type: object
+      required:
+      - weights
       type: object
     StaticSpec:
       example:
@@ -153,6 +171,7 @@ components:
           image: image
           name: name
         endpoint: endpoint
+        provider: provider
         name: name
         active: true
         status:
@@ -163,6 +182,8 @@ components:
         name:
           type: string
         endpoint:
+          type: string
+        provider:
           type: string
         active:
           type: boolean
@@ -175,6 +196,7 @@ components:
       - container
       - endpoint
       - name
+      - provider
       - status
       type: object
     InstanceStatus:

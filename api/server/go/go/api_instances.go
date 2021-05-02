@@ -45,7 +45,7 @@ func (c *InstancesApiController) Routes() Routes {
 	}
 }
 
-// GetInstances - Get Instances for a ScrapeTarget
+// GetInstances - Get InstanceDemand for a ScrapeTarget
 func (c *InstancesApiController) GetInstances(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
 	target := params["target"]
@@ -60,7 +60,7 @@ func (c *InstancesApiController) GetInstances(w http.ResponseWriter, r *http.Req
 	
 }
 
-// SaveInstances - Update Instances for a ScrapeTarget
+// SaveInstances - Update InstanceDemand for a ScrapeTarget
 func (c *InstancesApiController) SaveInstances(w http.ResponseWriter, r *http.Request) { 
 	params := mux.Vars(r)
 	target := params["target"]
