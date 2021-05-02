@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/cbrgm/cloudburst/autoscaler"
 	"github.com/cbrgm/cloudburst/cloudburst"
+	"github.com/cbrgm/cloudburst/metrics"
 	"github.com/cbrgm/cloudburst/state/boltdb"
 	"github.com/ghodss/yaml"
 	"github.com/go-chi/chi"
@@ -13,14 +15,14 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/oklog/run"
 	"github.com/pkg/errors"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/urfave/cli"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -88,12 +90,6 @@ func main() {
 
 func apiAction(logger log.Logger) cli.ActionFunc {
 	return func(c *cli.Context) error {
-		registry := prometheus.NewRegistry()
-		registry.MustRegister(
-			prometheus.NewGoCollector(),
-			prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}),
-		)
-
 		bytes, err := ioutil.ReadFile(c.String(flagConfigFile))
 		if err != nil {
 			return fmt.Errorf("failed to read config file: %w", err)
@@ -111,31 +107,38 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 
 		events := cloudburst.NewEvents()
 
-		var db cloudburst.State
+		var state autoscaler.State
 		{
 			var dbPath = c.String(flagBoltPath)
 			bolt, dbClose, err := boltdb.NewDB(dbPath, scrapeTargets)
 			if err != nil {
-				return fmt.Errorf("failed to create bolt db: %s", err)
+				return fmt.Errorf("failed to create bolt state: %s", err)
 			}
 			defer dbClose()
 
 			boltEvents := boltdb.NewEvents(bolt, events)
-			db = boltEvents
+			state = boltEvents
 		}
+
+		metricOptions := metrics.Options{
+			Enabled:              true,
+			Prefix:               "",
+			EnableProfile:        true,
+			EnableRuntimeMetrics: true,
+		}
+		scalingMetrics := metrics.NewDefaultPrometheus()
+		ctx, cancel := context.WithCancel(context.Background())
 
 		var gr run.Group
 		// api
 		{
-			apiV1, err := NewV1(logger, registry, db, events)
+			apiV1, err := NewV1(logger, scalingMetrics, state, events)
 			if err != nil {
 				return fmt.Errorf("failed to initialize api: %w", err)
 			}
 
 			r := chi.NewRouter()
 			r.Use(Logger(logger))
-			r.Use(HTTPMetrics(registry))
-
 			{
 				r.Mount("/", apiV1)
 			}
@@ -170,8 +173,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		}
 		{
 			r := chi.NewRouter()
-			r.Mount("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))
-			r.Mount("/debug", middleware.Profiler())
+			r.Mount("/metrics", metrics.HandlerFor(scalingMetrics, metricOptions))
 
 			s := http.Server{
 				Addr:    c.String(flagInternalAddr),
@@ -192,8 +194,12 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		// polling
 		{
 			if c.Bool(flagDebug) {
-				var scalingFunc = cloudburst.NewDefaultScalingFunc()
-				var autoscaler = cloudburst.NewInstrumentedAutoScaler(registry, scalingFunc, db)
+				sLogger := log.With(logger, "component", "autoscaler")
+				scaling, err := autoscaler.NewScaling(state, config.PrometheusURL)
+				if err != nil {
+					level.Error(sLogger).Log("msg", "failed to initialize telegram bot", "err", err)
+					os.Exit(2)
+				}
 				var ticker = make(chan int)
 				gr.Add(func() error {
 					scan := bufio.NewScanner(os.Stdin)
@@ -213,40 +219,55 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 					for {
 						select {
 						case i := <-ticker:
-							err = autoscaler.Scale(scrapeTargets[0], float64(i))
+							err = scaling.ProcessScrapeTargetWithValue(scrapeTargets[0], float64(i))
 							if err != nil {
 								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 							}
 						}
 					}
 				}, func(err error) {
-
+					cancel()
 				})
 			}
-
 			if !c.Bool(flagDebug) {
-				gr.Add(func() error {
-					ticker := time.NewTicker(time.Duration(c.Int(flagPollingInterval)) * time.Second)
-					cloudburstapi := cloudburst.NewInstrumentedScrapeTargetProcessor(registry, db)
-					for {
-						select {
-						case <-ticker.C:
-							err = cloudburstapi.ProcessScrapeTargets(config.PrometheusURL)
-							if err != nil {
-								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
-							}
-						}
-					}
-				}, func(err error) {
+				sLogger := log.With(logger, "component", "autoscaler")
+				interval := time.Duration(c.Int(flagPollingInterval)) * time.Second
+				scaling, err := autoscaler.NewScaling(state, config.PrometheusURL,
+					autoscaler.WithLogger(sLogger),
+					autoscaler.WithInterval(interval),
+					autoscaler.WithMetrics(scalingMetrics),
+				)
+				if err != nil {
+					level.Error(sLogger).Log("msg", "failed to initialize telegram bot", "err", err)
+					os.Exit(2)
+				}
 
+				gr.Add(func() error {
+					level.Info(sLogger).Log(
+						"msg", "starting autoscaler",
+					)
+					return scaling.Run(ctx)
+				}, func(err error) {
+					cancel()
 				})
 			}
+		}
+		{
+			sig := make(chan os.Signal)
+			signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+
+			gr.Add(func() error {
+				<-sig
+				return nil
+			}, func(err error) {
+				cancel()
+				close(sig)
+			})
 		}
 
 		if err := gr.Run(); err != nil {
 			return errors.Errorf("error running: %w", err)
 		}
-
 		return nil
 	}
 }
@@ -276,26 +297,5 @@ func Logger(logger log.Logger) func(next http.Handler) http.Handler {
 				"bytes", ww.BytesWritten(),
 			)
 		})
-	}
-}
-
-// HTTPMetrics returns a middleware component to track http requests by prometheus
-func HTTPMetrics(registry *prometheus.Registry) func(next http.Handler) http.Handler {
-	duration := prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Name: "http_request_duration_seconds",
-		Help: "latency of http requests",
-	}, nil)
-
-	counter := prometheus.NewCounterVec(prometheus.CounterOpts{
-		Name: "http_requests_total",
-		Help: "http requests total",
-	}, []string{"code", "method"})
-
-	registry.MustRegister(duration, counter)
-
-	return func(next http.Handler) http.Handler {
-		return promhttp.InstrumentHandlerDuration(duration,
-			promhttp.InstrumentHandlerCounter(counter, next),
-		)
 	}
 }

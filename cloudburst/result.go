@@ -7,6 +7,14 @@ type ScalingResult struct {
 	Result []*ResultValue // the rounded demand for new instances
 }
 
+func (s *ScalingResult) Sum() int {
+	var sum int
+	for _, result := range s.Result {
+		sum = sum + result.InstanceDemand
+	}
+	return sum
+}
+
 type ResultValue struct {
 	Provider       string
 	Weight         float32
