@@ -1,40 +1,24 @@
-package cloudburst
+package autoscaler
 
-type Threshold struct {
-	Upper int
-	Lower int
+import "github.com/cbrgm/cloudburst/cloudburst"
+
+// preparator modifies instance states stored in the state to fulfill scaling needs calculated by a requestCalculator.
+// Create preparator instances with newPreparator.
+type preparator struct {
+	state State
 }
 
-func (t *Threshold) inRange(i int) bool {
-	return i >= t.Lower && i <= t.Upper
-}
-
-func newThreshold(upper, lower int) Threshold {
-	return Threshold{
-		Upper: upper,
-		Lower: lower,
-	}
-}
-
-// requester modifies instance states stored in the state to fulfill scaling needs calculated by a requestCalculator.
-// Create requester instances with newRequester.
-type requester struct {
-	threshold Threshold
-	state     State
-}
-
-// newRequester creates a new requester. The provided State is used to access and modify instance states
+// newPreparator creates a new preparator. The provided State is used to access and modify instance states
 // stored by a database provider implementation. The provided requestCalculator is used to calculate
-func newRequester(state State, threshold Threshold) *requester {
-	return &requester{
-		threshold: threshold,
+func newPreparator(state State) *preparator {
+	return &preparator{
 		state:     state,
 	}
 }
 
-func (r *requester) ProcessDemand(result ScalingResult, scrapeTarget *ScrapeTarget) error {
+func (r *preparator) Prepare(result cloudburst.ScalingResult, scrapeTarget *cloudburst.ScrapeTarget) error {
 	for _, value := range result.Result {
-		err := r.ProcessDemandForProvider(value, scrapeTarget)
+		err := r.prepareForProvider(value, scrapeTarget)
 		if err != nil {
 			return err
 		}
@@ -42,12 +26,12 @@ func (r *requester) ProcessDemand(result ScalingResult, scrapeTarget *ScrapeTarg
 	return nil
 }
 
-func (r *requester) ProcessDemandForProvider(value *ResultValue, scrapeTarget *ScrapeTarget) error {
+func (r *preparator) prepareForProvider(value *cloudburst.ResultValue, scrapeTarget *cloudburst.ScrapeTarget) error {
 	// if demand is in range of threshold, we don't request/suspend new instances
 	result := value.InstanceDemand
-	if r.threshold.inRange(result) {
-		result = 0
-	}
+	//if r.threshold.inRange(result) {
+	//	result = 0
+	//}
 
 	if result == 0 {
 		return r.thresholdEquals(scrapeTarget, value.Instances)
@@ -63,8 +47,8 @@ func (r *requester) ProcessDemandForProvider(value *ResultValue, scrapeTarget *S
 	return nil
 }
 
-func (r *requester) thresholdEquals(scrapeTarget *ScrapeTarget, instances []*Instance) error {
-	pendingInstances := GetInstancesByStatus(instances, Pending)
+func (r *preparator) thresholdEquals(scrapeTarget *cloudburst.ScrapeTarget, instances []*cloudburst.Instance) error {
+	pendingInstances := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 	err := r.state.RemoveInstances(scrapeTarget.Name, pendingInstances)
 	if err != nil {
 		return err
@@ -72,16 +56,16 @@ func (r *requester) thresholdEquals(scrapeTarget *ScrapeTarget, instances []*Ins
 	return nil
 }
 
-func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Instance, provider string, demand int) error {
-	pendingInstances := GetInstancesByStatus(instances, Pending)
+func (r *preparator) thresholdAbove(scrapeTarget *cloudburst.ScrapeTarget, instances []*cloudburst.Instance, provider string, demand int) error {
+	pendingInstances := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 
 	var result = demand - len(pendingInstances)
 
 	if result > 0 {
 		// on a positive vars, create pending instances until we satisfy vars
-		var toCreate []*Instance
+		var toCreate []*cloudburst.Instance
 		for i := 0; i < result; i++ {
-			toCreate = append(toCreate, NewInstance(provider, scrapeTarget.InstanceSpec))
+			toCreate = append(toCreate, cloudburst.NewInstance(provider, scrapeTarget.InstanceSpec))
 		}
 		_, err := r.state.SaveInstances(scrapeTarget.Name, toCreate)
 		if err != nil {
@@ -100,17 +84,17 @@ func (r *requester) thresholdAbove(scrapeTarget *ScrapeTarget, instances []*Inst
 	return nil
 }
 
-func (r *requester) thresholdBelow(scrapeTarget *ScrapeTarget, instances []*Instance, demand int) error {
+func (r *preparator) thresholdBelow(scrapeTarget *cloudburst.ScrapeTarget, instances []*cloudburst.Instance, demand int) error {
 
 	// delete all pending instances first
-	pendingInstances := GetInstancesByStatus(instances, Pending)
+	pendingInstances := cloudburst.GetInstancesByStatus(instances, cloudburst.Pending)
 	err := r.state.RemoveInstances(scrapeTarget.Name, pendingInstances)
 	if err != nil {
 		return err
 	}
 
-	runningInstances := GetInstancesByStatus(instances, Running)
-	activeInstances := GetActiveInstances(runningInstances, true)
+	runningInstances := cloudburst.GetInstancesByStatus(instances, cloudburst.Running)
+	activeInstances := cloudburst.GetActiveInstances(runningInstances, true)
 
 	// we dont want a negative number here
 	numToBeTerminated := 0 - (demand)
@@ -134,8 +118,8 @@ func (r *requester) thresholdBelow(scrapeTarget *ScrapeTarget, instances []*Inst
 	return nil
 }
 
-func markToBeTerminated(instances []*Instance) []*Instance {
-	var res = []*Instance{}
+func markToBeTerminated(instances []*cloudburst.Instance) []*cloudburst.Instance {
+	var res = []*cloudburst.Instance{}
 	for _, instance := range instances {
 		instance.Active = false
 		res = append(res, instance)
