@@ -28,21 +28,32 @@ func (r *preparator) Prepare(result cloudburst.ScalingResult, scrapeTarget *clou
 
 func (r *preparator) prepareForProvider(value *cloudburst.ResultValue, scrapeTarget *cloudburst.ScrapeTarget) error {
 	// if demand is in range of threshold, we don't request/suspend new instances
-	result := value.InstanceDemand
-	//if r.threshold.inRange(result) {
-	//	result = 0
+
+	sumTerminating := cloudburst.CountActiveInstances(cloudburst.GetInstancesByStatus(value.Instances, cloudburst.Running), false)
+	sumProgressActive := cloudburst.CountActiveInstances(cloudburst.GetInstancesByStatus(value.Instances, cloudburst.Progress), true)
+	sumRunning := cloudburst.CountInstancesByStatus(value.Instances, cloudburst.Running)
+
+	current := (sumRunning - sumTerminating) + sumProgressActive
+	demand := value.InstanceDemand
+
+	delta := demand - current
+
+	println(delta)
+
+	//if r.threshold.inRange(delta) {
+	//	delta = 0
 	//}
 
-	if result == 0 {
+	if delta == 0 {
 		return r.thresholdEquals(scrapeTarget, value.Instances)
 	}
 
-	if result > 0 {
-		return r.thresholdAbove(scrapeTarget, value.Instances, value.Provider, result)
+	if delta > 0 {
+		return r.thresholdAbove(scrapeTarget, value.Instances, value.Provider, delta)
 	}
 
-	if result < 0 {
-		return r.thresholdBelow(scrapeTarget, value.Instances, result)
+	if delta < 0 {
+		return r.thresholdBelow(scrapeTarget, value.Instances, delta)
 	}
 	return nil
 }

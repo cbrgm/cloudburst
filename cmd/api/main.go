@@ -195,17 +195,17 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 		{
 			if c.Bool(flagDebug) {
 				sLogger := log.With(logger, "component", "autoscaler")
-				scaling, err := autoscaler.NewScaling(state, config.PrometheusURL)
+				scaling, err := autoscaler.NewScaling(state, config.PrometheusURL, autoscaler.WithMetrics(scalingMetrics))
 				if err != nil {
 					level.Error(sLogger).Log("msg", "failed to initialize telegram bot", "err", err)
 					os.Exit(2)
 				}
-				var ticker = make(chan int)
+				var ticker = make(chan float64)
 				gr.Add(func() error {
 					scan := bufio.NewScanner(os.Stdin)
 					for scan.Scan() {
 						s := scan.Text()
-						queryValue, err := strconv.Atoi(s)
+						queryValue, err := strconv.ParseFloat(s, 64)
 						if err != nil {
 							continue
 						}
@@ -219,7 +219,7 @@ func apiAction(logger log.Logger) cli.ActionFunc {
 					for {
 						select {
 						case i := <-ticker:
-							err = scaling.ProcessScrapeTargetWithValue(scrapeTargets[0], float64(i))
+							err = scaling.ProcessScrapeTargetWithValue(scrapeTargets[0], i)
 							if err != nil {
 								level.Info(logger).Log("msg", "prometheus processScrapeTargets job failed", "err", err)
 							}
