@@ -7,9 +7,9 @@ targets:
       (sum(rate(example_sorting_requests_total[15s])) / 5)
     provider:
       weights:
-        cloud-provider-A: 50
-        cloud-provider-B: 40
-        cloud-provider-C: 10
+        cloud-provider-alpha: 50
+        cloud-provider-beta: 40
+        cloud-provider-gamma: 10
     spec:
       container:
         name: "bubblesort-svc"

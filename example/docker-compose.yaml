@@ -30,22 +30,32 @@ services:
     networks:
       - promnet
 
-  cloudburst-agent-01:
+  cloudburst-agent-alpha:
     image: cbrgm/cloudburst-agent:latest
     restart: always
     command:
-      - '--name=mock-agent'
-      - '--provider=cloud-provider-A'
+      - '--name=agent-alpha'
+      - '--provider=cloud-provider-alpha'
       - '--api.url=http://cloudburst-api:6660'
     networks:
       - promnet
 
-  cloudburst-agent-02:
+  cloudburst-agent-beta:
     image: cbrgm/cloudburst-agent:latest
     restart: always
     command:
-      - '--name=mock-agent'
-      - '--provider=cloud-provider-B'
+      - '--name=agent-beta'
+      - '--provider=cloud-provider-beta'
+      - '--api.url=http://cloudburst-api:6660'
+    networks:
+      - promnet
+
+  cloudburst-agent-gamma:
+    image: cbrgm/cloudburst-agent:latest
+    restart: always
+    command:
+      - '--name=agent-gamma'
+      - '--provider=cloud-provider-gamma'
       - '--api.url=http://cloudburst-api:6660'
     networks:
       - promnet
