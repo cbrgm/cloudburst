@@ -21,16 +21,9 @@ func NewReactiveThresholdWithThreshold(threshold Threshold) *ReactiveThreshold {
 func (c *ReactiveThreshold) Calculate(scrapeTarget *ScrapeTarget, instances []*Instance, metricValue float64) ScalingResult {
 	sumInternal := float64(len(scrapeTarget.StaticSpec.Endpoints))
 	sumExternal := float64(CountInstancesByStatus(instances, Running))
-	sumEffective := math.Ceil((metricValue)*(sumInternal+sumExternal))
+	sumEffective := math.Round(((metricValue)*(sumInternal+sumExternal)) + 0.5)
 
 	demandTotal := sumEffective - sumInternal
-
-	println("Values:")
-	println(sumInternal)
-	println(sumExternal)
-	println(demandTotal)
-	println("")
-
 	res := ScalingResult{
 		Result: []*ResultValue{},
 	}
@@ -41,13 +34,6 @@ func (c *ReactiveThreshold) Calculate(scrapeTarget *ScrapeTarget, instances []*I
 	}
 
 	handleDifference(res, demandTotal)
-
-	for _, val := range res.Result {
-		println(val.Provider)
-		println(val.InstanceDemand)
-		println(val.Weight)
-		println("")
-	}
 	return res
 }
 

@@ -38,8 +38,6 @@ func (r *preparator) prepareForProvider(value *cloudburst.ResultValue, scrapeTar
 
 	delta := demand - current
 
-	println(delta)
-
 	//if r.threshold.inRange(delta) {
 	//	delta = 0
 	//}

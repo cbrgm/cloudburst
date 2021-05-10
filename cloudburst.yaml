@@ -4,7 +4,7 @@ targets:
     path: /bubblesort
     description: requests amount greater than 15 rps
     query: |
-      (sum(rate(example_sorting_requests_total[15s])) / 5)
+      (sum(rate(example_sorting_requests_total[15s])) / 12)
     provider:
       weights:
         cloud-provider-alpha: 50
