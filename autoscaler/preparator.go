@@ -12,7 +12,7 @@ type preparator struct {
 // stored by a database provider implementation. The provided requestCalculator is used to calculate
 func newPreparator(state State) *preparator {
 	return &preparator{
-		state:     state,
+		state: state,
 	}
 }
 
@@ -31,7 +31,7 @@ func (r *preparator) prepareForProvider(value *cloudburst.ResultValue, scrapeTar
 
 	sumTerminating := cloudburst.CountActiveInstances(cloudburst.GetInstancesByStatus(value.Instances, cloudburst.Running), false)
 	sumProgressActive := cloudburst.CountActiveInstances(cloudburst.GetInstancesByStatus(value.Instances, cloudburst.Progress), true)
-	sumRunning := cloudburst.CountInstancesByStatus(value.Instances, cloudburst.Running)
+	sumRunning := cloudburst.CountActiveInstances(cloudburst.GetInstancesByStatus(value.Instances, cloudburst.Running), true)
 
 	current := (sumRunning - sumTerminating) + sumProgressActive
 	demand := value.InstanceDemand
